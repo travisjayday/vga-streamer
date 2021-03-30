@@ -1,0 +1,3 @@
+Mar 29
+
+I have understood how mask generation works. The website gave me an intuitive understanding of butterly circuits. The book hinted at an algorithm for general bit permutations, but there was no connection. I couldn't understand how to incorperate them until I read the code. Deciphering the code was the missing puzzle piece. Now I can work on implementing my own version of mask g generation which will likely be slower but surely more comprehensible. 

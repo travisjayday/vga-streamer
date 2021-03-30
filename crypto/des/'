@@ -1,0 +1,163 @@
+import time
+import random
+
+bit64 = [chr(ord('A') + x) for x in range(0, 64)]
+
+def swap(array, i, j):
+    t = array[i]
+    array[i] = array[j]
+    array[j] = t
+
+def butterfly_n(given, n_div2, mask):
+    """ Computes the n-way butterfly of a given input.
+            given   = list of elements, 
+            n       : len(given) // 2, 
+            mask    : bitstring 
+    """
+    output = given[:]
+    [swap(output, n_div2  + i, i) for i in range(n_div2) if mask[i] == '1']
+    return output 
+
+def force(n): 
+    print("Forcing", n, "bit")
+    n_div2 = n // 2
+    steps = 2**(n_div2)
+    elems = bit64[0:n]
+    for i in range(steps): 
+        mask = format(i, f'0{n_div2}b')
+        print(mask, '-->', butterfly_n(elems, n_div2, mask))
+
+#elems = bit64[0:8]
+#elems = butterfly_n(elems, 4, format(0x33, f'0{8}b'))
+#force(16)
+
+def get_masks(start, end):
+    n = len(start)
+    
+    if n == 2: 
+        return []
+
+    start_s1 = start[0:n//2] 
+    start_s2 = start[n//2:n]
+    end_s1 = end[0:n//2]
+    end_s2 = end[n//2:n]
+
+    start_s = [(x, y) for x, y in zip(start_s1, start_s2)]
+    end_s = [(x, y) for x, y in zip(end_s1, end_s2)]
+   
+    mask_start = [0] * (n // 2) 
+    mask_end = [0] * (n // 2)
+    s1, s2 = 1, 2
+
+    blacklist = []
+    for end_item in end_s:
+        if end_item in start_s: 
+            blacklist.append(end_item)
+            end_s.remove(end_item)
+            start_s.remove(end_item)
+
+    unwanted = start_s[0][1]
+    wanted = start_s[0][0]
+
+    past_unwanted = set()
+    past_wanted = set([wanted])
+
+    def ping_back(arr, wanted, unwanted):
+        wanted, unwanted = None, None
+        for i in range(len(arr)): 
+            if arr[i][0] == unwanted:
+                end_s[i] = arr[i][::-1] # cross
+                wanted = arr[i][0]
+                break
+            if arr[i][0] == wanted:
+                unwanted = arr[i][1] 
+                break
+            if arr[i][1] == unwanted:
+                wanted = arr[i][0] 
+                break
+            if arr[i][1] == wanted:
+                arr[i] = arr[i][::-1] # cross
+                unwanted = arr[i][1]
+                break
+        return wanted, unwanted
+
+
+ 
+    # it is our goal to make set(start_s,0) == set(end_s,0)
+    while s1 != s2:
+        time.sleep(1)
+
+        s1 = set([x[0] for x in start_s]) 
+        s2 = set([x[0] for x in end_s])
+
+        print(len(s1 - s2))
+        print(s1)
+        print(s2)
+        print(start_s)
+        print(end_s)
+        print(wanted)
+        print(unwanted)
+        print(blacklist)
+
+        for i in range(len(end_s)): 
+            if end_s[i][0] == unwanted:
+                end_s[i] = end_s[i][::-1] # cross
+                wanted = end_s[i][0]
+                unwanted = None
+                break
+            if end_s[i][0] == wanted:
+                unwanted = end_s[i][1] 
+                wanted = None
+                break
+            if end_s[i][1] == unwanted:
+                wanted = end_s[i][0] 
+                unwanted = None
+                break
+            if end_s[i][1] == wanted:
+                end_s[i] = end_s[i][::-1] # cross
+                unwanted = end_s[i][1]
+                wanted = None
+                break
+
+        for i in range(len(start_s)): 
+            if start_s[i][0] == unwanted:
+                start_s[i] = start_s[i][::-1] # cross
+                wanted = start_s[i][0]
+                unwanted = None
+                break
+            if start_s[i][0] == wanted:
+                unwanted = start_s[i][1] 
+                wanted = None
+                break
+            if start_s[i][1] == unwanted:
+                wanted = start_s[i][0] 
+                unwanted = None
+                break
+            if start_s[i][1] == wanted:
+                start_s[i] = start_s[i][::-1] # cross
+                unwanted = start_s[i][1]
+                wanted = None
+                break
+
+
+
+        #wanted, unwanted = ping_back(end_s, wanted, unwanted)
+        #wanted, unwanted = ping_back(start_s, wanted, unwanted)
+
+    print("sets:")
+    print(set([x[0] for x in start_s]), set([x[1] for x in start_s]))
+    print(set([x[0] for x in end_s]),   set([x[1] for x in end_s]), )
+
+    start_s1 = [x[0] for x in start_s]
+    start_s2 = [x[1] for x in start_s]
+    end_s1 = [x[0] for x in end_s]
+    end_s2 = [x[1] for x in end_s]
+
+    mask_sublayer_left = get_masks(start_s1, end_s1)
+    mask_sublayer_right = get_masks(start_s2, end_s2)
+ 
+get_masks(bit64[0:8], ['C', 'E', 'B', 'F', 'A', 'H', 'D', 'G'])
+quit()
+res = bit64[:16]
+random.shuffle(res)
+get_masks(bit64[:16], res)
