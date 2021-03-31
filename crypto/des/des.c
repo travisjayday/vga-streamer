@@ -18,79 +18,83 @@ void print_bits(uintmax_t n)
     putchar('\n');
 }
 
+uint64_t
+perm_bitstring_dumb(uint64_t x, uint8_t n, uint8_t* src, uint8_t* dst)
+{
+    uint64_t res = 0; 
+    uint8_t* bits = malloc(n * sizeof(uint8_t));
+    uint8_t* permbits = malloc(n * sizeof(uint8_t));
+    uint8_t bit_i = n - 1;  
+    uint64_t i;
+    uint8_t j; 
+
+    if (n != 64) {
+        for (i = 1; i < (1 << n); i <<= 1, bit_i--) {
+            bits[bit_i] = (i & x)? '1' : '0';               // set the bit in the array if its set
+        }
+    }
+    else {
+        for (i = 1; i != 0; i <<= 1, bit_i--) {
+            bits[bit_i] = (i & x)? '1' : '0';               // set the bit in the array if its set
+        }
+    }
+ 
+    for (i = 0; i < n; i++) {
+        uint8_t current_bit = bits[i];             // get the value of the bit at current index
+        for (j = 0; j < n; j++) {
+            if (dst[j] == src[i]) 
+                permbits[j] = current_bit;                 // set the value at destination index to current bit
+        }
+    }
+
+    bit_i = n - 1;
+    if (n != 64) {
+        for (i = 1; i < 1 << n; i <<= 1, bit_i--) 
+            if (permbits[bit_i] == '1') res = res | i;      // set the bit if it's set in the array
+    }
+    else {
+        for (i = 1; i != 0; i <<= 1, bit_i--) 
+            if (permbits[bit_i] == '1') res = res | i;      // set the bit if it's set in the array
+
+    }
+
+    return res; 
+}
+
+/**
+ * bench_perm_bitstring_dumb - benchmark dumb bitstring permutations given src and destination masks.
+ * @n: The number of bits which will be permuatated
+ */
+double
+bench_perm_bitstring_dumb(uint8_t n, uint8_t** srcs, uint8_t** dsts, int perms_n,
+        uint64_t* samples, int samples_per_perm)
+{
+    /* Start timer */
+    uint64_t start_time = __rdtsc();
+
+    /* Do computations */
+    int i, j;
+    uint64_t x;
+    for (i = 0; i < perms_n; i++, srcs++, dsts++) 
+        for (j = 0; j < samples_per_perm; j++, samples++) 
+            x = perm_bitstring_dumb(*samples, n, *srcs, *dsts);
+
+    /* Print Results */
+    uint64_t elapsed = (__rdtsc() - start_time);
+    double freq = 3600.033e6;
+    double seconds = (elapsed / freq) ;
+    double seconds_per_call = seconds / (perms_n* samples_per_perm);
+
+    printf("Dumb C Results:\n");
+    printf("-----------------\n");
+    printf("Ticks elapsed: \t%ld\n", elapsed);
+    printf("Total seconds: \t%.17g\nSeconds / Call: %.17g\n", seconds, seconds_per_call);
+    printf("Sanity Check: \t0x%lx\n\n", x); 
+
+    return seconds_per_call;
+}
+
 // See http://programming.sirrida.de/bit_perm.html#benes for butterfly reference
-
-/*
- * Equivalent to bit rotate by 4. 
- * Swaps lower half with upper half.
- */
-static inline uint8_t 
-subflip8(uint8_t n)
-{
-    return (n << 4 | n >> 4); 
-}
-
-/*
- * Equivalent to bit rotate by 2. 
- * Swaps lower half with upper half. 
- * This function does it on the two 4bit subwords. 
- */
-static inline uint8_t 
-subflip4(uint8_t n)
-{
-    return (((n << 2) & 0xcc) | ((n >> 2) & 0x33)); 
-}
-
-/*
- * Equivalent to bit rotate by 1. 
- * Swaps lower half with upper half. 
- * This function does it on the four 2bit subwords. 
- */
-static inline uint8_t 
-subflip2(uint8_t n)
-{
-    return (((n << 1) & 0xaa) | ((n >> 1) & 0x55)); 
-}
-
-
-static inline uint8_t 
-butterfly2(uint8_t input, uint8_t mask) 
-{
-    return ((~mask) & input) | subflip2(mask & input); 
-}
-
-static inline uint8_t 
-butterfly4(uint8_t input, uint8_t mask) 
-{
-    return ((~mask) & input) | subflip4(mask & input); 
-}
-
-static inline uint8_t 
-butterfly8(uint8_t input, uint8_t mask) 
-{
-    return ((~mask) & input) | subflip8(mask & input); 
-}
-
-/*
- *  masks = 00 [ 2 bits ] [ 2 bits ] [ 2 bits ] 
- *               layer 3    layer 2    layer 1  mask
- */
-static inline uint8_t
-perm4(uint8_t input, uint8_t masks)
-{
-    print_bits(masks);
-    uint8_t layer1_mask = ((masks & 0x3) << 2) | (masks & 0x3);
-    uint8_t layer2_mask = (masks & 0xc) >> 2;
-    uint8_t layer3_mask = ((masks & 0x30) >> 2) | ((masks & 0x30) >> 4);
-    print_bits(layer1_mask);
-    print_bits(layer2_mask);
-    print_bits(layer3_mask);
-    input = butterfly4(input, layer1_mask);     // layer 1
-    input = butterfly2(input, layer2_mask);     // layer 2
-    input = butterfly4(input, layer3_mask);     // layer 3
-    return input; 
-}
-
 static inline uint64_t 
 do_delta_swap(uint64_t x, uint8_t n, uint64_t mask)
 {
@@ -104,29 +108,56 @@ uint64_t
 perm_bitstring(uint64_t x, uint8_t n, uint64_t* mask) 
 {
     uint8_t layer; 
-    for (layer = n; layer >= 4; layer >>= 1, mask++)
-        x = do_delta_swap(x, layer, *mask);
-    for (layer = 2; layer <= n; layer <<= 1, mask++) 
-        x = do_delta_swap(x, layer, *mask);
+    for (layer = n; layer >= 4; layer >>= 1, mask++) x = do_delta_swap(x, layer, *mask);
+    for (layer = 2; layer <= n; layer <<= 1, mask++) x = do_delta_swap(x, layer, *mask); 
     return x;
 }
 
-uint64_t 
-bench_perm_bitstring(uint64_t x, uint8_t n, uint64_t* mask)
+/**
+ * bench_perm_bitstring - benchmark bitstring permutations given a list of masks.
+ * @n: The number of bits which will be permuatated
+ * @mask: A list of lists of masks 
+ * @mask_n: Length of mask list
+ * @samples: The number of randomly generated samples which will be run for each mask. 
+ */
+double
+bench_perm_bitstring(uint8_t n, uint64_t** masks, int masks_n, 
+        uint64_t* samples, int samples_per_mask)
 {
-    double freq = 3600.033e6;
+    /* Start timer */
     uint64_t start_time = __rdtsc();
 
-    perm_bitstring(x, n, mask);
+    /* Do computations */
+    int i, j;
+    uint64_t x;
+    for (i = 0; i < masks_n; i++, masks++) 
+        for (j = 0; j < samples_per_mask; j++, samples++) 
+            x = perm_bitstring(*samples, n, *masks);
 
+    /* Print Results */
     uint64_t elapsed = (__rdtsc() - start_time);
-    double seconds = (elapsed * freq) ;
-    printf("Done in %ld clock_cylcles --> %.17g seconds \n",  elapsed, 1.0 / seconds);
+    double freq = 3600.033e6;
+    double seconds = (elapsed / freq) ;
+    double seconds_per_call = seconds / (masks_n * samples_per_mask);
+
+    printf("Fast C Results:\n");
+    printf("-----------------\n");
+    printf("Ticks elapsed: \t%ld\n", elapsed);
+    printf("Total seconds: \t%.17g\nSeconds / Call: %.17g\n", seconds, seconds_per_call);
+    printf("Sanity Check: \t0x%lx\n\n", x); 
+
+    return seconds_per_call;
 }
 
 int 
 main() 
 {
+
+    uint8_t src[] = { 1, 0, 2, 3 };
+    uint8_t dst[] = { 1, 2, 0, 3 };
+    perm_bitstring_dumb(0b1000, 4, src, dst);
+    return 0; 
+
     uint64_t masks0[] = {
         0, 0, 85, 51, 15
     };
@@ -143,62 +174,6 @@ main()
     uint64_t masks[] = {
         0, 0, 0, 0, 1431655765, 858993459, 252645135, 65535, 65535
     };
-    uint64_t x = bench_perm_bitstring(0b11111111111111101000000000000000, 32, masks);
-    printf("result: %ld", x);
-
-    uint64_t masks2[] = {
-        716730551, 120972048890684, 13511314278318134, 360292381121380866, 1224980267144314896, 4706262990382519364, 2522582113671189296, 576743339878189828, 36873423817474067, 63836098968526, 2861590325
-
-    };
-    for (int i = 0; i < 10000; i++) {
-    uint64_t x2 = bench_perm_bitstring(0b0010110100000111001100001011110010000100001100001110111001110001, 64, masks2);
-    printf("result: %ld", x2);
-    }
-
-    return 0;
- 
-    /*
-    uint64_t masks[] = {
-        0b00000011,
-        0b00010001,        
-        0b00010100,
-        0b00000010,
-        0b00001101
-    };
-    uint64_t x = perm_bitstring(0b10011100, 8, masks);
-    printf("result: %ld", x);
-   
-    printf("layer 8\n");
-    print_bits(do_delta_swap(0b10011100, 8, 0b00000011));
-    printf("layer 4\n");
-    print_bits(do_delta_swap(0b00100011010, 4, 0b00010001));
-    printf("layer 2\n");
-    print_bits(do_delta_swap(0b01100110, 2, 0b00010100));
-    printf("layer 4\n");
-    print_bits(do_delta_swap(0b01100110, 4, 0b00000010));
-    print_bits(do_delta_swap(0b01101100, 8, 0b00001101));*/
-    return 0;
-    uint8_t res = 0;
-
-    // test 4 input 2 bit butterfly
-    res = butterfly2(0x82, 0xcc);
-    assert(res == 0x42);
-
-    // test 2 input 4 bit buttefly 
-    res = butterfly4(0x9b, 0xa5);
-    assert(res == 0x3e);
-
-    // test 1 input 8 bit buttefly
-    res = butterfly8(0xca, 0x77);
-    assert(res == 0xac);
-
-    // test 4 bit perm 
-    res = perm4(0b1011, 0b00000011);       // abcd -> cdab 
-    assert(res == 0b1110);
-    res = perm4(0b1011, 0b00011101);    // abcd -> acbd
-    assert(res == 0b1101);
-    res = perm4(0b1101, 0b00011101);   // acbd -> abcd
-    assert(res == 0b1011);
 
     return 0;
 }
