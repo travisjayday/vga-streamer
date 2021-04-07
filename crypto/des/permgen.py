@@ -1,13 +1,28 @@
 import os
 import time
 import random
+from tests import *
 import ctypes
 
-# Prepare the permutate function
+# Load dynamic library 
 so = ctypes.CDLL(os.path.abspath('./build/libdes.so'))
-so.perm_bitstring.restype = ctypes.c_ulong
-so.perm_bitstring.argtypes = (ctypes.c_uint64, ctypes.c_uint8, 
-        ctypes.POINTER(ctypes.c_uint64))
+
+# Define fast native function   
+so.perm_bitstring.restype = ctypes.c_ulong                   
+so.perm_bitstring.argtypes = (
+        ctypes.c_uint64,                                    # uint64_t x
+        ctypes.c_uint8,                                     # uint8_t n 
+        ctypes.POINTER(ctypes.c_uint64)                     # uint64_t* mask
+)
+
+# Define dumb native function
+so.perm_bitstring_dumb.restype = ctypes.c_ulong
+so.perm_bitstring_dumb.argtypes = (
+        ctypes.c_uint64,                                    # uint64_t x
+        ctypes.c_uint8,                                     # uint8_t n 
+        ctypes.POINTER(ctypes.c_uint8),                     # uint8_t* src
+        ctypes.POINTER(ctypes.c_uint8)                      # uint8_t* dst
+)
 
 # Define the fast benchmark function
 so.bench_perm_bitstring.restype = ctypes.c_double
@@ -31,6 +46,17 @@ so.bench_perm_bitstring_dumb.argtypes = (
 )
 
 
+logbuf = ''
+def log(*args, **kwargs):
+    global logbuf
+    logbuf += ' '.join(map(str, args))
+    def_end = '\n'
+    if 'end' in kwargs:
+        def_end = kwargs['end']
+    logbuf += def_end
+    print(*args, **kwargs)
+ 
+
 def perm_bitstring(x, n, masks):
     """
     Permutates a given bitstring using the permutation defined by the given masks. 
@@ -52,6 +78,13 @@ def dumb_perm(x, src_perm, dst_perm):
     """
     mapping = {x: y for x, y in zip(src_perm, list(format(x, f'0{len(src_perm)}b')))}
     return int(''.join([mapping[x] for x in dst_perm]), 2)
+
+def dumb_perm_native(x, src_perm, dst_perm):
+    srcs = [ord(a) - ord('A') for a in src_perm] 
+    dsts = [ord(a) - ord('A') for a in dst_perm]
+    srcs_data = (ctypes.c_uint8 * len(srcs))(*srcs)
+    dsts_data = (ctypes.c_uint8 * len(dsts))(*dsts)
+    return so.perm_bitstring_dumb(x, len(src_perm), srcs_data, dsts_data)
  
 
 def get_masks(start, end):
@@ -62,6 +95,8 @@ def get_masks(start, end):
     @end:   array with permutated elemented. For example, ['D', 'C', 'B', 'A']
     """
     n = len(start)
+    if set(start) != set(end):
+        return print("Error! Not a permutation!!")
 
     # base case. A simple Mux. 
     if n == 2: 
@@ -187,38 +222,47 @@ def pretty_print_mask(title, cvars, n, m):
     @m:     The mask or a list of masks
     """
     title = title.center(20)
-    print('\n/**' + ''.join(['*'] * len(title)) + '**/')
-    print('/*', title, '*/')
-    print('/**' + ''.join(['*'] * len(title)) + '**/')
+    log('\n/**' + ''.join(['*'] * len(title)) + '**/')
+    log('/*', title, '*/')
+    log('/**' + ''.join(['*'] * len(title)) + '**/')
     if type(m[0]) != list:
         m = [m]
         cvars = [cvars]
     for var, mask_collection in zip(cvars, m):  
-        print('uint64_t', var, '{')
-        print(" ", end='')
+        log(f'uint64_t {var}[] =' + '{')
+        log(" ", end='')
         for i in range(len(mask_collection) - 1):
-            print(" {0:#0{1}x},".format(mask_collection[i], (n >> 2) + 2),\
-                    end='' if (i + 1) % (13 - (n >> 2)) != 0 else '\n ')
-        print(" {0:#0{1}x}".format(mask_collection[-1], (n >> 2) + 2))
-        print('};')
+            alpha = 14 if n == 64 else 12 
+            # change the first value after % to modify numbers per line 
+            log(" {0:#0{1}x},".format(mask_collection[i], (n >> 2) + 2),\
+                    end='' if (i + 1) % (alpha - (n >> 2)) != 0 else '\n ')
+        log(" {0:#0{1}x}".format(mask_collection[-1], (n >> 2) + 2))
+        log('};')
+ 
 
-def print_des_masks():
+def print_des_masks(to_file=''):
     """
     Print all the masks required for DES
     """
     bit64 = [x for x in range(1, 65)]
 
-    def print_s(n, d):
-        title = f"S-Block {n}"
-        title = title.center(20)
-        print('\n/**' + ''.join(['*'] * len(title)) + '**/')
-        print('/*', title, '*/')
-        print('/**' + ''.join(['*'] * len(title)) + '**/')
-     
+    def print_s(n, d, last):
         rows = [d[i*16: i*16 + 16] for i in range(4)] 
-        h = [["{0:01x}".format(x) for x in m] for m in rows]
-        for row in h:
-            print(''.join(row)), end=', ')
+
+        def printrow(row, comma):
+            i = 0
+            log('  ', end='')
+            endings = [', ' for _ in range(len(row) - 1)]
+            if not comma: endings[-1] = ''
+            while i < len(row):
+                log("{0:#04x}".format(row[i] | row[i + 1] << 4), end=endings[i])
+                i += 2
+            log('')
+ 
+        printrow(rows[0], True)
+        printrow(rows[2], True)
+        printrow(rows[1], True)
+        printrow(rows[3], not last)
 
     # s1 only acting on the first 16 bits of data
     s1 = [
@@ -270,8 +314,70 @@ def print_des_masks():
         2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11
     ]
 
+    title = f"S-Blocks 1-8"
+    title = title.center(20)
+    log('\n/**' + ''.join(['*'] * len(title)) + '**/')
+    log('/*', title, '*/')
+    log('/**' + ''.join(['*'] * len(title)) + '**/')
+    log('/* \n' +
+        ' * S-Block defined as bytes. High nibble corresponds to \n' + 
+        ' * i + 1 while low nibble corresponds to i. \n' +
+        '*/') 
+
+    log("uint8_t sblocks[] = {")
     for i in range(1, 9):
-        print_s(i, locals()[f"s{i}"])
+        print_s(i, locals()[f"s{i}"], i == 8)
+    log("};")
+
+    p = [
+        16,  7, 20, 21,
+        29, 12, 28, 17,
+         1, 15, 23, 26, 
+         5, 18, 31, 10,
+         2,  8, 24, 14,
+        32, 27,  3,  9,
+        19, 13, 30,  6,
+        22, 11,  4, 25
+    ]
+    pretty_print_mask(
+            "P Permutation Mask",
+            "perm_mask_p", 32, 
+            render_mask(get_masks(bit64[0:32], p)) 
+    )
+
+    ip = [
+        58, 50, 42, 34, 26, 18, 10, 2, 
+        60, 52, 44, 36, 28, 20, 12, 4, 
+        62, 54, 46, 38, 30, 22, 14, 6, 
+        64, 56, 48, 40, 32, 24, 16, 8, 
+        57, 49, 41, 33, 25, 17, 9,  1, 
+        59, 51, 43, 35, 27, 19, 11, 3, 
+        61, 53, 45, 37, 29, 21, 13, 5, 
+        63, 55, 47, 39, 31, 23, 15, 7
+    ]
+
+    pretty_print_mask(
+            "IP Permutation Mask",
+            "perm_mask_ip", 64, 
+            render_mask(get_masks(bit64, ip)) 
+    )
+
+    ipi = [
+        40, 8, 48, 16, 56, 24, 64, 32, 
+        39, 7, 47, 15, 55, 23, 63, 31, 
+        38, 6, 46, 14, 54, 22, 62, 30, 
+        37, 5, 45, 13, 53, 21, 61, 29, 
+        36, 4, 44, 12, 52, 20, 60, 28, 
+        35, 3, 43, 11, 51, 19, 59, 27, 
+        34, 2, 42, 10, 50, 18, 58, 26, 
+        33, 1, 41,  9, 49, 17, 57, 25
+    ]
+
+    pretty_print_mask(
+            "IP^-1 Permutation Mask",
+            "perm_mask_ipi", 64, 
+            render_mask(get_masks(bit64, ipi)) 
+    )
 
     pc1 = [
         57, 49, 41, 33, 25, 17,  9, 
@@ -289,7 +395,7 @@ def print_des_masks():
 
     pretty_print_mask(
             "PC-1 Permutation Mask", 
-            "perm_mask_p1", 64,
+            "perm_mask_pc1", 64,
             render_mask(get_masks(bit64, pc1))
     )
 
@@ -312,6 +418,11 @@ def print_des_masks():
             render_mask(get_masks(bit64, pc2))
     )
 
+    global logbuf
+    if len(to_file) != 0: 
+        with open(to_file, 'w') as f:
+            f.write(logbuf)
+
 
 def generate_random_masks(n, count): 
     abc = [chr(ord('A') + x) for x in range(0, 64)]
@@ -326,7 +437,11 @@ def generate_random_masks(n, count):
 
  
 if __name__ == "__main__":
-    print_des_masks()
+    print_des_masks(to_file="des_data.c")
+    src = ['A', 'B', 'C', 'D']
+    dst = ['B', 'C', 'D', 'A']
+    get_masks(src, dst)
+    
 
 
 
