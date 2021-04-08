@@ -43,4 +43,6 @@ Dumb C vs Dumb Python	 1.91
 Fast C vs Dumb C	     211.21
 Fast C vs Dumb Python	 404.03
 
+Apr 7
 
+I have finally found the time to finish implmeneted DES. Now I just need to test it. 
