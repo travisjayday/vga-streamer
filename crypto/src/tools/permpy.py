@@ -7,6 +7,23 @@ import ctypes
 libbitperm_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../build/libbitperm.so'))
 libbitperm = ctypes.CDLL(libbitperm_path)
 
+# Define fast native function
+libbitperm.perm_bitstring.restype = ctypes.c_ulong
+libbitperm.perm_bitstring.argtypes = (
+        ctypes.c_uint64,                                    # uint64_t x
+        ctypes.c_uint8,                                     # uint8_t n
+        ctypes.POINTER(ctypes.c_uint64)                     # uint64_t* mask
+)
+
+# Define dumb native function
+libbitperm.perm_bitstring_dumb.restype = ctypes.c_ulong
+libbitperm.perm_bitstring_dumb.argtypes = (
+        ctypes.c_uint64,                                    # uint64_t x
+        ctypes.c_uint8,                                     # uint8_t n
+        ctypes.POINTER(ctypes.c_uint8),                     # uint8_t* src
+        ctypes.POINTER(ctypes.c_uint8)                      # uint8_t* dst
+)
+
 # Define the fast benchmark function
 libbitperm.bench_perm_bitstring.restype = ctypes.c_double
 libbitperm.bench_perm_bitstring.argtypes = (

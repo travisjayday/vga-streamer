@@ -9,6 +9,7 @@ sys.path.append(tools_dir)
 from despy import * 
 
 def test_des_blk(num_keys): 
+    print("Testing DES...")
     for _ in range(num_keys):
         key = random.randint(0, 2**64 -1)
         des = DES.new(key.to_bytes(8, byteorder='big'), DES.MODE_ECB)
@@ -23,7 +24,9 @@ def test_des_blk(num_keys):
                 print('test_des k=',key,'x=', x, 'FAILED')
                 print("r1=",hex(r1))
                 print('r2=',hex(r2))
+                quit(-1)
+    print("Test succeeded!")
 
 
 if __name__ == "__main__":
-    test_des_blk(10000)
+    test_des_blk(1000)

@@ -1,38 +1,23 @@
 #include "bitperm.h"
 
-uint64_t
-perm_bitstring_dumb(uint64_t x, uint8_t n, uint8_t* src, uint8_t* dst)
+void _print_bits(uintmax_t n, uint32_t bits) {
+    char c;
+    for (size_t i = bits; i-- != 0;)
+    {
+        if ((n & (1UL << i)) != 0) c = '1';
+        else c = '0';
+        printf ("%c", c);
+    }
+    putchar('\n');
+}
+
+void print_bits(uintmax_t n)
 {
-    uint64_t res = 0; 
-    uint8_t* bits = malloc(n * sizeof(uint8_t));
-    uint8_t* permbits = malloc(n * sizeof(uint8_t));
-    uint8_t bit_i = n - 1;  
-    uint64_t i = 1;
-    uint8_t j; 
-    uint64_t max = n == 64? 0 : 1ULL << n; 
-
-    /* Set the bit in the array if its set */
-    for (i = 1; i != max; i <<= 1, bit_i--) 
-        bits[bit_i] = (i & x)? '1' : '0';               
-
-     /* For each source bit, find the corresponding destination bit
-      * and move the src's value into the desintations' index. 
-      */ 
-    for (i = 0; i < n; i++) 
-       for (j = 0; j < n; j++) 
-            if (dst[j] == src[i]) 
-                permbits[j] = bits[i];              
-
-    /* Set the bit if it's set in the array */
-    bit_i = n - 1;
-    for (i = 1; i != max; i <<= 1, bit_i--) 
-        if (permbits[bit_i] == '1') res = res | i;     
-
-    return res; 
+    _print_bits(n, 8 * sizeof(int));
 }
 
 // See http://programming.sirrida.de/bit_perm.html#benes for butterfly reference
-static inline uint64_t 
+uint64_t 
 do_delta_swap(uint64_t x, uint8_t n, uint64_t mask)
 {
     uint64_t n_div2 = (uint64_t) (n / 2);
@@ -41,11 +26,62 @@ do_delta_swap(uint64_t x, uint8_t n, uint64_t mask)
     return x; 
 }
 
+#define __do_delta_swap                 \
+    n_div2 = layer >> 1;                \
+    y = (x ^ (x >> n_div2)) & *mask;         \
+    x = x ^ y ^ (y << n_div2); 
+
+#define ___do_delta_swap(n_div2)             \
+    y = (x ^ (x >> n_div2)) & *mask;         \
+    x = x ^ y ^ (y << n_div2);          \
+    mask++;
+ 
+uint64_t 
+_perm_bitstring(uint64_t x, uint8_t n, uint64_t* mask) 
+{
+    uint8_t layer; 
+    uint64_t n_div2;
+    uint64_t y; 
+
+    for (layer = n; layer >= 4; layer >>= 1, mask++) {
+        __do_delta_swap
+        //x = do_delta_swap(x, layer, *mask);
+    }
+    for (layer = 2; layer <= n; layer <<= 1, mask++)  {
+        __do_delta_swap
+        //x = do_delta_swap(x, layer, *mask);
+    }
+    return x;
+}
+
 uint64_t 
 perm_bitstring(uint64_t x, uint8_t n, uint64_t* mask) 
 {
-    uint8_t layer; 
-    for (layer = n; layer >= 4; layer >>= 1, mask++) x = do_delta_swap(x, layer, *mask);
-    for (layer = 2; layer <= n; layer <<= 1, mask++) x = do_delta_swap(x, layer, *mask); 
+    uint64_t y; 
+
+    if (n == 32) {
+        ___do_delta_swap(16); 
+        ___do_delta_swap(8); 
+        ___do_delta_swap(4); 
+        ___do_delta_swap(2); 
+        ___do_delta_swap(1); 
+        ___do_delta_swap(2); 
+        ___do_delta_swap(4); 
+        ___do_delta_swap(8); 
+        ___do_delta_swap(16); 
+    }
+    else if (n == 64) {
+        ___do_delta_swap(32); 
+        ___do_delta_swap(16); 
+        ___do_delta_swap(8); 
+        ___do_delta_swap(4); 
+        ___do_delta_swap(2); 
+        ___do_delta_swap(1); 
+        ___do_delta_swap(2); 
+        ___do_delta_swap(4); 
+        ___do_delta_swap(8); 
+        ___do_delta_swap(16); 
+        ___do_delta_swap(32); 
+    }
     return x;
 }
