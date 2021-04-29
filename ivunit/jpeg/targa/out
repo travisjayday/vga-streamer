@@ -1,705 +1,4 @@
-gcc -g huff.c
+gcc jpg.c targa.c -lm 
 ./a.out
-Amp: 34/0
-VLI: 0x8800/6
-Amp: 34/6
-RL/Size: 0/5 --> index 5, Val 20 -- > Amp: 20
-RL/Size: 0/4 --> index 4, Val 10 -- > Amp: 10
-RL/Size: 0/1 --> index 1, Val -1 -- > Amp: 0
-RL/Size: 0/2 --> index 2, Val -3 -- > Amp: 0
-RL/Size: 0/3 --> index 3, Val 5 -- > Amp: 5
-RL/Size: 2/2 --> index 22, Val 2 -- > Amp: 2
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-RL/Size: 1/1 --> index 11, Val 1 -- > Amp: 1
-151/+16 ZEROSRL/Size: 5/4 --> index 54, Val -12 -- > Amp: 3
-RL/Size: 1/4 --> index 14, Val 8 -- > Amp: 8
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-RL/Size: 0/2 --> index 2, Val 2 -- > Amp: 2
-RL/Size: 0/2 --> index 2, Val 3 -- > Amp: 3
-RL/Size: 0/4 --> index 4, Val -10 -- > Amp: 5
-RL/Size: 15/3 --> index 153, Val 6 -- > Amp: 6
-RL/Size: 0/3 --> index 3, Val 7 -- > Amp: 7
-RL/Size: 6/1 --> index 61, Val 1 -- > Amp: 1
-
-Intermediate coding:
-Table Index: 5 -> Encodes to [5 bits] 1a; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 3 -> Encodes to [3 bits] 4; 
-Table Index: 22 -> Encodes to [8 bits] f9; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 11 -> Encodes to [4 bits] c; 
-Table Index: 151 -> Encodes to [11 bits] 7f9; 
-Table Index: 54 -> Encodes to [16 bits] ff9f; 
-Table Index: 14 -> Encodes to [9 bits] 1f6; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 153 -> Encodes to [16 bits] fff6; 
-Table Index: 3 -> Encodes to [3 bits] 4; 
-Table Index: 61 -> Encodes to [7 bits] 7b; 
-Table Index: 0 -> Encodes to [4 bits] a; 
-eb75 4ba0 92fc c73f e7fe 7cfe d059 ed7f fdb4 fef4 Codeword: eb75Len/Size = 4/6
-DC Amp: 2d
-Raw word: d52eRL/Size = 0/5; [len:5] Amp: 20
-[1] (0, 1) <- 20Raw word: ba09RL/Size = 0/4; [len:4] Amp: 10
-[2] (1, 0) <- 10Raw word: 92fRL/Size = 0/1; [len:2] Amp: -1
-[3] (0, 2) <- -1Raw word: 497eRL/Size = 0/2; [len:2] Amp: -3
-[4] (1, 1) <- -3Raw word: 97e6RL/Size = 0/3; [len:3] Amp: 5
-[5] (2, 0) <- 5Raw word: f98eRL/Size = 2/2; [len:8] Amp: 2
-[8] (2, 1) <- 2Raw word: 39ffRL/Size = 0/1; [len:2] Amp: 1
-[9] (3, 0) <- 1Raw word: cff9RL/Size = 1/1; [len:4] Amp: 1
-[11] (1, 3) <- 1Raw word: ff3fRL/Size = 15/1; [len:11] Skipping amp!
-[27] (6, 0) <- 0Raw word: ff9fRL/Size = 5/4; [len:16] Amp: -12
-[33] (5, 2) <- -12Raw word: fb41RL/Size = 1/4; [len:9] Amp: 8
-[35] (7, 0) <- 8Raw word: 2cf6RL/Size = 0/1; [len:2] Amp: 1
-[36] (1, 7) <- 1Raw word: 67b5RL/Size = 0/2; [len:2] Amp: 2
-[37] (2, 6) <- 2Raw word: 7b5fRL/Size = 0/2; [len:2] Amp: 3
-[38] (3, 5) <- 3Raw word: b5ffRL/Size = 0/4; [len:4] Amp: -10
-[39] (4, 4) <- -10Raw word: fff6RL/Size = 15/3; [len:16] Amp: 6
-[55] (5, 6) <- 6Raw word: 9fdeRL/Size = 0/3; [len:3] Amp: 7
-[56] (6, 5) <- 7Raw word: f7a0RL/Size = 6/1; [len:7] Amp: 1
-[63] (7, 7) <- 1Raw word: a000
-57 0 0 0 20 0 0 0 
--1 -1 -1 -1 0 0 0 0 
-0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 
-10 0 0 0 -3 -1 -1 -1 
-0 0 0 0 1 0 0 0 
-0 0 0 0 0 0 0 0 
-0 0 0 0 1 0 0 0 
-RL/Size: 0/5 --> index 5, Val 20 -- > Amp: 20
-RL/Size: 0/4 --> index 4, Val 10 -- > Amp: 10
-RL/Size: 0/5 --> index 5, Val 30 -- > Amp: 30
-RL/Size: 0/2 --> index 2, Val -3 -- > Amp: 0
-RL/Size: 0/3 --> index 3, Val 5 -- > Amp: 5
-RL/Size: 1/7 --> index 17, Val -120 -- > Amp: 7
-RL/Size: 0/2 --> index 2, Val 2 -- > Amp: 2
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-RL/Size: 1/1 --> index 11, Val 1 -- > Amp: 1
-RL/Size: 0/6 --> index 6, Val 44 -- > Amp: 44
-RL/Size: 11/8 --> index 118, Val 140 -- > Amp: 140
-RL/Size: 8/4 --> index 84, Val -12 -- > Amp: 3
-RL/Size: 1/4 --> index 14, Val 8 -- > Amp: 8
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-RL/Size: 0/2 --> index 2, Val 2 -- > Amp: 2
-RL/Size: 0/2 --> index 2, Val 3 -- > Amp: 3
-RL/Size: 0/4 --> index 4, Val -10 -- > Amp: 5
-RL/Size: 13/5 --> index 135, Val -30 -- > Amp: 1
-RL/Size: 1/3 --> index 13, Val 6 -- > Amp: 6
-RL/Size: 0/3 --> index 3, Val 7 -- > Amp: 7
-RL/Size: 0/6 --> index 6, Val 40 -- > Amp: 40
-RL/Size: 5/1 --> index 51, Val 1 -- > Amp: 1
-
-Intermediate coding:
-Table Index: 5 -> Encodes to [5 bits] 1a; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 5 -> Encodes to [5 bits] 1a; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 3 -> Encodes to [3 bits] 4; 
-Table Index: 17 -> Encodes to [16 bits] ff85; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 11 -> Encodes to [4 bits] c; 
-Table Index: 6 -> Encodes to [7 bits] 78; 
-Table Index: 118 -> Encodes to [16 bits] ffd6; 
-Table Index: 84 -> Encodes to [16 bits] ffb7; 
-Table Index: 14 -> Encodes to [9 bits] 1f6; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 135 -> Encodes to [16 bits] ffe5; 
-Table Index: 13 -> Encodes to [7 bits] 79; 
-Table Index: 3 -> Encodes to [3 bits] 4; 
-Table Index: 6 -> Encodes to [7 bits] 78; 
-Table Index: 51 -> Encodes to [7 bits] 7a; 
-Table Index: 0 -> Encodes to [4 bits] a; 
-Codeword: d7d5Len/Size = 3/5
-DC Amp: 17
-Raw word: d52eRL/Size = 0/5; [len:5] Amp: 20
-[1] (0, 1) <- 20Raw word: bad7RL/Size = 0/4; [len:4] Amp: 10
-[2] (1, 0) <- 10Raw word: d792RL/Size = 0/5; [len:5] Amp: 30
-[3] (0, 2) <- 30Raw word: 497fRL/Size = 0/2; [len:2] Amp: -3
-[4] (1, 1) <- -3Raw word: 97feRL/Size = 0/3; [len:3] Amp: 5
-[5] (2, 0) <- 5Raw word: ff85RL/Size = 1/7; [len:16] Amp: -120
-[7] (1, 2) <- -120Raw word: 639fRL/Size = 0/2; [len:2] Amp: 2
-[8] (2, 1) <- 2Raw word: 39f1RL/Size = 0/1; [len:2] Amp: 1
-[9] (3, 0) <- 1Raw word: cf8bRL/Size = 1/1; [len:4] Amp: 1
-[11] (1, 3) <- 1Raw word: f167RL/Size = 0/6; [len:7] Amp: 44
-[12] (2, 2) <- 44Raw word: ffd6RL/Size = 11/8; [len:16] Amp: 140
-[24] (3, 3) <- 140Raw word: ffb7RL/Size = 8/4; [len:16] Amp: -12
-[33] (5, 2) <- -12Raw word: fb41RL/Size = 1/4; [len:9] Amp: 8
-[35] (7, 0) <- 8Raw word: 2cf6RL/Size = 0/1; [len:2] Amp: 1
-[36] (1, 7) <- 1Raw word: 67b5RL/Size = 0/2; [len:2] Amp: 2
-[37] (2, 6) <- 2Raw word: 7b5fRL/Size = 0/2; [len:2] Amp: 3
-[38] (3, 5) <- 3Raw word: b5ffRL/Size = 0/4; [len:4] Amp: -10
-[39] (4, 4) <- -10Raw word: ffe5RL/Size = 13/5; [len:16] Amp: -30
-[53] (7, 3) <- -30Raw word: f3a7RL/Size = 1/3; [len:7] Amp: 6
-[55] (5, 6) <- 6Raw word: 9fc5RL/Size = 0/3; [len:3] Amp: 7
-[56] (6, 5) <- 7Raw word: f147RL/Size = 0/6; [len:7] Amp: 40
-[57] (7, 4) <- 40Raw word: f5a0RL/Size = 5/1; [len:7] Amp: 1
-[63] (7, 7) <- 1Raw word: a000
-
-
-
-
-
-
-
-
-RL/Size: 0/5 --> index 5, Val 20 -- > Amp: 20
-RL/Size: 0/4 --> index 4, Val 10 -- > Amp: 10
-RL/Size: 0/1 --> index 1, Val -1 -- > Amp: 0
-RL/Size: 0/2 --> index 2, Val -3 -- > Amp: 0
-RL/Size: 0/3 --> index 3, Val 5 -- > Amp: 5
-RL/Size: 1/7 --> index 17, Val 99 -- > Amp: 99
-RL/Size: 0/2 --> index 2, Val 2 -- > Amp: 2
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-RL/Size: 1/1 --> index 11, Val 1 -- > Amp: 1
-RL/Size: 0/6 --> index 6, Val 33 -- > Amp: 33
-RL/Size: 7/4 --> index 74, Val 8 -- > Amp: 8
-RL/Size: 4/5 --> index 45, Val -31 -- > Amp: 0
-RL/Size: 0/4 --> index 4, Val 8 -- > Amp: 8
-RL/Size: 4/5 --> index 45, Val 30 -- > Amp: 30
-RL/Size: 1/4 --> index 14, Val -12 -- > Amp: 3
-RL/Size: 1/4 --> index 14, Val 8 -- > Amp: 8
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-RL/Size: 0/2 --> index 2, Val 2 -- > Amp: 2
-RL/Size: 0/2 --> index 2, Val 3 -- > Amp: 3
-RL/Size: 0/4 --> index 4, Val -10 -- > Amp: 5
-RL/Size: 1/7 --> index 17, Val -64 -- > Amp: 63
-RL/Size: 13/3 --> index 133, Val 6 -- > Amp: 6
-RL/Size: 0/3 --> index 3, Val 7 -- > Amp: 7
-RL/Size: 1/7 --> index 17, Val 100 -- > Amp: 100
-RL/Size: 3/4 --> index 34, Val 12 -- > Amp: 12
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-
-Intermediate coding:
-Table Index: 5 -> Encodes to [5 bits] 1a; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 3 -> Encodes to [3 bits] 4; 
-Table Index: 17 -> Encodes to [16 bits] ff85; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 11 -> Encodes to [4 bits] c; 
-Table Index: 6 -> Encodes to [7 bits] 78; 
-Table Index: 74 -> Encodes to [16 bits] ffaf; 
-Table Index: 45 -> Encodes to [16 bits] ff98; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 45 -> Encodes to [16 bits] ff98; 
-Table Index: 14 -> Encodes to [9 bits] 1f6; 
-Table Index: 14 -> Encodes to [9 bits] 1f6; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 17 -> Encodes to [16 bits] ff85; 
-Table Index: 133 -> Encodes to [16 bits] ffe3; 
-Table Index: 3 -> Encodes to [3 bits] 4; 
-Table Index: 17 -> Encodes to [16 bits] ff85; 
-Table Index: 34 -> Encodes to [16 bits] ff8f; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 0 -> Encodes to [4 bits] a; 
-Codeword: e7b5Len/Size = 4/6
-DC Amp: ffffffdf
-Raw word: d52eRL/Size = 0/5; [len:5] Amp: 20
-[1] (0, 1) <- 20Raw word: ba09RL/Size = 0/4; [len:4] Amp: 10
-[2] (1, 0) <- 10Raw word: 92fRL/Size = 0/1; [len:2] Amp: -1
-[3] (0, 2) <- -1Raw word: 497fRL/Size = 0/2; [len:2] Amp: -3
-[4] (1, 1) <- -3Raw word: 97feRL/Size = 0/3; [len:3] Amp: 5
-[5] (2, 0) <- 5Raw word: ff85RL/Size = 1/7; [len:16] Amp: 99
-[7] (1, 2) <- 99Raw word: 639fRL/Size = 0/2; [len:2] Amp: 2
-[8] (2, 1) <- 2Raw word: 39f1RL/Size = 0/1; [len:2] Amp: 1
-[9] (3, 0) <- 1Raw word: cf88RL/Size = 1/1; [len:4] Amp: 1
-[11] (1, 3) <- 1Raw word: f10fRL/Size = 0/6; [len:7] Amp: 33
-[12] (2, 2) <- 33Raw word: ffafRL/Size = 7/4; [len:16] Amp: 8
-[20] (5, 0) <- 8Raw word: ff98RL/Size = 4/5; [len:16] Amp: -31
-[25] (4, 2) <- -31Raw word: b8ffRL/Size = 0/4; [len:4] Amp: 8
-[26] (5, 1) <- 8Raw word: ff98RL/Size = 4/5; [len:16] Amp: 30
-[31] (3, 4) <- 30Raw word: fb1fRL/Size = 1/4; [len:9] Amp: -12
-[33] (5, 2) <- -12Raw word: fb41RL/Size = 1/4; [len:9] Amp: 8
-[35] (7, 0) <- 8Raw word: 2cf6RL/Size = 0/1; [len:2] Amp: 1
-[36] (1, 7) <- 1Raw word: 67b5RL/Size = 0/2; [len:2] Amp: 2
-[37] (2, 6) <- 2Raw word: 7b5fRL/Size = 0/2; [len:2] Amp: 3
-[38] (3, 5) <- 3Raw word: b5ffRL/Size = 0/4; [len:4] Amp: -10
-[39] (4, 4) <- -10Raw word: ff85RL/Size = 1/7; [len:16] Amp: -64
-[41] (6, 2) <- -64Raw word: ffe3RL/Size = 13/3; [len:16] Amp: 6
-[55] (5, 6) <- 6Raw word: 9ffeRL/Size = 0/3; [len:3] Amp: 7
-[56] (6, 5) <- 7Raw word: ff85RL/Size = 1/7; [len:16] Amp: 100
-[58] (5, 7) <- 100Raw word: ff8fRL/Size = 3/4; [len:16] Amp: 12
-[62] (7, 6) <- 12Raw word: 3400RL/Size = 0/1; [len:2] Amp: 1
-[63] (7, 7) <- 1Raw word: a000
-
-
-
-
-
-
-
-
-RL/Size: 0/5 --> index 5, Val 20 -- > Amp: 20
-RL/Size: 0/4 --> index 4, Val 10 -- > Amp: 10
-RL/Size: 0/1 --> index 1, Val -1 -- > Amp: 0
-RL/Size: 0/2 --> index 2, Val -3 -- > Amp: 0
-RL/Size: 0/3 --> index 3, Val 5 -- > Amp: 5
-RL/Size: 1/7 --> index 17, Val 99 -- > Amp: 99
-RL/Size: 0/2 --> index 2, Val 2 -- > Amp: 2
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-RL/Size: 1/1 --> index 11, Val 1 -- > Amp: 1
-RL/Size: 0/6 --> index 6, Val 33 -- > Amp: 33
-RL/Size: 7/4 --> index 74, Val 8 -- > Amp: 8
-RL/Size: 4/5 --> index 45, Val -31 -- > Amp: 0
-RL/Size: 0/4 --> index 4, Val 8 -- > Amp: 8
-RL/Size: 4/5 --> index 45, Val 30 -- > Amp: 30
-RL/Size: 1/4 --> index 14, Val -12 -- > Amp: 3
-RL/Size: 1/4 --> index 14, Val 8 -- > Amp: 8
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-RL/Size: 0/2 --> index 2, Val 2 -- > Amp: 2
-RL/Size: 0/2 --> index 2, Val 3 -- > Amp: 3
-RL/Size: 0/4 --> index 4, Val -10 -- > Amp: 5
-RL/Size: 1/7 --> index 17, Val -64 -- > Amp: 63
-RL/Size: 13/3 --> index 133, Val 6 -- > Amp: 6
-RL/Size: 0/3 --> index 3, Val 7 -- > Amp: 7
-RL/Size: 1/7 --> index 17, Val 100 -- > Amp: 100
-RL/Size: 3/4 --> index 34, Val 12 -- > Amp: 12
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-
-Intermediate coding:
-Table Index: 5 -> Encodes to [5 bits] 1a; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 3 -> Encodes to [3 bits] 4; 
-Table Index: 17 -> Encodes to [16 bits] ff85; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 11 -> Encodes to [4 bits] c; 
-Table Index: 6 -> Encodes to [7 bits] 78; 
-Table Index: 74 -> Encodes to [16 bits] ffaf; 
-Table Index: 45 -> Encodes to [16 bits] ff98; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 45 -> Encodes to [16 bits] ff98; 
-Table Index: 14 -> Encodes to [9 bits] 1f6; 
-Table Index: 14 -> Encodes to [9 bits] 1f6; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 17 -> Encodes to [16 bits] ff85; 
-Table Index: 133 -> Encodes to [16 bits] ffe3; 
-Table Index: 3 -> Encodes to [3 bits] 4; 
-Table Index: 17 -> Encodes to [16 bits] ff85; 
-Table Index: 34 -> Encodes to [16 bits] ff8f; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 0 -> Encodes to [4 bits] a; 
-Codeword: e7b5Len/Size = 4/6
-DC Amp: ffffffdf
-Raw word: d52eRL/Size = 0/5; [len:5] Amp: 20
-[1] (0, 1) <- 20Raw word: ba09RL/Size = 0/4; [len:4] Amp: 10
-[2] (1, 0) <- 10Raw word: 92fRL/Size = 0/1; [len:2] Amp: -1
-[3] (0, 2) <- -1Raw word: 497fRL/Size = 0/2; [len:2] Amp: -3
-[4] (1, 1) <- -3Raw word: 97feRL/Size = 0/3; [len:3] Amp: 5
-[5] (2, 0) <- 5Raw word: ff85RL/Size = 1/7; [len:16] Amp: 99
-[7] (1, 2) <- 99Raw word: 639fRL/Size = 0/2; [len:2] Amp: 2
-[8] (2, 1) <- 2Raw word: 39f1RL/Size = 0/1; [len:2] Amp: 1
-[9] (3, 0) <- 1Raw word: cf88RL/Size = 1/1; [len:4] Amp: 1
-[11] (1, 3) <- 1Raw word: f10fRL/Size = 0/6; [len:7] Amp: 33
-[12] (2, 2) <- 33Raw word: ffafRL/Size = 7/4; [len:16] Amp: 8
-[20] (5, 0) <- 8Raw word: ff98RL/Size = 4/5; [len:16] Amp: -31
-[25] (4, 2) <- -31Raw word: b8ffRL/Size = 0/4; [len:4] Amp: 8
-[26] (5, 1) <- 8Raw word: ff98RL/Size = 4/5; [len:16] Amp: 30
-[31] (3, 4) <- 30Raw word: fb1fRL/Size = 1/4; [len:9] Amp: -12
-[33] (5, 2) <- -12Raw word: fb41RL/Size = 1/4; [len:9] Amp: 8
-[35] (7, 0) <- 8Raw word: 2cf6RL/Size = 0/1; [len:2] Amp: 1
-[36] (1, 7) <- 1Raw word: 67b5RL/Size = 0/2; [len:2] Amp: 2
-[37] (2, 6) <- 2Raw word: 7b5fRL/Size = 0/2; [len:2] Amp: 3
-[38] (3, 5) <- 3Raw word: b5ffRL/Size = 0/4; [len:4] Amp: -10
-[39] (4, 4) <- -10Raw word: ff85RL/Size = 1/7; [len:16] Amp: -64
-[41] (6, 2) <- -64Raw word: ffe3RL/Size = 13/3; [len:16] Amp: 6
-[55] (5, 6) <- 6Raw word: 9ffeRL/Size = 0/3; [len:3] Amp: 7
-[56] (6, 5) <- 7Raw word: ff85RL/Size = 1/7; [len:16] Amp: 100
-[58] (5, 7) <- 100Raw word: ff8fRL/Size = 3/4; [len:16] Amp: 12
-[62] (7, 6) <- 12Raw word: 3400RL/Size = 0/1; [len:2] Amp: 1
-[63] (7, 7) <- 1Raw word: a000
-
-
-
-
-
-
-
-
-RL/Size: 0/9 --> index 9, Val 320 -- > Amp: 320
-RL/Size: 0/4 --> index 4, Val 10 -- > Amp: 10
-RL/Size: 0/1 --> index 1, Val -1 -- > Amp: 0
-RL/Size: 0/2 --> index 2, Val -3 -- > Amp: 0
-RL/Size: 0/3 --> index 3, Val 5 -- > Amp: 5
-RL/Size: 1/10 --> index 20, Val 799 -- > Amp: 799
-RL/Size: 0/10 --> index 10, Val 1023 -- > Amp: 1023
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-RL/Size: 1/1 --> index 11, Val 1 -- > Amp: 1
-RL/Size: 0/9 --> index 9, Val 333 -- > Amp: 333
-RL/Size: 2/10 --> index 30, Val -585 -- > Amp: 438
-RL/Size: 2/5 --> index 25, Val 20 -- > Amp: 20
-RL/Size: 1/4 --> index 14, Val 8 -- > Amp: 8
-RL/Size: 4/5 --> index 45, Val -31 -- > Amp: 0
-RL/Size: 0/4 --> index 4, Val 8 -- > Amp: 8
-RL/Size: 4/5 --> index 45, Val 30 -- > Amp: 30
-RL/Size: 1/4 --> index 14, Val -12 -- > Amp: 3
-RL/Size: 1/4 --> index 14, Val 8 -- > Amp: 8
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-RL/Size: 0/2 --> index 2, Val 2 -- > Amp: 2
-RL/Size: 0/2 --> index 2, Val 3 -- > Amp: 3
-RL/Size: 0/10 --> index 10, Val -810 -- > Amp: 213
-RL/Size: 1/7 --> index 17, Val -64 -- > Amp: 63
-RL/Size: 3/9 --> index 39, Val 358 -- > Amp: 358
-RL/Size: 3/9 --> index 39, Val 325 -- > Amp: 325
-RL/Size: 5/3 --> index 53, Val 6 -- > Amp: 6
-RL/Size: 0/3 --> index 3, Val 7 -- > Amp: 7
-RL/Size: 1/7 --> index 17, Val 100 -- > Amp: 100
-RL/Size: 3/4 --> index 34, Val 12 -- > Amp: 12
-RL/Size: 0/1 --> index 1, Val 1 -- > Amp: 1
-
-Intermediate coding:
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 3 -> Encodes to [3 bits] 4; 
-Table Index: 20 -> Encodes to [16 bits] ff88; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 11 -> Encodes to [4 bits] c; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 30 -> Encodes to [16 bits] ff8e; 
-Table Index: 25 -> Encodes to [16 bits] ff89; 
-Table Index: 14 -> Encodes to [9 bits] 1f6; 
-Table Index: 45 -> Encodes to [16 bits] ff98; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 45 -> Encodes to [16 bits] ff98; 
-Table Index: 14 -> Encodes to [9 bits] 1f6; 
-Table Index: 14 -> Encodes to [9 bits] 1f6; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 2 -> Encodes to [2 bits] 1; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 17 -> Encodes to [16 bits] ff85; 
-Table Index: 39 -> Encodes to [16 bits] ff94; 
-Table Index: 39 -> Encodes to [16 bits] ff94; 
-Table Index: 53 -> Encodes to [16 bits] ff9e; 
-Table Index: 3 -> Encodes to [3 bits] 4; 
-Table Index: 17 -> Encodes to [16 bits] ff85; 
-Table Index: 34 -> Encodes to [16 bits] ff8f; 
-Table Index: 1 -> Encodes to [2 bits] 0; 
-Table Index: 0 -> Encodes to [4 bits] a; 
-Codeword: e7bfLen/Size = 4/6
-DC Amp: ffffffdf
-Raw word: ff82RL/Size = 0/9; [len:16] Amp: 320
-[1] (0, 1) <- 320Raw word: ba09RL/Size = 0/4; [len:4] Amp: 10
-[2] (1, 0) <- 10Raw word: 92fRL/Size = 0/1; [len:2] Amp: -1
-[3] (0, 2) <- -1Raw word: 497fRL/Size = 0/2; [len:2] Amp: -3
-[4] (1, 1) <- -3Raw word: 97feRL/Size = 0/3; [len:3] Amp: 5
-[5] (2, 0) <- 5Raw word: ff88RL/Size = 1/10; [len:16] Amp: 799
-[7] (1, 2) <- 799Raw word: ff83RL/Size = 0/10; [len:16] Amp: 1023
-[8] (2, 1) <- 1023Raw word: 39ffRL/Size = 0/1; [len:2] Amp: 1
-[9] (3, 0) <- 1Raw word: cffcRL/Size = 1/1; [len:4] Amp: 1
-[11] (1, 3) <- 1Raw word: ff82RL/Size = 0/9; [len:16] Amp: 333
-[12] (2, 2) <- 333Raw word: ff8eRL/Size = 2/10; [len:16] Amp: -585
-[15] (0, 5) <- -585Raw word: ff89RL/Size = 2/5; [len:16] Amp: 20
-[18] (3, 2) <- 20Raw word: fb47RL/Size = 1/4; [len:9] Amp: 8
-[20] (5, 0) <- 8Raw word: ff98RL/Size = 4/5; [len:16] Amp: -31
-[25] (4, 2) <- -31Raw word: b8ffRL/Size = 0/4; [len:4] Amp: 8
-[26] (5, 1) <- 8Raw word: ff98RL/Size = 4/5; [len:16] Amp: 30
-[31] (3, 4) <- 30Raw word: fb1fRL/Size = 1/4; [len:9] Amp: -12
-[33] (5, 2) <- -12Raw word: fb41RL/Size = 1/4; [len:9] Amp: 8
-[35] (7, 0) <- 8Raw word: 2cffRL/Size = 0/1; [len:2] Amp: 1
-[36] (1, 7) <- 1Raw word: 67ffRL/Size = 0/2; [len:2] Amp: 2
-[37] (2, 6) <- 2Raw word: 7ff8RL/Size = 0/2; [len:2] Amp: 3
-[38] (3, 5) <- 3Raw word: ff83RL/Size = 0/10; [len:16] Amp: -810
-[39] (4, 4) <- -810Raw word: ff85RL/Size = 1/7; [len:16] Amp: -64
-[41] (6, 2) <- -64Raw word: ff94RL/Size = 3/9; [len:16] Amp: 358
-[45] (4, 5) <- 358Raw word: ff94RL/Size = 3/9; [len:16] Amp: 325
-[49] (3, 7) <- 325Raw word: ff9eRL/Size = 5/3; [len:16] Amp: 6
-[55] (5, 6) <- 6Raw word: 9ffeRL/Size = 0/3; [len:3] Amp: 7
-[56] (6, 5) <- 7Raw word: ff85RL/Size = 1/7; [len:16] Amp: 100
-[58] (5, 7) <- 100Raw word: ff8fRL/Size = 3/4; [len:16] Amp: 12
-[62] (7, 6) <- 12Raw word: 3400RL/Size = 0/1; [len:2] Amp: 1
-[63] (7, 7) <- 1Raw word: a000
-
-
-
-
-
-
-
-
-
-Intermediate coding:
-Table Index: 0 -> Encodes to [4 bits] a; 
-Codeword: e768Len/Size = 4/6
-DC Amp: ffffffde
-Raw word: a000
-
-
-
-
-
-
-
-
-151/+16 ZEROSRL/Size: 0/10 --> index 10, Val 922 -- > Amp: 922
-RL/Size: 0/8 --> index 8, Val 168 -- > Amp: 168
-RL/Size: 0/10 --> index 10, Val 723 -- > Amp: 723
-
-Intermediate coding:
-Table Index: 151 -> Encodes to [11 bits] 7f9; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 0 -> Encodes to [4 bits] a; 
-Codeword: e77fLen/Size = 4/6
-DC Amp: ffffffde
-Raw word: ff3fRL/Size = 15/1; [len:11] Skipping amp!
-[16] (1, 4) <- 0Raw word: ff83RL/Size = 0/10; [len:16] Amp: 922
-[17] (2, 3) <- 922Raw word: fdaaRL/Size = 0/8; [len:10] Amp: 168
-[18] (3, 2) <- 168Raw word: ff83RL/Size = 0/10; [len:16] Amp: 723
-[19] (4, 1) <- 723Raw word: a000
-
-
-
-
-
-
-
-
-359, 966, 105, 115, 81, 255, 74, 236, 
-809, 205, 186, 939, 498, 763, 483, 326, 
-124, 706, 84, 1016, 795, 488, 487, 909, 
-886, 346, 302, 611, 563, 927, 201, 922, 
-870, 306, 13, 951, 561, 88, 163, 346, 
-293, 349, 261, 791, 88, 745, 94, 212, 
-427, 178, 205, 198, 667, 692, 84, 529, 
-14, 386, 116, 577, 289, 317, 476, 135, 
-RL/Size: 0/10 --> index 10, Val 966 -- > Amp: 966
-RL/Size: 0/10 --> index 10, Val 809 -- > Amp: 809
-RL/Size: 0/7 --> index 7, Val 105 -- > Amp: 105
-RL/Size: 0/8 --> index 8, Val 205 -- > Amp: 205
-RL/Size: 0/7 --> index 7, Val 124 -- > Amp: 124
-RL/Size: 0/7 --> index 7, Val 115 -- > Amp: 115
-RL/Size: 0/8 --> index 8, Val 186 -- > Amp: 186
-RL/Size: 0/10 --> index 10, Val 706 -- > Amp: 706
-RL/Size: 0/10 --> index 10, Val 886 -- > Amp: 886
-RL/Size: 0/7 --> index 7, Val 81 -- > Amp: 81
-RL/Size: 0/10 --> index 10, Val 939 -- > Amp: 939
-RL/Size: 0/7 --> index 7, Val 84 -- > Amp: 84
-RL/Size: 0/9 --> index 9, Val 346 -- > Amp: 346
-RL/Size: 0/10 --> index 10, Val 870 -- > Amp: 870
-RL/Size: 0/8 --> index 8, Val 255 -- > Amp: 255
-RL/Size: 0/9 --> index 9, Val 498 -- > Amp: 498
-RL/Size: 0/10 --> index 10, Val 1016 -- > Amp: 1016
-RL/Size: 0/9 --> index 9, Val 302 -- > Amp: 302
-RL/Size: 0/9 --> index 9, Val 306 -- > Amp: 306
-RL/Size: 0/9 --> index 9, Val 293 -- > Amp: 293
-RL/Size: 0/7 --> index 7, Val 74 -- > Amp: 74
-RL/Size: 0/10 --> index 10, Val 763 -- > Amp: 763
-RL/Size: 0/10 --> index 10, Val 795 -- > Amp: 795
-RL/Size: 0/10 --> index 10, Val 611 -- > Amp: 611
-RL/Size: 0/4 --> index 4, Val 13 -- > Amp: 13
-RL/Size: 0/9 --> index 9, Val 349 -- > Amp: 349
-RL/Size: 0/9 --> index 9, Val 427 -- > Amp: 427
-RL/Size: 0/8 --> index 8, Val 236 -- > Amp: 236
-RL/Size: 0/9 --> index 9, Val 483 -- > Amp: 483
-RL/Size: 0/9 --> index 9, Val 488 -- > Amp: 488
-RL/Size: 0/10 --> index 10, Val 563 -- > Amp: 563
-RL/Size: 0/10 --> index 10, Val 951 -- > Amp: 951
-RL/Size: 0/9 --> index 9, Val 261 -- > Amp: 261
-RL/Size: 0/8 --> index 8, Val 178 -- > Amp: 178
-RL/Size: 0/4 --> index 4, Val 14 -- > Amp: 14
-RL/Size: 0/9 --> index 9, Val 326 -- > Amp: 326
-RL/Size: 0/9 --> index 9, Val 487 -- > Amp: 487
-RL/Size: 0/10 --> index 10, Val 927 -- > Amp: 927
-RL/Size: 0/10 --> index 10, Val 561 -- > Amp: 561
-RL/Size: 0/10 --> index 10, Val 791 -- > Amp: 791
-RL/Size: 0/8 --> index 8, Val 205 -- > Amp: 205
-RL/Size: 0/9 --> index 9, Val 386 -- > Amp: 386
-RL/Size: 0/10 --> index 10, Val 909 -- > Amp: 909
-RL/Size: 0/8 --> index 8, Val 201 -- > Amp: 201
-RL/Size: 0/7 --> index 7, Val 88 -- > Amp: 88
-RL/Size: 0/7 --> index 7, Val 88 -- > Amp: 88
-RL/Size: 0/8 --> index 8, Val 198 -- > Amp: 198
-RL/Size: 0/7 --> index 7, Val 116 -- > Amp: 116
-RL/Size: 0/10 --> index 10, Val 922 -- > Amp: 922
-RL/Size: 0/8 --> index 8, Val 163 -- > Amp: 163
-RL/Size: 0/10 --> index 10, Val 745 -- > Amp: 745
-RL/Size: 0/10 --> index 10, Val 667 -- > Amp: 667
-RL/Size: 0/10 --> index 10, Val 577 -- > Amp: 577
-RL/Size: 0/9 --> index 9, Val 346 -- > Amp: 346
-RL/Size: 0/7 --> index 7, Val 94 -- > Amp: 94
-RL/Size: 0/10 --> index 10, Val 692 -- > Amp: 692
-RL/Size: 0/9 --> index 9, Val 289 -- > Amp: 289
-RL/Size: 0/8 --> index 8, Val 212 -- > Amp: 212
-RL/Size: 0/7 --> index 7, Val 84 -- > Amp: 84
-RL/Size: 0/9 --> index 9, Val 317 -- > Amp: 317
-RL/Size: 0/10 --> index 10, Val 529 -- > Amp: 529
-RL/Size: 0/9 --> index 9, Val 476 -- > Amp: 476
-RL/Size: 0/8 --> index 8, Val 135 -- > Amp: 135
-
-Intermediate coding:
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 4 -> Encodes to [4 bits] b; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 7 -> Encodes to [8 bits] f8; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 10 -> Encodes to [16 bits] ff83; 
-Table Index: 9 -> Encodes to [16 bits] ff82; 
-Table Index: 8 -> Encodes to [10 bits] 3f6; 
-Table Index: 0 -> Encodes to [4 bits] a; 
-Codeword: f45fLen/Size = 5/7
-DC Amp: 45
-Raw word: ff83RL/Size = 0/10; [len:16] Amp: 966
-[1] (0, 1) <- 966Raw word: ff83RL/Size = 0/10; [len:16] Amp: 809
-[2] (1, 0) <- 809Raw word: f8d3RL/Size = 0/7; [len:8] Amp: 105
-[3] (0, 2) <- 105Raw word: fdb3RL/Size = 0/8; [len:10] Amp: 205
-[4] (1, 1) <- 205Raw word: f8f9RL/Size = 0/7; [len:8] Amp: 124
-[5] (2, 0) <- 124Raw word: f8e7RL/Size = 0/7; [len:8] Amp: 115
-[6] (0, 3) <- 115Raw word: fdaeRL/Size = 0/8; [len:10] Amp: 186
-[7] (1, 2) <- 186Raw word: ff83RL/Size = 0/10; [len:16] Amp: 706
-[8] (2, 1) <- 706Raw word: ff83RL/Size = 0/10; [len:16] Amp: 886
-[9] (3, 0) <- 886Raw word: f8a3RL/Size = 0/7; [len:8] Amp: 81
-[10] (0, 4) <- 81Raw word: ff83RL/Size = 0/10; [len:16] Amp: 939
-[11] (1, 3) <- 939Raw word: f8a9RL/Size = 0/7; [len:8] Amp: 84
-[12] (2, 2) <- 84Raw word: ff82RL/Size = 0/9; [len:16] Amp: 346
-[13] (3, 1) <- 346Raw word: ff83RL/Size = 0/10; [len:16] Amp: 870
-[14] (4, 0) <- 870Raw word: fdbfRL/Size = 0/8; [len:10] Amp: 255
-[15] (0, 5) <- 255Raw word: ff82RL/Size = 0/9; [len:16] Amp: 498
-[16] (1, 4) <- 498Raw word: ff83RL/Size = 0/10; [len:16] Amp: 1016
-[17] (2, 3) <- 1016Raw word: ff82RL/Size = 0/9; [len:16] Amp: 302
-[18] (3, 2) <- 302Raw word: ff82RL/Size = 0/9; [len:16] Amp: 306
-[19] (4, 1) <- 306Raw word: ff82RL/Size = 0/9; [len:16] Amp: 293
-[20] (5, 0) <- 293Raw word: f895RL/Size = 0/7; [len:8] Amp: 74
-[21] (0, 6) <- 74Raw word: ff83RL/Size = 0/10; [len:16] Amp: 763
-[22] (1, 5) <- 763Raw word: ff83RL/Size = 0/10; [len:16] Amp: 795
-[23] (2, 4) <- 795Raw word: ff83RL/Size = 0/10; [len:16] Amp: 611
-[24] (3, 3) <- 611Raw word: bdffRL/Size = 0/4; [len:4] Amp: 13
-[25] (4, 2) <- 13Raw word: ff82RL/Size = 0/9; [len:16] Amp: 349
-[26] (5, 1) <- 349Raw word: ff82RL/Size = 0/9; [len:16] Amp: 427
-[27] (6, 0) <- 427Raw word: fdbbRL/Size = 0/8; [len:10] Amp: 236
-[28] (0, 7) <- 236Raw word: ff82RL/Size = 0/9; [len:16] Amp: 483
-[29] (1, 6) <- 483Raw word: ff82RL/Size = 0/9; [len:16] Amp: 488
-[30] (2, 5) <- 488Raw word: ff83RL/Size = 0/10; [len:16] Amp: 563
-[31] (3, 4) <- 563Raw word: ff83RL/Size = 0/10; [len:16] Amp: 951
-[32] (4, 3) <- 951Raw word: ff82RL/Size = 0/9; [len:16] Amp: 261
-[33] (5, 2) <- 261Raw word: fdacRL/Size = 0/8; [len:10] Amp: 178
-[34] (6, 1) <- 178Raw word: beffRL/Size = 0/4; [len:4] Amp: 14
-[35] (7, 0) <- 14Raw word: ff82RL/Size = 0/9; [len:16] Amp: 326
-[36] (1, 7) <- 326Raw word: ff82RL/Size = 0/9; [len:16] Amp: 487
-[37] (2, 6) <- 487Raw word: ff83RL/Size = 0/10; [len:16] Amp: 927
-[38] (3, 5) <- 927Raw word: ff83RL/Size = 0/10; [len:16] Amp: 561
-[39] (4, 4) <- 561Raw word: ff83RL/Size = 0/10; [len:16] Amp: 791
-[40] (5, 3) <- 791Raw word: fdb3RL/Size = 0/8; [len:10] Amp: 205
-[41] (6, 2) <- 205Raw word: ff82RL/Size = 0/9; [len:16] Amp: 386
-[42] (7, 1) <- 386Raw word: ff83RL/Size = 0/10; [len:16] Amp: 909
-[43] (2, 7) <- 909Raw word: fdb2RL/Size = 0/8; [len:10] Amp: 201
-[44] (3, 6) <- 201Raw word: f8b1RL/Size = 0/7; [len:8] Amp: 88
-[45] (4, 5) <- 88Raw word: f8b1RL/Size = 0/7; [len:8] Amp: 88
-[46] (5, 4) <- 88Raw word: fdb1RL/Size = 0/8; [len:10] Amp: 198
-[47] (6, 3) <- 198Raw word: f8e9RL/Size = 0/7; [len:8] Amp: 116
-[48] (7, 2) <- 116Raw word: ff83RL/Size = 0/10; [len:16] Amp: 922
-[49] (3, 7) <- 922Raw word: fda8RL/Size = 0/8; [len:10] Amp: 163
-[50] (4, 6) <- 163Raw word: ff93RL/Size = 3/8; [len:16] Amp: 186
-[54] (4, 7) <- 186Raw word: 7fe0RL/Size = 0/2; [len:2] Amp: 3
-[55] (5, 6) <- 3Raw word: fe0eRL/Size = 4/2; [len:10] Amp: -3
-[60] (7, 5) <- -3Raw word: e9bfRL/Size = 3/1; [len:6] Amp: -1
-[64] (255, 0) <- -1Raw word: dff8RL/Size = 1/2; [len:5] Amp: 3
-[66] (9, 1) <- 3Raw word: fc01RL/Size = 8/1; [len:9] Amp: -1
-[75] (27, 1) <- -1Raw word: 670RL/Size = 0/1; [len:2] Amp: -1
-[76] (28, 2) <- -1Raw word: 3380RL/Size = 0/1; [len:2] Amp: 1
-[77] (29, 3) <- 1Raw word: 9c00RL/Size = 0/3; [len:3] Amp: 7
-[78] (30, 4) <- 7Raw word: 0RL/Size = 0/1; [len:2] Amp: -1
-[79] (34, 0) <- -1Raw word: 0RL/Size = 0/1; [len:2] Amp: -1
-[80] (35, 1) <- -1Raw word: 0RL/Size = 0/1; [len:2] Amp: -1
-[81] (36, 2) <- -1Raw word: 7RL/Size = 0/1; [len:2] Amp: -1
-[82] (37, 3) <- -1Raw word: 3cRL/Size = 0/1; [len:2] Amp: -1
-[83] (38, 4) <- -1Raw word: 1e3RL/Size = 0/1; [len:2] Amp: -1
-[84] (39, 5) <- -1Raw word: f18RL/Size = 0/1; [len:2] Amp: -1
-[85] (40, 0) <- -1Raw word: 78c0RL/Size = 0/2; [len:2] Amp: 3
-[86] (43, 1) <- 3Raw word: 8c00RL/Size = 0/3; [len:3] Amp: -4
-[87] (44, 2) <- -4Raw word: 0RL/Size = 0/1; [len:2] Amp: -1
-[88] (45, 3) <- -1Raw word: 0RL/Size = 0/1; [len:2] Amp: -1
-[89] (46, 4) <- -1Raw word: 0RL/Size = 0/1; [len:2] Amp: -1
-[90] (47, 5) <- -1Raw word: 0RL/Size = 0/1; [len:2] Amp: -1
-[91] (48, 6) <- -1Raw word: 3RL/Size = 0/1; [len:2] Amp: -1
-[92] (49, 0) <- -1Raw word: 1aRL/Size = 0/1; [len:2] Amp: -1
-[93] (50, 1) <- -1Raw word: d2RL/Size = 0/1; [len:2] Amp: -1
-[94] (53, 2) <- -1Raw word: 690RL/Size = 0/1; [len:2] Amp: -1
-[95] (54, 3) <- -1Raw word: 3480RL/Size = 0/1; [len:2] Amp: 1
-[96] (55, 4) <- 1Raw word: a400
-Test failed!
-
-
-
-Test failed!
-Test failed!Test failed!Test failed!
-Test failed!Test failed!Test failed!Test failed!
-Test failed!Test failed!Test failed!Test failed!Test failed!
-Test done!
+HELLOLoaded 256x256x24bpp targa ("lenna.tga").
+WORLD256HELLO WROLDBuflen: 3processed 1/1024 blocks.HELLO WROLDBuflen: 3processed 2/1024 blocks.HELLO WROLDBuflen: 4processed 3/1024 blocks.HELLO WROLDBuflen: 5processed 4/1024 blocks.HELLO WROLDBuflen: 4processed 5/1024 blocks.HELLO WROLDBuflen: 3processed 6/1024 blocks.HELLO WROLDBuflen: 4processed 7/1024 blocks.HELLO WROLDBuflen: 4processed 8/1024 blocks.HELLO WROLDBuflen: 3processed 9/1024 blocks.HELLO WROLDBuflen: 3processed 10/1024 blocks.HELLO WROLDBuflen: 2processed 11/1024 blocks.HELLO WROLDBuflen: 3processed 12/1024 blocks.HELLO WROLDBuflen: 3processed 13/1024 blocks.HELLO WROLDBuflen: 3processed 14/1024 blocks.HELLO WROLDBuflen: 3processed 15/1024 blocks.HELLO WROLDBuflen: 3processed 16/1024 blocks.HELLO WROLDBuflen: 3processed 17/1024 blocks.HELLO WROLDBuflen: 3processed 18/1024 blocks.HELLO WROLDBuflen: 2processed 19/1024 blocks.HELLO WROLDBuflen: 3processed 20/1024 blocks.HELLO WROLDBuflen: 5processed 21/1024 blocks.HELLO WROLDBuflen: 4processed 22/1024 blocks.HELLO WROLDBuflen: 3processed 23/1024 blocks.HELLO WROLDBuflen: 2processed 24/1024 blocks.HELLO WROLDBuflen: 3processed 25/1024 blocks.HELLO WROLDBuflen: 8processed 26/1024 blocks.HELLO WROLDBuflen: 10processed 27/1024 blocks.HELLO WROLDBuflen: 3processed 28/1024 blocks.HELLO WROLDBuflen: 3processed 29/1024 blocks.HELLO WROLDBuflen: 3processed 30/1024 blocks.HELLO WROLDBuflen: 4processed 31/1024 blocks.HELLO WROLDBuflen: 12processed 32/1024 blocks.HELLO WROLDBuflen: 2processed 33/1024 blocks.HELLO WROLDBuflen: 4processed 34/1024 blocks.HELLO WROLDBuflen: 3processed 35/1024 blocks.HELLO WROLDBuflen: 5processed 36/1024 blocks.HELLO WROLDBuflen: 4processed 37/1024 blocks.HELLO WROLDBuflen: 2processed 38/1024 blocks.HELLO WROLDBuflen: 3processed 39/1024 blocks.HELLO WROLDBuflen: 2processed 40/1024 blocks.HELLO WROLDBuflen: 2processed 41/1024 blocks.HELLO WROLDBuflen: 2processed 42/1024 blocks.HELLO WROLDBuflen: 3processed 43/1024 blocks.HELLO WROLDBuflen: 3processed 44/1024 blocks.HELLO WROLDBuflen: 3processed 45/1024 blocks.HELLO WROLDBuflen: 3processed 46/1024 blocks.HELLO WROLDBuflen: 3processed 47/1024 blocks.HELLO WROLDBuflen: 3processed 48/1024 blocks.HELLO WROLDBuflen: 3processed 49/1024 blocks.HELLO WROLDBuflen: 2processed 50/1024 blocks.HELLO WROLDBuflen: 3processed 51/1024 blocks.HELLO WROLDBuflen: 4processed 52/1024 blocks.HELLO WROLDBuflen: 4processed 53/1024 blocks.HELLO WROLDBuflen: 4processed 54/1024 blocks.HELLO WROLDBuflen: 3processed 55/1024 blocks.HELLO WROLDBuflen: 2processed 56/1024 blocks.HELLO WROLDBuflen: 3processed 57/1024 blocks.HELLO WROLDBuflen: 8processed 58/1024 blocks.HELLO WROLDBuflen: 8processed 59/1024 blocks.HELLO WROLDBuflen: 10processed 60/1024 blocks.HELLO WROLDBuflen: 3processed 61/1024 blocks.HELLO WROLDBuflen: 4processed 62/1024 blocks.HELLO WROLDBuflen: 10processed 63/1024 blocks.HELLO WROLDBuflen: 5processed 64/1024 blocks.HELLO WROLDBuflen: 3processed 65/1024 blocks.HELLO WROLDBuflen: 5processed 66/1024 blocks.HELLO WROLDBuflen: 4processed 67/1024 blocks.HELLO WROLDBuflen: 5processed 68/1024 blocks.HELLO WROLDBuflen: 5processed 69/1024 blocks.HELLO WROLDBuflen: 3processed 70/1024 blocks.HELLO WROLDBuflen: 3processed 71/1024 blocks.HELLO WROLDBuflen: 3processed 72/1024 blocks.HELLO WROLDBuflen: 3processed 73/1024 blocks.HELLO WROLDBuflen: 3processed 74/1024 blocks.HELLO WROLDBuflen: 4processed 75/1024 blocks.HELLO WROLDBuflen: 2processed 76/1024 blocks.HELLO WROLDBuflen: 3processed 77/1024 blocks.HELLO WROLDBuflen: 7processed 78/1024 blocks.HELLO WROLDBuflen: 8processed 79/1024 blocks.HELLO WROLDBuflen: 6processed 80/1024 blocks.HELLO WROLDBuflen: 3processed 81/1024 blocks.HELLO WROLDBuflen: 2processed 82/1024 blocks.HELLO WROLDBuflen: 2processed 83/1024 blocks.HELLO WROLDBuflen: 2processed 84/1024 blocks.HELLO WROLDBuflen: 3processed 85/1024 blocks.HELLO WROLDBuflen: 4processed 86/1024 blocks.HELLO WROLDBuflen: 3processed 87/1024 blocks.HELLO WROLDBuflen: 2processed 88/1024 blocks.HELLO WROLDBuflen: 3processed 89/1024 blocks.HELLO WROLDBuflen: 3processed 90/1024 blocks.HELLO WROLDBuflen: 8processed 91/1024 blocks.HELLO WROLDBuflen: 11processed 92/1024 blocks.HELLO WROLDBuflen: 5processed 93/1024 blocks.HELLO WROLDBuflen: 10processed 94/1024 blocks.HELLO WROLDBuflen: 6processed 95/1024 blocks.HELLO WROLDBuflen: 3processed 96/1024 blocks.HELLO WROLDBuflen: 4processed 97/1024 blocks.HELLO WROLDBuflen: 6processed 98/1024 blocks.HELLO WROLDBuflen: 4processed 99/1024 blocks.HELLO WROLDBuflen: 5processed 100/1024 blocks.HELLO WROLDBuflen: 5processed 101/1024 blocks.HELLO WROLDBuflen: 2processed 102/1024 blocks.HELLO WROLDBuflen: 3processed 103/1024 blocks.HELLO WROLDBuflen: 3processed 104/1024 blocks.HELLO WROLDBuflen: 3processed 105/1024 blocks.HELLO WROLDBuflen: 4processed 106/1024 blocks.HELLO WROLDBuflen: 9processed 107/1024 blocks.HELLO WROLDBuflen: 7processed 108/1024 blocks.HELLO WROLDBuflen: 8processed 109/1024 blocks.HELLO WROLDBuflen: 6processed 110/1024 blocks.HELLO WROLDBuflen: 5processed 111/1024 blocks.HELLO WROLDBuflen: 10processed 112/1024 blocks.HELLO WROLDBuflen: 11processed 113/1024 blocks.HELLO WROLDBuflen: 8processed 114/1024 blocks.HELLO WROLDBuflen: 2processed 115/1024 blocks.HELLO WROLDBuflen: 3processed 116/1024 blocks.HELLO WROLDBuflen: 5processed 117/1024 blocks.HELLO WROLDBuflen: 3processed 118/1024 blocks.HELLO WROLDBuflen: 3processed 119/1024 blocks.HELLO WROLDBuflen: 4processed 120/1024 blocks.HELLO WROLDBuflen: 3processed 121/1024 blocks.HELLO WROLDBuflen: 3processed 122/1024 blocks.HELLO WROLDBuflen: 7processed 123/1024 blocks.HELLO WROLDBuflen: 9processed 124/1024 blocks.HELLO WROLDBuflen: 13processed 125/1024 blocks.HELLO WROLDBuflen: 5processed 126/1024 blocks.HELLO WROLDBuflen: 4processed 127/1024 blocks.HELLO WROLDBuflen: 3processed 128/1024 blocks.HELLO WROLDBuflen: 6processed 129/1024 blocks.HELLO WROLDBuflen: 8processed 130/1024 blocks.HELLO WROLDBuflen: 4processed 131/1024 blocks.HELLO WROLDBuflen: 5processed 132/1024 blocks.HELLO WROLDBuflen: 5processed 133/1024 blocks.HELLO WROLDBuflen: 3processed 134/1024 blocks.HELLO WROLDBuflen: 3processed 135/1024 blocks.HELLO WROLDBuflen: 3processed 136/1024 blocks.HELLO WROLDBuflen: 3processed 137/1024 blocks.HELLO WROLDBuflen: 11processed 138/1024 blocks.HELLO WROLDBuflen: 6processed 139/1024 blocks.HELLO WROLDBuflen: 5processed 140/1024 blocks.HELLO WROLDBuflen: 4processed 141/1024 blocks.HELLO WROLDBuflen: 5processed 142/1024 blocks.HELLO WROLDBuflen: 5processed 143/1024 blocks.HELLO WROLDBuflen: 4processed 144/1024 blocks.HELLO WROLDBuflen: 3processed 145/1024 blocks.HELLO WROLDBuflen: 12processed 146/1024 blocks.HELLO WROLDBuflen: 14processed 147/1024 blocks.HELLO WROLDBuflen: 4processed 148/1024 blocks.HELLO WROLDBuflen: 5processed 149/1024 blocks.HELLO WROLDBuflen: 5processed 150/1024 blocks.HELLO WROLDBuflen: 5processed 151/1024 blocks.HELLO WROLDBuflen: 5processed 152/1024 blocks.HELLO WROLDBuflen: 3processed 153/1024 blocks.HELLO WROLDBuflen: 2processed 154/1024 blocks.HELLO WROLDBuflen: 3processed 155/1024 blocks.HELLO WROLDBuflen: 13processed 156/1024 blocks.HELLO WROLDBuflen: 13processed 157/1024 blocks.HELLO WROLDBuflen: 5processed 158/1024 blocks.HELLO WROLDBuflen: 5processed 159/1024 blocks.HELLO WROLDBuflen: 11processed 160/1024 blocks.HELLO WROLDBuflen: 7processed 161/1024 blocks.HELLO WROLDBuflen: 4processed 162/1024 blocks.HELLO WROLDBuflen: 4processed 163/1024 blocks.HELLO WROLDBuflen: 5processed 164/1024 blocks.HELLO WROLDBuflen: 5processed 165/1024 blocks.HELLO WROLDBuflen: 3processed 166/1024 blocks.HELLO WROLDBuflen: 2processed 167/1024 blocks.HELLO WROLDBuflen: 3processed 168/1024 blocks.HELLO WROLDBuflen: 4processed 169/1024 blocks.HELLO WROLDBuflen: 5processed 170/1024 blocks.HELLO WROLDBuflen: 5processed 171/1024 blocks.HELLO WROLDBuflen: 5processed 172/1024 blocks.HELLO WROLDBuflen: 5processed 173/1024 blocks.HELLO WROLDBuflen: 6processed 174/1024 blocks.HELLO WROLDBuflen: 6processed 175/1024 blocks.HELLO WROLDBuflen: 11processed 176/1024 blocks.HELLO WROLDBuflen: 8processed 177/1024 blocks.HELLO WROLDBuflen: 5processed 178/1024 blocks.HELLO WROLDBuflen: 13processed 179/1024 blocks.HELLO WROLDBuflen: 13processed 180/1024 blocks.HELLO WROLDBuflen: 5processed 181/1024 blocks.HELLO WROLDBuflen: 4processed 182/1024 blocks.HELLO WROLDBuflen: 6processed 183/1024 blocks.HELLO WROLDBuflen: 8processed 184/1024 blocks.HELLO WROLDBuflen: 4processed 185/1024 blocks.HELLO WROLDBuflen: 2processed 186/1024 blocks.HELLO WROLDBuflen: 10processed 187/1024 blocks.HELLO WROLDBuflen: 11processed 188/1024 blocks.HELLO WROLDBuflen: 4processed 189/1024 blocks.HELLO WROLDBuflen: 5processed 190/1024 blocks.HELLO WROLDBuflen: 9processed 191/1024 blocks.HELLO WROLDBuflen: 10processed 192/1024 blocks.HELLO WROLDBuflen: 4processed 193/1024 blocks.HELLO WROLDBuflen: 4processed 194/1024 blocks.HELLO WROLDBuflen: 4processed 195/1024 blocks.HELLO WROLDBuflen: 5processed 196/1024 blocks.HELLO WROLDBuflen: 5processed 197/1024 blocks.HELLO WROLDBuflen: 3processed 198/1024 blocks.HELLO WROLDBuflen: 3processed 199/1024 blocks.HELLO WROLDBuflen: 4processed 200/1024 blocks.HELLO WROLDBuflen: 11processed 201/1024 blocks.HELLO WROLDBuflen: 4processed 202/1024 blocks.HELLO WROLDBuflen: 4processed 203/1024 blocks.HELLO WROLDBuflen: 6processed 204/1024 blocks.HELLO WROLDBuflen: 4processed 205/1024 blocks.HELLO WROLDBuflen: 10processed 206/1024 blocks.HELLO WROLDBuflen: 11processed 207/1024 blocks.HELLO WROLDBuflen: 6processed 208/1024 blocks.HELLO WROLDBuflen: 5processed 209/1024 blocks.HELLO WROLDBuflen: 4processed 210/1024 blocks.HELLO WROLDBuflen: 4processed 211/1024 blocks.HELLO WROLDBuflen: 14processed 212/1024 blocks.HELLO WROLDBuflen: 13processed 213/1024 blocks.HELLO WROLDBuflen: 4processed 214/1024 blocks.HELLO WROLDBuflen: 6processed 215/1024 blocks.HELLO WROLDBuflen: 8processed 216/1024 blocks.HELLO WROLDBuflen: 9processed 217/1024 blocks.HELLO WROLDBuflen: 8processed 218/1024 blocks.HELLO WROLDBuflen: 12processed 219/1024 blocks.HELLO WROLDBuflen: 4processed 220/1024 blocks.HELLO WROLDBuflen: 5processed 221/1024 blocks.HELLO WROLDBuflen: 7processed 222/1024 blocks.HELLO WROLDBuflen: 9processed 223/1024 blocks.HELLO WROLDBuflen: 6processed 224/1024 blocks.HELLO WROLDBuflen: 3processed 225/1024 blocks.HELLO WROLDBuflen: 4processed 226/1024 blocks.HELLO WROLDBuflen: 4processed 227/1024 blocks.HELLO WROLDBuflen: 5processed 228/1024 blocks.HELLO WROLDBuflen: 5processed 229/1024 blocks.HELLO WROLDBuflen: 4processed 230/1024 blocks.HELLO WROLDBuflen: 3processed 231/1024 blocks.HELLO WROLDBuflen: 12processed 232/1024 blocks.HELLO WROLDBuflen: 9processed 233/1024 blocks.HELLO WROLDBuflen: 5processed 234/1024 blocks.HELLO WROLDBuflen: 5processed 235/1024 blocks.HELLO WROLDBuflen: 8processed 236/1024 blocks.HELLO WROLDBuflen: 11processed 237/1024 blocks.HELLO WROLDBuflen: 10processed 238/1024 blocks.HELLO WROLDBuflen: 7processed 239/1024 blocks.HELLO WROLDBuflen: 6processed 240/1024 blocks.HELLO WROLDBuflen: 6processed 241/1024 blocks.HELLO WROLDBuflen: 6processed 242/1024 blocks.HELLO WROLDBuflen: 4processed 243/1024 blocks.HELLO WROLDBuflen: 5processed 244/1024 blocks.HELLO WROLDBuflen: 13processed 245/1024 blocks.HELLO WROLDBuflen: 5processed 246/1024 blocks.HELLO WROLDBuflen: 6processed 247/1024 blocks.HELLO WROLDBuflen: 15processed 248/1024 blocks.HELLO WROLDBuflen: 15processed 249/1024 blocks.HELLO WROLDBuflen: 9processed 250/1024 blocks.HELLO WROLDBuflen: 13processed 251/1024 blocks.HELLO WROLDBuflen: 4processed 252/1024 blocks.HELLO WROLDBuflen: 4processed 253/1024 blocks.HELLO WROLDBuflen: 9processed 254/1024 blocks.HELLO WROLDBuflen: 7processed 255/1024 blocks.HELLO WROLDBuflen: 2processed 256/1024 blocks.HELLO WROLDBuflen: 3processed 257/1024 blocks.HELLO WROLDBuflen: 4processed 258/1024 blocks.HELLO WROLDBuflen: 4processed 259/1024 blocks.HELLO WROLDBuflen: 5processed 260/1024 blocks.HELLO WROLDBuflen: 5processed 261/1024 blocks.HELLO WROLDBuflen: 3processed 262/1024 blocks.HELLO WROLDBuflen: 3processed 263/1024 blocks.HELLO WROLDBuflen: 12processed 264/1024 blocks.HELLO WROLDBuflen: 7processed 265/1024 blocks.HELLO WROLDBuflen: 6processed 266/1024 blocks.HELLO WROLDBuflen: 6processed 267/1024 blocks.HELLO WROLDBuflen: 11processed 268/1024 blocks.HELLO WROLDBuflen: 10processed 269/1024 blocks.HELLO WROLDBuflen: 8processed 270/1024 blocks.HELLO WROLDBuflen: 7processed 271/1024 blocks.HELLO WROLDBuflen: 9processed 272/1024 blocks.HELLO WROLDBuflen: 7processed 273/1024 blocks.HELLO WROLDBuflen: 8processed 274/1024 blocks.HELLO WROLDBuflen: 9processed 275/1024 blocks.HELLO WROLDBuflen: 5processed 276/1024 blocks.HELLO WROLDBuflen: 10processed 277/1024 blocks.HELLO WROLDBuflen: 11processed 278/1024 blocks.HELLO WROLDBuflen: 13processed 279/1024 blocks.HELLO WROLDBuflen: 14processed 280/1024 blocks.HELLO WROLDBuflen: 6processed 281/1024 blocks.HELLO WROLDBuflen: 4processed 282/1024 blocks.HELLO WROLDBuflen: 13processed 283/1024 blocks.HELLO WROLDBuflen: 4processed 284/1024 blocks.HELLO WROLDBuflen: 10processed 285/1024 blocks.HELLO WROLDBuflen: 9processed 286/1024 blocks.HELLO WROLDBuflen: 2processed 287/1024 blocks.HELLO WROLDBuflen: 2processed 288/1024 blocks.HELLO WROLDBuflen: 3processed 289/1024 blocks.HELLO WROLDBuflen: 4processed 290/1024 blocks.HELLO WROLDBuflen: 5processed 291/1024 blocks.HELLO WROLDBuflen: 5processed 292/1024 blocks.HELLO WROLDBuflen: 4processed 293/1024 blocks.HELLO WROLDBuflen: 3processed 294/1024 blocks.HELLO WROLDBuflen: 2processed 295/1024 blocks.HELLO WROLDBuflen: 10processed 296/1024 blocks.HELLO WROLDBuflen: 7processed 297/1024 blocks.HELLO WROLDBuflen: 6processed 298/1024 blocks.HELLO WROLDBuflen: 10processed 299/1024 blocks.HELLO WROLDBuflen: 10processed 300/1024 blocks.HELLO WROLDBuflen: 8processed 301/1024 blocks.HELLO WROLDBuflen: 8processed 302/1024 blocks.HELLO WROLDBuflen: 8processed 303/1024 blocks.HELLO WROLDBuflen: 7processed 304/1024 blocks.HELLO WROLDBuflen: 6processed 305/1024 blocks.HELLO WROLDBuflen: 7processed 306/1024 blocks.HELLO WROLDBuflen: 6processed 307/1024 blocks.HELLO WROLDBuflen: 5processed 308/1024 blocks.HELLO WROLDBuflen: 9processed 309/1024 blocks.HELLO WROLDBuflen: 9processed 310/1024 blocks.HELLO WROLDBuflen: 5processed 311/1024 blocks.HELLO WROLDBuflen: 3processed 312/1024 blocks.HELLO WROLDBuflen: 8processed 313/1024 blocks.HELLO WROLDBuflen: 15processed 314/1024 blocks.HELLO WROLDBuflen: 8processed 315/1024 blocks.HELLO WROLDBuflen: 6processed 316/1024 blocks.HELLO WROLDBuflen: 10processed 317/1024 blocks.HELLO WROLDBuflen: 4processed 318/1024 blocks.HELLO WROLDBuflen: 2processed 319/1024 blocks.HELLO WROLDBuflen: 2processed 320/1024 blocks.HELLO WROLDBuflen: 2processed 321/1024 blocks.HELLO WROLDBuflen: 4processed 322/1024 blocks.HELLO WROLDBuflen: 4processed 323/1024 blocks.HELLO WROLDBuflen: 6processed 324/1024 blocks.HELLO WROLDBuflen: 5processed 325/1024 blocks.HELLO WROLDBuflen: 3processed 326/1024 blocks.HELLO WROLDBuflen: 2processed 327/1024 blocks.HELLO WROLDBuflen: 11processed 328/1024 blocks.HELLO WROLDBuflen: 7processed 329/1024 blocks.HELLO WROLDBuflen: 9processed 330/1024 blocks.HELLO WROLDBuflen: 9processed 331/1024 blocks.HELLO WROLDBuflen: 8processed 332/1024 blocks.HELLO WROLDBuflen: 7processed 333/1024 blocks.HELLO WROLDBuflen: 12processed 334/1024 blocks.HELLO WROLDBuflen: 12processed 335/1024 blocks.HELLO WROLDBuflen: 12processed 336/1024 blocks.HELLO WROLDBuflen: 10processed 337/1024 blocks.HELLO WROLDBuflen: 11processed 338/1024 blocks.HELLO WROLDBuflen: 12processed 339/1024 blocks.HELLO WROLDBuflen: 10processed 340/1024 blocks.HELLO WROLDBuflen: 7processed 341/1024 blocks.HELLO WROLDBuflen: 4processed 342/1024 blocks.HELLO WROLDBuflen: 3processed 343/1024 blocks.HELLO WROLDBuflen: 9processed 344/1024 blocks.HELLO WROLDBuflen: 14processed 345/1024 blocks.HELLO WROLDBuflen: 16processed 346/1024 blocks.HELLO WROLDBuflen: 5processed 347/1024 blocks.HELLO WROLDBuflen: 9processed 348/1024 blocks.HELLO WROLDBuflen: 6processed 349/1024 blocks.HELLO WROLDBuflen: 3processed 350/1024 blocks.HELLO WROLDBuflen: 2processed 351/1024 blocks.HELLO WROLDBuflen: 2processed 352/1024 blocks.HELLO WROLDBuflen: 4processed 353/1024 blocks.HELLO WROLDBuflen: 5processed 354/1024 blocks.HELLO WROLDBuflen: 4processed 355/1024 blocks.HELLO WROLDBuflen: 6processed 356/1024 blocks.HELLO WROLDBuflen: 5processed 357/1024 blocks.HELLO WROLDBuflen: 2processed 358/1024 blocks.HELLO WROLDBuflen: 2processed 359/1024 blocks.HELLO WROLDBuflen: 11processed 360/1024 blocks.HELLO WROLDBuflen: 8processed 361/1024 blocks.HELLO WROLDBuflen: 9processed 362/1024 blocks.HELLO WROLDBuflen: 8processed 363/1024 blocks.HELLO WROLDBuflen: 7processed 364/1024 blocks.HELLO WROLDBuflen: 9processed 365/1024 blocks.HELLO WROLDBuflen: 12processed 366/1024 blocks.HELLO WROLDBuflen: 13processed 367/1024 blocks.HELLO WROLDBuflen: 12processed 368/1024 blocks.HELLO WROLDBuflen: 14processed 369/1024 blocks.HELLO WROLDBuflen: 16processed 370/1024 blocks.HELLO WROLDBuflen: 15processed 371/1024 blocks.HELLO WROLDBuflen: 6processed 372/1024 blocks.HELLO WROLDBuflen: 3processed 373/1024 blocks.HELLO WROLDBuflen: 8processed 374/1024 blocks.HELLO WROLDBuflen: 13processed 375/1024 blocks.HELLO WROLDBuflen: 11processed 376/1024 blocks.HELLO WROLDBuflen: 15processed 377/1024 blocks.HELLO WROLDBuflen: 14processed 378/1024 blocks.HELLO WROLDBuflen: 5processed 379/1024 blocks.HELLO WROLDBuflen: 10processed 380/1024 blocks.HELLO WROLDBuflen: 4processed 381/1024 blocks.HELLO WROLDBuflen: 2processed 382/1024 blocks.HELLO WROLDBuflen: 2processed 383/1024 blocks.HELLO WROLDBuflen: 2processed 384/1024 blocks.HELLO WROLDBuflen: 3processed 385/1024 blocks.HELLO WROLDBuflen: 4processed 386/1024 blocks.HELLO WROLDBuflen: 4processed 387/1024 blocks.HELLO WROLDBuflen: 5processed 388/1024 blocks.HELLO WROLDBuflen: 5processed 389/1024 blocks.HELLO WROLDBuflen: 3processed 390/1024 blocks.HELLO WROLDBuflen: 3processed 391/1024 blocks.HELLO WROLDBuflen: 14processed 392/1024 blocks.HELLO WROLDBuflen: 11processed 393/1024 blocks.HELLO WROLDBuflen: 11processed 394/1024 blocks.HELLO WROLDBuflen: 6processed 395/1024 blocks.HELLO WROLDBuflen: 9processed 396/1024 blocks.HELLO WROLDBuflen: 12processed 397/1024 blocks.HELLO WROLDBuflen: 12processed 398/1024 blocks.HELLO WROLDBuflen: 11processed 399/1024 blocks.HELLO WROLDBuflen: 14processed 400/1024 blocks.HELLO WROLDBuflen: 16processed 401/1024 blocks.HELLO WROLDBuflen: 13processed 402/1024 blocks.HELLO WROLDBuflen: 4processed 403/1024 blocks.HELLO WROLDBuflen: 5processed 404/1024 blocks.HELLO WROLDBuflen: 10processed 405/1024 blocks.HELLO WROLDBuflen: 18processed 406/1024 blocks.HELLO WROLDBuflen: 10processed 407/1024 blocks.HELLO WROLDBuflen: 16processed 408/1024 blocks.HELLO WROLDBuflen: 14processed 409/1024 blocks.HELLO WROLDBuflen: 4processed 410/1024 blocks.HELLO WROLDBuflen: 9processed 411/1024 blocks.HELLO WROLDBuflen: 6processed 412/1024 blocks.HELLO WROLDBuflen: 3processed 413/1024 blocks.HELLO WROLDBuflen: 2processed 414/1024 blocks.HELLO WROLDBuflen: 2processed 415/1024 blocks.HELLO WROLDBuflen: 2processed 416/1024 blocks.HELLO WROLDBuflen: 3processed 417/1024 blocks.HELLO WROLDBuflen: 4processed 418/1024 blocks.HELLO WROLDBuflen: 4processed 419/1024 blocks.HELLO WROLDBuflen: 6processed 420/1024 blocks.HELLO WROLDBuflen: 6processed 421/1024 blocks.HELLO WROLDBuflen: 2processed 422/1024 blocks.HELLO WROLDBuflen: 3processed 423/1024 blocks.HELLO WROLDBuflen: 4processed 424/1024 blocks.HELLO WROLDBuflen: 13processed 425/1024 blocks.HELLO WROLDBuflen: 8processed 426/1024 blocks.HELLO WROLDBuflen: 8processed 427/1024 blocks.HELLO WROLDBuflen: 12processed 428/1024 blocks.HELLO WROLDBuflen: 9processed 429/1024 blocks.HELLO WROLDBuflen: 11processed 430/1024 blocks.HELLO WROLDBuflen: 13processed 431/1024 blocks.HELLO WROLDBuflen: 14processed 432/1024 blocks.HELLO WROLDBuflen: 13processed 433/1024 blocks.HELLO WROLDBuflen: 6processed 434/1024 blocks.HELLO WROLDBuflen: 7processed 435/1024 blocks.HELLO WROLDBuflen: 6processed 436/1024 blocks.HELLO WROLDBuflen: 5processed 437/1024 blocks.HELLO WROLDBuflen: 12processed 438/1024 blocks.HELLO WROLDBuflen: 12processed 439/1024 blocks.HELLO WROLDBuflen: 10processed 440/1024 blocks.HELLO WROLDBuflen: 4processed 441/1024 blocks.HELLO WROLDBuflen: 5processed 442/1024 blocks.HELLO WROLDBuflen: 9processed 443/1024 blocks.HELLO WROLDBuflen: 6processed 444/1024 blocks.HELLO WROLDBuflen: 2processed 445/1024 blocks.HELLO WROLDBuflen: 2processed 446/1024 blocks.HELLO WROLDBuflen: 2processed 447/1024 blocks.HELLO WROLDBuflen: 2processed 448/1024 blocks.HELLO WROLDBuflen: 3processed 449/1024 blocks.HELLO WROLDBuflen: 4processed 450/1024 blocks.HELLO WROLDBuflen: 5processed 451/1024 blocks.HELLO WROLDBuflen: 6processed 452/1024 blocks.HELLO WROLDBuflen: 6processed 453/1024 blocks.HELLO WROLDBuflen: 3processed 454/1024 blocks.HELLO WROLDBuflen: 8processed 455/1024 blocks.HELLO WROLDBuflen: 6processed 456/1024 blocks.HELLO WROLDBuflen: 13processed 457/1024 blocks.HELLO WROLDBuflen: 9processed 458/1024 blocks.HELLO WROLDBuflen: 12processed 459/1024 blocks.HELLO WROLDBuflen: 12processed 460/1024 blocks.HELLO WROLDBuflen: 9processed 461/1024 blocks.HELLO WROLDBuflen: 12processed 462/1024 blocks.HELLO WROLDBuflen: 16processed 463/1024 blocks.HELLO WROLDBuflen: 13processed 464/1024 blocks.HELLO WROLDBuflen: 10processed 465/1024 blocks.HELLO WROLDBuflen: 8processed 466/1024 blocks.HELLO WROLDBuflen: 7processed 467/1024 blocks.HELLO WROLDBuflen: 4processed 468/1024 blocks.HELLO WROLDBuflen: 3processed 469/1024 blocks.HELLO WROLDBuflen: 8processed 470/1024 blocks.HELLO WROLDBuflen: 11processed 471/1024 blocks.HELLO WROLDBuflen: 9processed 472/1024 blocks.HELLO WROLDBuflen: 5processed 473/1024 blocks.HELLO WROLDBuflen: 9processed 474/1024 blocks.HELLO WROLDBuflen: 8processed 475/1024 blocks.HELLO WROLDBuflen: 4processed 476/1024 blocks.HELLO WROLDBuflen: 4processed 477/1024 blocks.HELLO WROLDBuflen: 4processed 478/1024 blocks.HELLO WROLDBuflen: 4processed 479/1024 blocks.HELLO WROLDBuflen: 3processed 480/1024 blocks.HELLO WROLDBuflen: 3processed 481/1024 blocks.HELLO WROLDBuflen: 4processed 482/1024 blocks.HELLO WROLDBuflen: 4processed 483/1024 blocks.HELLO WROLDBuflen: 6processed 484/1024 blocks.HELLO WROLDBuflen: 5processed 485/1024 blocks.HELLO WROLDBuflen: 3processed 486/1024 blocks.HELLO WROLDBuflen: 3processed 487/1024 blocks.HELLO WROLDBuflen: 11processed 488/1024 blocks.HELLO WROLDBuflen: 16processed 489/1024 blocks.HELLO WROLDBuflen: 13processed 490/1024 blocks.HELLO WROLDBuflen: 13processed 491/1024 blocks.HELLO WROLDBuflen: 11processed 492/1024 blocks.HELLO WROLDBuflen: 9processed 493/1024 blocks.HELLO WROLDBuflen: 15processed 494/1024 blocks.HELLO WROLDBuflen: 15processed 495/1024 blocks.HELLO WROLDBuflen: 12processed 496/1024 blocks.HELLO WROLDBuflen: 14processed 497/1024 blocks.HELLO WROLDBuflen: 11processed 498/1024 blocks.HELLO WROLDBuflen: 10processed 499/1024 blocks.HELLO WROLDBuflen: 4processed 500/1024 blocks.HELLO WROLDBuflen: 11processed 501/1024 blocks.HELLO WROLDBuflen: 13processed 502/1024 blocks.HELLO WROLDBuflen: 11processed 503/1024 blocks.HELLO WROLDBuflen: 10processed 504/1024 blocks.HELLO WROLDBuflen: 4processed 505/1024 blocks.HELLO WROLDBuflen: 9processed 506/1024 blocks.HELLO WROLDBuflen: 6processed 507/1024 blocks.HELLO WROLDBuflen: 3processed 508/1024 blocks.HELLO WROLDBuflen: 3processed 509/1024 blocks.HELLO WROLDBuflen: 4processed 510/1024 blocks.HELLO WROLDBuflen: 4processed 511/1024 blocks.HELLO WROLDBuflen: 4processed 512/1024 blocks.HELLO WROLDBuflen: 4processed 513/1024 blocks.HELLO WROLDBuflen: 5processed 514/1024 blocks.HELLO WROLDBuflen: 4processed 515/1024 blocks.HELLO WROLDBuflen: 5processed 516/1024 blocks.HELLO WROLDBuflen: 6processed 517/1024 blocks.HELLO WROLDBuflen: 3processed 518/1024 blocks.HELLO WROLDBuflen: 15processed 519/1024 blocks.HELLO WROLDBuflen: 15processed 520/1024 blocks.HELLO WROLDBuflen: 16processed 521/1024 blocks.HELLO WROLDBuflen: 14processed 522/1024 blocks.HELLO WROLDBuflen: 12processed 523/1024 blocks.HELLO WROLDBuflen: 12processed 524/1024 blocks.HELLO WROLDBuflen: 13processed 525/1024 blocks.HELLO WROLDBuflen: 15processed 526/1024 blocks.HELLO WROLDBuflen: 11processed 527/1024 blocks.HELLO WROLDBuflen: 15processed 528/1024 blocks.HELLO WROLDBuflen: 13processed 529/1024 blocks.HELLO WROLDBuflen: 16processed 530/1024 blocks.HELLO WROLDBuflen: 6processed 531/1024 blocks.HELLO WROLDBuflen: 12processed 532/1024 blocks.HELLO WROLDBuflen: 16processed 533/1024 blocks.HELLO WROLDBuflen: 11processed 534/1024 blocks.HELLO WROLDBuflen: 10processed 535/1024 blocks.HELLO WROLDBuflen: 10processed 536/1024 blocks.HELLO WROLDBuflen: 4processed 537/1024 blocks.HELLO WROLDBuflen: 9processed 538/1024 blocks.HELLO WROLDBuflen: 5processed 539/1024 blocks.HELLO WROLDBuflen: 2processed 540/1024 blocks.HELLO WROLDBuflen: 2processed 541/1024 blocks.HELLO WROLDBuflen: 3processed 542/1024 blocks.HELLO WROLDBuflen: 4processed 543/1024 blocks.HELLO WROLDBuflen: 6processed 544/1024 blocks.HELLO WROLDBuflen: 4processed 545/1024 blocks.HELLO WROLDBuflen: 6processed 546/1024 blocks.HELLO WROLDBuflen: 5processed 547/1024 blocks.HELLO WROLDBuflen: 5processed 548/1024 blocks.HELLO WROLDBuflen: 5processed 549/1024 blocks.HELLO WROLDBuflen: 13processed 550/1024 blocks.HELLO WROLDBuflen: 14processed 551/1024 blocks.HELLO WROLDBuflen: 18processed 552/1024 blocks.HELLO WROLDBuflen: 16processed 553/1024 blocks.HELLO WROLDBuflen: 13processed 554/1024 blocks.HELLO WROLDBuflen: 13processed 555/1024 blocks.HELLO WROLDBuflen: 6processed 556/1024 blocks.HELLO WROLDBuflen: 13processed 557/1024 blocks.HELLO WROLDBuflen: 15processed 558/1024 blocks.HELLO WROLDBuflen: 13processed 559/1024 blocks.HELLO WROLDBuflen: 8processed 560/1024 blocks.HELLO WROLDBuflen: 11processed 561/1024 blocks.HELLO WROLDBuflen: 11processed 562/1024 blocks.HELLO WROLDBuflen: 5processed 563/1024 blocks.HELLO WROLDBuflen: 9processed 564/1024 blocks.HELLO WROLDBuflen: 12processed 565/1024 blocks.HELLO WROLDBuflen: 10processed 566/1024 blocks.HELLO WROLDBuflen: 9processed 567/1024 blocks.HELLO WROLDBuflen: 9processed 568/1024 blocks.HELLO WROLDBuflen: 9processed 569/1024 blocks.HELLO WROLDBuflen: 8processed 570/1024 blocks.HELLO WROLDBuflen: 3processed 571/1024 blocks.HELLO WROLDBuflen: 4processed 572/1024 blocks.HELLO WROLDBuflen: 3processed 573/1024 blocks.HELLO WROLDBuflen: 5processed 574/1024 blocks.HELLO WROLDBuflen: 8processed 575/1024 blocks.HELLO WROLDBuflen: 7processed 576/1024 blocks.HELLO WROLDBuflen: 3processed 577/1024 blocks.HELLO WROLDBuflen: 5processed 578/1024 blocks.HELLO WROLDBuflen: 4processed 579/1024 blocks.HELLO WROLDBuflen: 6processed 580/1024 blocks.HELLO WROLDBuflen: 6processed 581/1024 blocks.HELLO WROLDBuflen: 12processed 582/1024 blocks.HELLO WROLDBuflen: 14processed 583/1024 blocks.HELLO WROLDBuflen: 13processed 584/1024 blocks.HELLO WROLDBuflen: 13processed 585/1024 blocks.HELLO WROLDBuflen: 13processed 586/1024 blocks.HELLO WROLDBuflen: 16processed 587/1024 blocks.HELLO WROLDBuflen: 12processed 588/1024 blocks.HELLO WROLDBuflen: 13processed 589/1024 blocks.HELLO WROLDBuflen: 17processed 590/1024 blocks.HELLO WROLDBuflen: 5processed 591/1024 blocks.HELLO WROLDBuflen: 5processed 592/1024 blocks.HELLO WROLDBuflen: 4processed 593/1024 blocks.HELLO WROLDBuflen: 5processed 594/1024 blocks.HELLO WROLDBuflen: 5processed 595/1024 blocks.HELLO WROLDBuflen: 7processed 596/1024 blocks.HELLO WROLDBuflen: 4processed 597/1024 blocks.HELLO WROLDBuflen: 7processed 598/1024 blocks.HELLO WROLDBuflen: 8processed 599/1024 blocks.HELLO WROLDBuflen: 9processed 600/1024 blocks.HELLO WROLDBuflen: 9processed 601/1024 blocks.HELLO WROLDBuflen: 6processed 602/1024 blocks.HELLO WROLDBuflen: 2processed 603/1024 blocks.HELLO WROLDBuflen: 3processed 604/1024 blocks.HELLO WROLDBuflen: 3processed 605/1024 blocks.HELLO WROLDBuflen: 8processed 606/1024 blocks.HELLO WROLDBuflen: 3processed 607/1024 blocks.HELLO WROLDBuflen: 3processed 608/1024 blocks.HELLO WROLDBuflen: 3processed 609/1024 blocks.HELLO WROLDBuflen: 5processed 610/1024 blocks.HELLO WROLDBuflen: 5processed 611/1024 blocks.HELLO WROLDBuflen: 5processed 612/1024 blocks.HELLO WROLDBuflen: 12processed 613/1024 blocks.HELLO WROLDBuflen: 14processed 614/1024 blocks.HELLO WROLDBuflen: 13processed 615/1024 blocks.HELLO WROLDBuflen: 13processed 616/1024 blocks.HELLO WROLDBuflen: 12processed 617/1024 blocks.HELLO WROLDBuflen: 11processed 618/1024 blocks.HELLO WROLDBuflen: 16processed 619/1024 blocks.HELLO WROLDBuflen: 15processed 620/1024 blocks.HELLO WROLDBuflen: 16processed 621/1024 blocks.HELLO WROLDBuflen: 11processed 622/1024 blocks.HELLO WROLDBuflen: 4processed 623/1024 blocks.HELLO WROLDBuflen: 4processed 624/1024 blocks.HELLO WROLDBuflen: 4processed 625/1024 blocks.HELLO WROLDBuflen: 6processed 626/1024 blocks.HELLO WROLDBuflen: 6processed 627/1024 blocks.HELLO WROLDBuflen: 8processed 628/1024 blocks.HELLO WROLDBuflen: 6processed 629/1024 blocks.HELLO WROLDBuflen: 8processed 630/1024 blocks.HELLO WROLDBuflen: 7processed 631/1024 blocks.HELLO WROLDBuflen: 11processed 632/1024 blocks.HELLO WROLDBuflen: 9processed 633/1024 blocks.HELLO WROLDBuflen: 4processed 634/1024 blocks.HELLO WROLDBuflen: 3processed 635/1024 blocks.HELLO WROLDBuflen: 3processed 636/1024 blocks.HELLO WROLDBuflen: 8processed 637/1024 blocks.HELLO WROLDBuflen: 6processed 638/1024 blocks.HELLO WROLDBuflen: 5processed 639/1024 blocks.HELLO WROLDBuflen: 3processed 640/1024 blocks.HELLO WROLDBuflen: 4processed 641/1024 blocks.HELLO WROLDBuflen: 7processed 642/1024 blocks.HELLO WROLDBuflen: 4processed 643/1024 blocks.HELLO WROLDBuflen: 5processed 644/1024 blocks.HELLO WROLDBuflen: 9processed 645/1024 blocks.HELLO WROLDBuflen: 10processed 646/1024 blocks.HELLO WROLDBuflen: 14processed 647/1024 blocks.HELLO WROLDBuflen: 12processed 648/1024 blocks.HELLO WROLDBuflen: 14processed 649/1024 blocks.HELLO WROLDBuflen: 15processed 650/1024 blocks.HELLO WROLDBuflen: 15processed 651/1024 blocks.HELLO WROLDBuflen: 16processed 652/1024 blocks.HELLO WROLDBuflen: 14processed 653/1024 blocks.HELLO WROLDBuflen: 8processed 654/1024 blocks.HELLO WROLDBuflen: 5processed 655/1024 blocks.HELLO WROLDBuflen: 4processed 656/1024 blocks.HELLO WROLDBuflen: 3processed 657/1024 blocks.HELLO WROLDBuflen: 5processed 658/1024 blocks.HELLO WROLDBuflen: 13processed 659/1024 blocks.HELLO WROLDBuflen: 12processed 660/1024 blocks.HELLO WROLDBuflen: 9processed 661/1024 blocks.HELLO WROLDBuflen: 10processed 662/1024 blocks.HELLO WROLDBuflen: 7processed 663/1024 blocks.HELLO WROLDBuflen: 11processed 664/1024 blocks.HELLO WROLDBuflen: 10processed 665/1024 blocks.HELLO WROLDBuflen: 2processed 666/1024 blocks.HELLO WROLDBuflen: 3processed 667/1024 blocks.HELLO WROLDBuflen: 2processed 668/1024 blocks.HELLO WROLDBuflen: 7processed 669/1024 blocks.HELLO WROLDBuflen: 4processed 670/1024 blocks.HELLO WROLDBuflen: 3processed 671/1024 blocks.HELLO WROLDBuflen: 2processed 672/1024 blocks.HELLO WROLDBuflen: 4processed 673/1024 blocks.HELLO WROLDBuflen: 5processed 674/1024 blocks.HELLO WROLDBuflen: 4processed 675/1024 blocks.HELLO WROLDBuflen: 6processed 676/1024 blocks.HELLO WROLDBuflen: 12processed 677/1024 blocks.HELLO WROLDBuflen: 13processed 678/1024 blocks.HELLO WROLDBuflen: 13processed 679/1024 blocks.HELLO WROLDBuflen: 10processed 680/1024 blocks.HELLO WROLDBuflen: 13processed 681/1024 blocks.HELLO WROLDBuflen: 17processed 682/1024 blocks.HELLO WROLDBuflen: 15processed 683/1024 blocks.HELLO WROLDBuflen: 16processed 684/1024 blocks.HELLO WROLDBuflen: 5processed 685/1024 blocks.HELLO WROLDBuflen: 9processed 686/1024 blocks.HELLO WROLDBuflen: 5processed 687/1024 blocks.HELLO WROLDBuflen: 4processed 688/1024 blocks.HELLO WROLDBuflen: 7processed 689/1024 blocks.HELLO WROLDBuflen: 7processed 690/1024 blocks.HELLO WROLDBuflen: 9processed 691/1024 blocks.HELLO WROLDBuflen: 11processed 692/1024 blocks.HELLO WROLDBuflen: 11processed 693/1024 blocks.HELLO WROLDBuflen: 6processed 694/1024 blocks.HELLO WROLDBuflen: 6processed 695/1024 blocks.HELLO WROLDBuflen: 10processed 696/1024 blocks.HELLO WROLDBuflen: 6processed 697/1024 blocks.HELLO WROLDBuflen: 2processed 698/1024 blocks.HELLO WROLDBuflen: 2processed 699/1024 blocks.HELLO WROLDBuflen: 3processed 700/1024 blocks.HELLO WROLDBuflen: 6processed 701/1024 blocks.HELLO WROLDBuflen: 4processed 702/1024 blocks.HELLO WROLDBuflen: 3processed 703/1024 blocks.HELLO WROLDBuflen: 2processed 704/1024 blocks.HELLO WROLDBuflen: 3processed 705/1024 blocks.HELLO WROLDBuflen: 6processed 706/1024 blocks.HELLO WROLDBuflen: 4processed 707/1024 blocks.HELLO WROLDBuflen: 8processed 708/1024 blocks.HELLO WROLDBuflen: 14processed 709/1024 blocks.HELLO WROLDBuflen: 12processed 710/1024 blocks.HELLO WROLDBuflen: 11processed 711/1024 blocks.HELLO WROLDBuflen: 14processed 712/1024 blocks.HELLO WROLDBuflen: 13processed 713/1024 blocks.HELLO WROLDBuflen: 14processed 714/1024 blocks.HELLO WROLDBuflen: 16processed 715/1024 blocks.HELLO WROLDBuflen: 5processed 716/1024 blocks.HELLO WROLDBuflen: 5processed 717/1024 blocks.HELLO WROLDBuflen: 8processed 718/1024 blocks.HELLO WROLDBuflen: 5processed 719/1024 blocks.HELLO WROLDBuflen: 4processed 720/1024 blocks.HELLO WROLDBuflen: 5processed 721/1024 blocks.HELLO WROLDBuflen: 7processed 722/1024 blocks.HELLO WROLDBuflen: 10processed 723/1024 blocks.HELLO WROLDBuflen: 12processed 724/1024 blocks.HELLO WROLDBuflen: 10processed 725/1024 blocks.HELLO WROLDBuflen: 8processed 726/1024 blocks.HELLO WROLDBuflen: 8processed 727/1024 blocks.HELLO WROLDBuflen: 9processed 728/1024 blocks.HELLO WROLDBuflen: 4processed 729/1024 blocks.HELLO WROLDBuflen: 2processed 730/1024 blocks.HELLO WROLDBuflen: 3processed 731/1024 blocks.HELLO WROLDBuflen: 4processed 732/1024 blocks.HELLO WROLDBuflen: 6processed 733/1024 blocks.HELLO WROLDBuflen: 3processed 734/1024 blocks.HELLO WROLDBuflen: 3processed 735/1024 blocks.HELLO WROLDBuflen: 4processed 736/1024 blocks.HELLO WROLDBuflen: 3processed 737/1024 blocks.HELLO WROLDBuflen: 6processed 738/1024 blocks.HELLO WROLDBuflen: 4processed 739/1024 blocks.HELLO WROLDBuflen: 6processed 740/1024 blocks.HELLO WROLDBuflen: 10processed 741/1024 blocks.HELLO WROLDBuflen: 11processed 742/1024 blocks.HELLO WROLDBuflen: 8processed 743/1024 blocks.HELLO WROLDBuflen: 12processed 744/1024 blocks.HELLO WROLDBuflen: 12processed 745/1024 blocks.HELLO WROLDBuflen: 15processed 746/1024 blocks.HELLO WROLDBuflen: 12processed 747/1024 blocks.HELLO WROLDBuflen: 5processed 748/1024 blocks.HELLO WROLDBuflen: 4processed 749/1024 blocks.HELLO WROLDBuflen: 5processed 750/1024 blocks.HELLO WROLDBuflen: 9processed 751/1024 blocks.HELLO WROLDBuflen: 8processed 752/1024 blocks.HELLO WROLDBuflen: 6processed 753/1024 blocks.HELLO WROLDBuflen: 6processed 754/1024 blocks.HELLO WROLDBuflen: 6processed 755/1024 blocks.HELLO WROLDBuflen: 11processed 756/1024 blocks.HELLO WROLDBuflen: 5processed 757/1024 blocks.HELLO WROLDBuflen: 8processed 758/1024 blocks.HELLO WROLDBuflen: 7processed 759/1024 blocks.HELLO WROLDBuflen: 9processed 760/1024 blocks.HELLO WROLDBuflen: 6processed 761/1024 blocks.HELLO WROLDBuflen: 2processed 762/1024 blocks.HELLO WROLDBuflen: 3processed 763/1024 blocks.HELLO WROLDBuflen: 4processed 764/1024 blocks.HELLO WROLDBuflen: 8processed 765/1024 blocks.HELLO WROLDBuflen: 3processed 766/1024 blocks.HELLO WROLDBuflen: 3processed 767/1024 blocks.HELLO WROLDBuflen: 10processed 768/1024 blocks.HELLO WROLDBuflen: 7processed 769/1024 blocks.HELLO WROLDBuflen: 8processed 770/1024 blocks.HELLO WROLDBuflen: 5processed 771/1024 blocks.HELLO WROLDBuflen: 10processed 772/1024 blocks.HELLO WROLDBuflen: 18processed 773/1024 blocks.HELLO WROLDBuflen: 9processed 774/1024 blocks.HELLO WROLDBuflen: 10processed 775/1024 blocks.HELLO WROLDBuflen: 15processed 776/1024 blocks.HELLO WROLDBuflen: 14processed 777/1024 blocks.HELLO WROLDBuflen: 16processed 778/1024 blocks.HELLO WROLDBuflen: 17processed 779/1024 blocks.HELLO WROLDBuflen: 6processed 780/1024 blocks.HELLO WROLDBuflen: 3processed 781/1024 blocks.HELLO WROLDBuflen: 4processed 782/1024 blocks.HELLO WROLDBuflen: 6processed 783/1024 blocks.HELLO WROLDBuflen: 8processed 784/1024 blocks.HELLO WROLDBuflen: 8processed 785/1024 blocks.HELLO WROLDBuflen: 5processed 786/1024 blocks.HELLO WROLDBuflen: 7processed 787/1024 blocks.HELLO WROLDBuflen: 13processed 788/1024 blocks.HELLO WROLDBuflen: 14processed 789/1024 blocks.HELLO WROLDBuflen: 7processed 790/1024 blocks.HELLO WROLDBuflen: 6processed 791/1024 blocks.HELLO WROLDBuflen: 11processed 792/1024 blocks.HELLO WROLDBuflen: 6processed 793/1024 blocks.HELLO WROLDBuflen: 6processed 794/1024 blocks.HELLO WROLDBuflen: 5processed 795/1024 blocks.HELLO WROLDBuflen: 6processed 796/1024 blocks.HELLO WROLDBuflen: 8processed 797/1024 blocks.HELLO WROLDBuflen: 5processed 798/1024 blocks.HELLO WROLDBuflen: 11processed 799/1024 blocks.HELLO WROLDBuflen: 10processed 800/1024 blocks.HELLO WROLDBuflen: 7processed 801/1024 blocks.HELLO WROLDBuflen: 8processed 802/1024 blocks.HELLO WROLDBuflen: 6processed 803/1024 blocks.HELLO WROLDBuflen: 9processed 804/1024 blocks.HELLO WROLDBuflen: 15processed 805/1024 blocks.HELLO WROLDBuflen: 12processed 806/1024 blocks.HELLO WROLDBuflen: 15processed 807/1024 blocks.HELLO WROLDBuflen: 15processed 808/1024 blocks.HELLO WROLDBuflen: 13processed 809/1024 blocks.HELLO WROLDBuflen: 11processed 810/1024 blocks.HELLO WROLDBuflen: 14processed 811/1024 blocks.HELLO WROLDBuflen: 11processed 812/1024 blocks.HELLO WROLDBuflen: 5processed 813/1024 blocks.HELLO WROLDBuflen: 5processed 814/1024 blocks.HELLO WROLDBuflen: 7processed 815/1024 blocks.HELLO WROLDBuflen: 7processed 816/1024 blocks.HELLO WROLDBuflen: 5processed 817/1024 blocks.HELLO WROLDBuflen: 4processed 818/1024 blocks.HELLO WROLDBuflen: 4processed 819/1024 blocks.HELLO WROLDBuflen: 3processed 820/1024 blocks.HELLO WROLDBuflen: 7processed 821/1024 blocks.HELLO WROLDBuflen: 16processed 822/1024 blocks.HELLO WROLDBuflen: 8processed 823/1024 blocks.HELLO WROLDBuflen: 10processed 824/1024 blocks.HELLO WROLDBuflen: 4processed 825/1024 blocks.HELLO WROLDBuflen: 5processed 826/1024 blocks.HELLO WROLDBuflen: 6processed 827/1024 blocks.HELLO WROLDBuflen: 9processed 828/1024 blocks.HELLO WROLDBuflen: 7processed 829/1024 blocks.HELLO WROLDBuflen: 11processed 830/1024 blocks.HELLO WROLDBuflen: 9processed 831/1024 blocks.HELLO WROLDBuflen: 5processed 832/1024 blocks.HELLO WROLDBuflen: 8processed 833/1024 blocks.HELLO WROLDBuflen: 8processed 834/1024 blocks.HELLO WROLDBuflen: 6processed 835/1024 blocks.HELLO WROLDBuflen: 7processed 836/1024 blocks.HELLO WROLDBuflen: 14processed 837/1024 blocks.HELLO WROLDBuflen: 9processed 838/1024 blocks.HELLO WROLDBuflen: 11processed 839/1024 blocks.HELLO WROLDBuflen: 13processed 840/1024 blocks.HELLO WROLDBuflen: 12processed 841/1024 blocks.HELLO WROLDBuflen: 12processed 842/1024 blocks.HELLO WROLDBuflen: 16processed 843/1024 blocks.HELLO WROLDBuflen: 13processed 844/1024 blocks.HELLO WROLDBuflen: 6processed 845/1024 blocks.HELLO WROLDBuflen: 7processed 846/1024 blocks.HELLO WROLDBuflen: 8processed 847/1024 blocks.HELLO WROLDBuflen: 6processed 848/1024 blocks.HELLO WROLDBuflen: 4processed 849/1024 blocks.HELLO WROLDBuflen: 3processed 850/1024 blocks.HELLO WROLDBuflen: 3processed 851/1024 blocks.HELLO WROLDBuflen: 3processed 852/1024 blocks.HELLO WROLDBuflen: 3processed 853/1024 blocks.HELLO WROLDBuflen: 4processed 854/1024 blocks.HELLO WROLDBuflen: 15processed 855/1024 blocks.HELLO WROLDBuflen: 11processed 856/1024 blocks.HELLO WROLDBuflen: 2processed 857/1024 blocks.HELLO WROLDBuflen: 3processed 858/1024 blocks.HELLO WROLDBuflen: 6processed 859/1024 blocks.HELLO WROLDBuflen: 8processed 860/1024 blocks.HELLO WROLDBuflen: 7processed 861/1024 blocks.HELLO WROLDBuflen: 10processed 862/1024 blocks.HELLO WROLDBuflen: 6processed 863/1024 blocks.HELLO WROLDBuflen: 5processed 864/1024 blocks.HELLO WROLDBuflen: 8processed 865/1024 blocks.HELLO WROLDBuflen: 8processed 866/1024 blocks.HELLO WROLDBuflen: 6processed 867/1024 blocks.HELLO WROLDBuflen: 6processed 868/1024 blocks.HELLO WROLDBuflen: 11processed 869/1024 blocks.HELLO WROLDBuflen: 8processed 870/1024 blocks.HELLO WROLDBuflen: 14processed 871/1024 blocks.HELLO WROLDBuflen: 9processed 872/1024 blocks.HELLO WROLDBuflen: 10processed 873/1024 blocks.HELLO WROLDBuflen: 13processed 874/1024 blocks.HELLO WROLDBuflen: 16processed 875/1024 blocks.HELLO WROLDBuflen: 17processed 876/1024 blocks.HELLO WROLDBuflen: 9processed 877/1024 blocks.HELLO WROLDBuflen: 8processed 878/1024 blocks.HELLO WROLDBuflen: 9processed 879/1024 blocks.HELLO WROLDBuflen: 5processed 880/1024 blocks.HELLO WROLDBuflen: 3processed 881/1024 blocks.HELLO WROLDBuflen: 3processed 882/1024 blocks.HELLO WROLDBuflen: 3processed 883/1024 blocks.HELLO WROLDBuflen: 3processed 884/1024 blocks.HELLO WROLDBuflen: 4processed 885/1024 blocks.HELLO WROLDBuflen: 3processed 886/1024 blocks.HELLO WROLDBuflen: 14processed 887/1024 blocks.HELLO WROLDBuflen: 10processed 888/1024 blocks.HELLO WROLDBuflen: 3processed 889/1024 blocks.HELLO WROLDBuflen: 3processed 890/1024 blocks.HELLO WROLDBuflen: 9processed 891/1024 blocks.HELLO WROLDBuflen: 5processed 892/1024 blocks.HELLO WROLDBuflen: 9processed 893/1024 blocks.HELLO WROLDBuflen: 4processed 894/1024 blocks.HELLO WROLDBuflen: 6processed 895/1024 blocks.HELLO WROLDBuflen: 5processed 896/1024 blocks.HELLO WROLDBuflen: 7processed 897/1024 blocks.HELLO WROLDBuflen: 8processed 898/1024 blocks.HELLO WROLDBuflen: 7processed 899/1024 blocks.HELLO WROLDBuflen: 5processed 900/1024 blocks.HELLO WROLDBuflen: 11processed 901/1024 blocks.HELLO WROLDBuflen: 10processed 902/1024 blocks.HELLO WROLDBuflen: 7processed 903/1024 blocks.HELLO WROLDBuflen: 9processed 904/1024 blocks.HELLO WROLDBuflen: 13processed 905/1024 blocks.HELLO WROLDBuflen: 16processed 906/1024 blocks.HELLO WROLDBuflen: 16processed 907/1024 blocks.HELLO WROLDBuflen: 12processed 908/1024 blocks.HELLO WROLDBuflen: 9processed 909/1024 blocks.HELLO WROLDBuflen: 6processed 910/1024 blocks.HELLO WROLDBuflen: 10processed 911/1024 blocks.HELLO WROLDBuflen: 5processed 912/1024 blocks.HELLO WROLDBuflen: 3processed 913/1024 blocks.HELLO WROLDBuflen: 3processed 914/1024 blocks.HELLO WROLDBuflen: 3processed 915/1024 blocks.HELLO WROLDBuflen: 3processed 916/1024 blocks.HELLO WROLDBuflen: 4processed 917/1024 blocks.HELLO WROLDBuflen: 3processed 918/1024 blocks.HELLO WROLDBuflen: 12processed 919/1024 blocks.HELLO WROLDBuflen: 10processed 920/1024 blocks.HELLO WROLDBuflen: 7processed 921/1024 blocks.HELLO WROLDBuflen: 5processed 922/1024 blocks.HELLO WROLDBuflen: 7processed 923/1024 blocks.HELLO WROLDBuflen: 8processed 924/1024 blocks.HELLO WROLDBuflen: 8processed 925/1024 blocks.HELLO WROLDBuflen: 6processed 926/1024 blocks.HELLO WROLDBuflen: 6processed 927/1024 blocks.HELLO WROLDBuflen: 6processed 928/1024 blocks.HELLO WROLDBuflen: 10processed 929/1024 blocks.HELLO WROLDBuflen: 8processed 930/1024 blocks.HELLO WROLDBuflen: 7processed 931/1024 blocks.HELLO WROLDBuflen: 7processed 932/1024 blocks.HELLO WROLDBuflen: 10processed 933/1024 blocks.HELLO WROLDBuflen: 8processed 934/1024 blocks.HELLO WROLDBuflen: 8processed 935/1024 blocks.HELLO WROLDBuflen: 7processed 936/1024 blocks.HELLO WROLDBuflen: 12processed 937/1024 blocks.HELLO WROLDBuflen: 14processed 938/1024 blocks.HELLO WROLDBuflen: 14processed 939/1024 blocks.HELLO WROLDBuflen: 6processed 940/1024 blocks.HELLO WROLDBuflen: 6processed 941/1024 blocks.HELLO WROLDBuflen: 10processed 942/1024 blocks.HELLO WROLDBuflen: 10processed 943/1024 blocks.HELLO WROLDBuflen: 3processed 944/1024 blocks.HELLO WROLDBuflen: 2processed 945/1024 blocks.HELLO WROLDBuflen: 3processed 946/1024 blocks.HELLO WROLDBuflen: 4processed 947/1024 blocks.HELLO WROLDBuflen: 3processed 948/1024 blocks.HELLO WROLDBuflen: 4processed 949/1024 blocks.HELLO WROLDBuflen: 4processed 950/1024 blocks.HELLO WROLDBuflen: 3processed 951/1024 blocks.HELLO WROLDBuflen: 12processed 952/1024 blocks.HELLO WROLDBuflen: 7processed 953/1024 blocks.HELLO WROLDBuflen: 8processed 954/1024 blocks.HELLO WROLDBuflen: 11processed 955/1024 blocks.HELLO WROLDBuflen: 9processed 956/1024 blocks.HELLO WROLDBuflen: 9processed 957/1024 blocks.HELLO WROLDBuflen: 8processed 958/1024 blocks.HELLO WROLDBuflen: 5processed 959/1024 blocks.HELLO WROLDBuflen: 6processed 960/1024 blocks.HELLO WROLDBuflen: 8processed 961/1024 blocks.HELLO WROLDBuflen: 7processed 962/1024 blocks.HELLO WROLDBuflen: 5processed 963/1024 blocks.HELLO WROLDBuflen: 9processed 964/1024 blocks.HELLO WROLDBuflen: 10processed 965/1024 blocks.HELLO WROLDBuflen: 5processed 966/1024 blocks.HELLO WROLDBuflen: 9processed 967/1024 blocks.HELLO WROLDBuflen: 11processed 968/1024 blocks.HELLO WROLDBuflen: 11processed 969/1024 blocks.HELLO WROLDBuflen: 13processed 970/1024 blocks.HELLO WROLDBuflen: 13processed 971/1024 blocks.HELLO WROLDBuflen: 7processed 972/1024 blocks.HELLO WROLDBuflen: 11processed 973/1024 blocks.HELLO WROLDBuflen: 12processed 974/1024 blocks.HELLO WROLDBuflen: 4processed 975/1024 blocks.HELLO WROLDBuflen: 3processed 976/1024 blocks.HELLO WROLDBuflen: 2processed 977/1024 blocks.HELLO WROLDBuflen: 3processed 978/1024 blocks.HELLO WROLDBuflen: 3processed 979/1024 blocks.HELLO WROLDBuflen: 3processed 980/1024 blocks.HELLO WROLDBuflen: 4processed 981/1024 blocks.HELLO WROLDBuflen: 4processed 982/1024 blocks.HELLO WROLDBuflen: 3processed 983/1024 blocks.HELLO WROLDBuflen: 12processed 984/1024 blocks.HELLO WROLDBuflen: 4processed 985/1024 blocks.HELLO WROLDBuflen: 6processed 986/1024 blocks.HELLO WROLDBuflen: 11processed 987/1024 blocks.HELLO WROLDBuflen: 11processed 988/1024 blocks.HELLO WROLDBuflen: 7processed 989/1024 blocks.HELLO WROLDBuflen: 7processed 990/1024 blocks.HELLO WROLDBuflen: 6processed 991/1024 blocks.HELLO WROLDBuflen: 7processed 992/1024 blocks.HELLO WROLDBuflen: 8processed 993/1024 blocks.HELLO WROLDBuflen: 9processed 994/1024 blocks.HELLO WROLDBuflen: 5processed 995/1024 blocks.HELLO WROLDBuflen: 11processed 996/1024 blocks.HELLO WROLDBuflen: 7processed 997/1024 blocks.HELLO WROLDBuflen: 7processed 998/1024 blocks.HELLO WROLDBuflen: 12processed 999/1024 blocks.HELLO WROLDBuflen: 12processed 1000/1024 blocks.HELLO WROLDBuflen: 14processed 1001/1024 blocks.HELLO WROLDBuflen: 13processed 1002/1024 blocks.HELLO WROLDBuflen: 13processed 1003/1024 blocks.HELLO WROLDBuflen: 7processed 1004/1024 blocks.HELLO WROLDBuflen: 5processed 1005/1024 blocks.HELLO WROLDBuflen: 3processed 1006/1024 blocks.HELLO WROLDBuflen: 3processed 1007/1024 blocks.HELLO WROLDBuflen: 3processed 1008/1024 blocks.HELLO WROLDBuflen: 3processed 1009/1024 blocks.HELLO WROLDBuflen: 2processed 1010/1024 blocks.HELLO WROLDBuflen: 3processed 1011/1024 blocks.HELLO WROLDBuflen: 3processed 1012/1024 blocks.HELLO WROLDBuflen: 3processed 1013/1024 blocks.HELLO WROLDBuflen: 4processed 1014/1024 blocks.HELLO WROLDBuflen: 4processed 1015/1024 blocks.HELLO WROLDBuflen: 12processed 1016/1024 blocks.HELLO WROLDBuflen: 6processed 1017/1024 blocks.HELLO WROLDBuflen: 5processed 1018/1024 blocks.HELLO WROLDBuflen: 5processed 1019/1024 blocks.HELLO WROLDBuflen: 6processed 1020/1024 blocks.HELLO WROLDBuflen: 6processed 1021/1024 blocks.HELLO WROLDBuflen: 6processed 1022/1024 blocks.HELLO WROLDBuflen: 6processed 1023/1024 blocks.HELLO WROLDBuflen: 7processed 1024/1024 blocks.0 non-zero coefficients0 data RLE bytes

@@ -2,19 +2,15 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "table.c"
-#include "reverse_table.c"
 
-void _print_bits(uintmax_t n, uint32_t bits) {
-    char c;
-    for (size_t i = bits; i-- != 0;)
-    {
-        if ((n & (1UL << i)) != 0) c = '1';
-        else c = '0';
-        printf ("%c", c);
-    }
-    putchar('\n');
-}
+#define VLI_DC 12
+#define VLI_AC 11
+#define HUFF_START_PARSE_SYMS 0xffff
 
+/*
+ * Given a DC size category, return it's codelength 
+ * in bits. 
+ */
 uint8_t get_dc_code_len(uint8_t category) {
     switch (category) {
         case 0:   return 2;
@@ -28,6 +24,10 @@ uint8_t get_dc_code_len(uint8_t category) {
     }
 }
  
+/* 
+ * Given an AC size category, return its codelength in 
+ * bits
+ */
 uint8_t get_ac_code_len(uint8_t run_size) {
     switch (run_size) {
         case 0:   return 4;
@@ -74,179 +74,12 @@ uint8_t get_ac_code_len(uint8_t run_size) {
     }
 }
 
-int32_t 
-amp_to_vli(int32_t amp, uint8_t* amp_size) 
-{
-    if (amp == 0) {
-        *amp_size = 0; 
-        return 0; 
-    }
-    for (*amp_size = 1; (*amp_size) < 12; (*amp_size)++) {
-        int bound = 1 << (*amp_size); 
-        if (abs(amp) < bound) {
-            if (amp < 0) amp = (bound - 1) + amp; 
-            return amp;
-        }
-    }   
-    printf("INVALID SIZE: %d", amp); exit(-1);
-    return -1; 
-}
-
-int32_t
-vli_to_amp(uint16_t vli, uint8_t vli_size)
-{
-    int sign = (vli & 0x8000)? 1 : -1; 
-    int32_t amp = vli >> (16 - vli_size); 
-    if (sign < 0) {
-        int bound = 1 << vli_size; 
-        amp = -(bound - 1) + (int32_t) amp; 
-    }
-    return amp; 
-}
-
-uint8_t runlen = 0; 
-uint8_t zeroblocks = 0; 
-void parse_syms(int32_t val, uint8_t** codes, uint16_t** amps) {
-    uint32_t absval; 
-
-    if (val == 0) {
-        if (++runlen > 15) {
-            // too many zeros!
-            zeroblocks++;
-            runlen = 0; 
-        }
-    }
-    else {
-        while (zeroblocks > 0) {
-            **codes = 151;
-            (*codes)++; 
-            zeroblocks--;
-            printf("151/+16 ZEROS");
-        }
-
-        int32_t v = val;
-
-        /* Compute size and magnitude representation */
-        uint8_t size = 0; 
-        val = amp_to_vli(val, &size);
-
-        uint16_t c = (runlen * 10) + size;
-        **codes = c; 
-        printf("RL/Size: %d/%d --> index %d, Val %d -- > Amp: %d\n", runlen, size, **codes, v, val); 
-        (*codes)++; 
-        **amps = val | (size << 12); 
-        (*amps)++; 
-        runlen = 0; 
-    }
-}
-
-uint16_t
-add_bits2buf(uint16_t bits_left, uint16_t** buf, uint16_t word, uint8_t len)
-{
-    //printf("Adding %x with len %d\n", (uint32_t) word, (uint32_t) len);
-    if (bits_left >= len) {
-        **buf |= (word << (bits_left - len)); 
-        bits_left -= len; 
-        if (bits_left == 0) {
-            (*buf)++; 
-            bits_left = 16;
-        }
-    }
-    else {
-        uint16_t upper = word >> (len - bits_left); 
-        **buf |= upper; 
-        (*buf)++; 
-        bits_left = 16 - (len - bits_left);
-        **buf |= (word << bits_left); 
-    }
-    //printf("Bits left: %d\n", (uint32_t) bits_left);
-    return bits_left; 
-}
-
-
-uint8_t 
-huff(int8_t prev_dcval, int32_t b[8][8], uint16_t* buf) 
-{
-    runlen = 0; 
-    zeroblocks = 0; 
-    uint8_t outs = 0; 
-
-    uint8_t* codes = calloc(128, 1); 
-    uint16_t* amps = calloc(128, 1); 
-
-    uint8_t dcval = b[0][0];
-
-    uint8_t* code_i = codes; 
-    uint16_t* amp_i = amps; 
-    int x = 0; 
-    int y = 0; 
-    for (int d = 1; d < 8; d++) {
-        x = d; y = 0; 
-        while (x >= 0) {
-            int32_t v = b[y][x]; 
-            parse_syms(v, &code_i, &amp_i); 
-            y++; 
-            x--;
-        }
-    }
-    for (int d = 1; d < 8; d++) {
-        x = 7; y = d; 
-        while (y < 8) {
-            int32_t v = b[y][x]; 
-            parse_syms(v, &code_i, &amp_i); 
-            y++; 
-            x--;
-        }
-    }
-    *code_i = 0x00; // terminating sym
-
-    /* The following converts intermediate codes to huffman codewords */
-    printf("\nIntermediate coding:\n");
-    uint8_t* p = codes - 1; 
-    uint16_t* a = amps - 1; 
-    int i = 0; 
-    int bits_left = 16; 
-    uint16_t* bufs = buf - 1; 
-
-    /* Find DC amplitude and category (size) */
-    int32_t dc_amp = b[0][0] - prev_dcval;
-    uint8_t dcsize = 0; 
-    dc_amp = amp_to_vli((uint32_t) dc_amp, &dcsize);
-    
-    /* Add DC huffman code (VLC) for size, then VLI for amplitude */
-    uint8_t codelen = get_dc_code_len(dcsize);
-    uint16_t codeword = dc_lht_codes[dcsize];
-    bits_left = add_bits2buf(bits_left, &buf, codeword, codelen); 
-    bits_left = add_bits2buf(bits_left, &buf, dc_amp, dcsize); 
-
-    while (p != code_i) {
-
-        /* Add AC huffman code (VLC) for size, then VLI for amplitude */
-        uint8_t code = *(++p); // index into table
-        codelen = get_ac_code_len(code);   
-        codeword = ac_lht_codes[code]; 
-        bits_left = add_bits2buf(bits_left, &buf, codeword, codelen);
-
-        printf("Table Index: %d -> Encodes to [%d bits] %x; \n", code, codelen, codeword); 
-
-        // skip EOB and ZRL codes (because they don't have amps) 
-        if (code != 0 && code != 151) {
-            uint16_t amp = (*(++a));
-            uint8_t amp_size = amp >> 12; 
-            amp &= 0x0fff;
-            bits_left = add_bits2buf(bits_left, &buf, amp, amp_size);
-            //printf("Amp: %x [%d]\n", amp, amp_size);
-        }
-
-        //_print_bits(codeword, 16); 
-    }
-    if (bits_left != 0) {
-        buf++;
-    }
-    return buf - bufs - 1; 
-}
-
-int ac_idx_from_codeword(uint16_t b, int* len) {
+/*
+ * Given an AC Luminance codeword, return its index
+ * into the luminance table and the length of the
+ * given codeword. 
+ */
+int ac_lht_idx_from_codeword(uint16_t b, int* len) {
     switch(b&0b1100000000000000){
         case 0b0000000000000000: *len = 2; return 1; 
         case 0b0100000000000000: *len = 2; return 2;  }
@@ -302,7 +135,10 @@ int ac_idx_from_codeword(uint16_t b, int* len) {
     return ac_lht_idx16[b]; 
 }
 
-/* len = codelen */
+/*
+ * Given a DC codeword, return it's size / category. 
+ * Out pointer len will return the length of the codeword.
+ */
 int dc_size_from_codeword(uint16_t b, int* len) {
     if    ((b&0b1100000000000000)  
             ==0b0000000000000000){*len= 2; return 0;  }
@@ -326,167 +162,311 @@ int dc_size_from_codeword(uint16_t b, int* len) {
             ==0b1111111100000000){*len= 9; return 11; }
 }
 
+/*
+ * Converts an amplitude into a VLI coded number.
+ * @amp: The amplitude
+ * @amp_size: Output of the size category for this amplitude. 
+ * @dc: 12 if this is a DC amplitude, if it's AC, 11. Use #defined 
+ *      VLI_DC or VLI_AC
+ */
+int32_t 
+amp_to_vli(int32_t amp, uint8_t* amp_size, uint8_t category) 
+{
+    if (amp == 0) {
+        *amp_size = 0; 
+        return 0; 
+    }
+    for (*amp_size = 1; (*amp_size) < category; (*amp_size)++) {
+        int bound = 1 << (*amp_size); 
+        if (abs(amp) < bound) {
+            if (amp < 0) amp = (bound - 1) + amp; 
+            return amp;
+        }
+    }   
+    // Encountered error!
+    exit(-1); 
+    return -1; 
+}
+
+/*
+ * Converts a VLI coded number into an amplitude. 
+ */
+int32_t
+vli_to_amp(uint16_t vli, uint8_t vli_size)
+{
+    int32_t amp = vli >> (16 - vli_size); 
+
+    int sign = (vli & 0x8000)? 1 : -1; 
+    if (sign < 0) {
+        int bound = 1 << vli_size; 
+        amp = -(bound - 1) + (int32_t) amp; 
+    }
+    return amp; 
+}
+
+
+/*
+ * Parses an 8x8 DCT block by consecutievely feeding in amplitudes
+ * in a zigzag. Outputs intermediate codes and amplitudes to the
+ * provided buffers. 
+ *
+ * @val: Set to HUFF_START_PARSE_SYMS to start parsing. Otherwise, 
+ *       set it to the current amplitude of the DCT block. 
+ * @codes: Pointer to a parallel buffer of encoded runlengths and sizes. 
+ * @amps: Pointer to a paralell buffer of VLI encoded amplitudes. 
+ */
+void parse_syms(int32_t val, uint8_t** codes, uint16_t** amps) {
+    static uint8_t runlen; 
+    static uint8_t zeroblocks; 
+
+    if (val == HUFF_START_PARSE_SYMS) {
+        runlen = 0; 
+        zeroblocks = 0; 
+        return;
+    }
+
+    uint32_t absval; 
+
+    if (val == 0) {
+        if (++runlen > 15) {
+            // too many zeros! Keep track of how many zero blocks 
+            // we will add once we've reached a nonzero value.
+            zeroblocks++;       
+            runlen = 0; 
+        }
+    }
+    else {
+        while (zeroblocks > 0) {
+            // Add as many zeroblocks as we've encountered. 
+            **codes = 151;
+            (*codes)++; 
+            zeroblocks--;
+        }
+
+        /* Compute size and magnitude representation */
+        uint8_t size = 0; 
+        val = amp_to_vli(val, &size, VLI_AC);
+
+        /* Add the code and amplitude to buffers */
+        uint16_t c = (runlen * 10) + size;
+        **codes = c; 
+        (*codes)++; 
+        **amps = val | (size << 12); 
+        (*amps)++; 
+        runlen = 0; 
+    }
+}
+
+
+/*
+ * Given the amount of bits left in a buffer of 16bit words, add a group
+ * of len bits specified by word into the buffer. 
+ *
+ * @bits_left: Number of bits free in the current word pointed to by buf. 
+ * @buf: The buffer in which bits will be inserted.
+ * @word: The bits to insert. Will insert MSB first. 
+ * @len: Number of bits to insert. 
+ *
+ * Returns the number of bits left in the current word after insertion.
+ */
+uint16_t
+add_bits2buf(uint16_t bits_left, uint16_t** buf, uint16_t word, uint8_t len)
+{
+    if (bits_left >= len) {
+        // We can fit the entire word into the current buffer word. 
+        **buf |= (word << (bits_left - len)); 
+        bits_left -= len; 
+        if (bits_left == 0) {
+            (*buf)++; 
+            bits_left = 16;
+        }
+    }
+    else {
+        // We have to split up the word, fill up the current buffer word, 
+        // increment the buffer, and start filling up the next buffer word. 
+        uint16_t upper = word >> (len - bits_left); 
+        **buf |= upper; 
+        (*buf)++; 
+        bits_left = 16 - (len - bits_left);
+        **buf |= (word << bits_left); 
+    }
+    return bits_left; 
+}
+
+/*
+ * Given a reference to a pointer buffer and a pointer to a word, 
+ * read the next 16 bit word at bitoffset from this buffer. 
+ *
+ * @p: Reference to 16bit pointed buffer
+ * @word: Reference to word which will be read into 
+ * @bitoffset: The bitoffset we should read the word from in the 
+ *              @p pointer 
+ *
+ * Returns the new bitoffset after advancing bitoffset bits. 
+ */
 int 
 get_word_from_buf(uint16_t** p, uint16_t* word, int bitoffset) 
 {
+    // If bitoffset too big, go to next word in buffer
     while (bitoffset >= 16) {
         bitoffset -= 16; 
         (*p)++; 
     }
-    if (bitoffset == 0) 
-        *word = **p; 
-    else 
-        *word = ((**p) << bitoffset) | ((*((*p)+1) >> (16 - bitoffset))); 
+
+    // if bitoffset is zero, just return the 16bit word
+    if (bitoffset == 0) *word = **p; 
+    // else, split it up and put it back together
+    else  *word = ((**p) << bitoffset) | ((*((*p)+1) >> (16 - bitoffset))); 
+
     return bitoffset;
 }
-    
+ 
 
-void 
-dehuff(int32_t prev_dcval, uint16_t* buf, 
-        int32_t* outb, uint16_t dst_col_offset, uint16_t dst_width) 
+/*
+ * Huffman encode an 8x8 DCT block of data with JPEG tables. 
+ * @prev_dcval: DC value of previous 8x8 block.
+ * @b: 8x8 quantized block. 
+ * @buf: output buffer where huffman encoded data will be written to. 
+ *
+ * Returns size of output buffer in bytes. 
+ */
+uint8_t 
+huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* buf8) 
 {
-    uint16_t* p = (uint16_t*) buf; 
-    int16_t* amps = calloc(128, 1); 
-    uint8_t bitoffset = 0; 
+    uint16_t* buf = (uint16_t*) buf8; 
+    uint16_t* buf_start = buf; 
+    uint8_t* codes = calloc(128, 1); 
+    uint16_t* amps = calloc(128, 1); 
+    uint8_t* code_i = codes; 
+    uint16_t* amp_i = amps; 
 
+    uint16_t codeword;
+    uint8_t codelen;
+    int r, c, i;
+    int32_t dc_amp; 
+    uint8_t size; 
+    uint16_t amp; 
+    uint8_t code; 
+    uint8_t bits_left = 16; 
+
+    /* Parse the buffer into intermediate Runlen/Size + VLI codes */
+    parse_syms(HUFF_START_PARSE_SYMS, NULL, NULL);
+    for (i = 1; i < 64; i++) {
+        // Loop through the 8x8 block zigzag and parse
+        r = row_lin2diag[i];  
+        c = col_lin2diag[i];  
+        parse_syms(b[r][c], &code_i, &amp_i); 
+    }
+    *code_i = 0x00; // terminating sym
+
+    /* The following converts intermediate codes to huffman codewords */
+
+    /* Find DC amplitude and category (size) */
+    dc_amp = b[0][0] - prev_dcval;
+    dc_amp = amp_to_vli((uint32_t) dc_amp, &size, VLI_DC);
+    
+    /* Add DC huffman code (VLC) for size, then VLI for amplitude */
+    codelen = get_dc_code_len(size);
+    codeword = dc_lht_codes[size];
+    bits_left = add_bits2buf(bits_left, &buf, codeword, codelen); 
+    bits_left = add_bits2buf(bits_left, &buf, dc_amp, size); 
+
+    uint8_t* p = codes - 1;     // point to start of codes
+    uint16_t* a = amps - 1;     // point to start of amps
+    while (p != code_i) {       // loop until we've processed all codes
+
+        /* Add AC huffman code (VLC) for size, then VLI for amplitude */
+        code = *(++p); // index into table
+        codelen = get_ac_code_len(code);   
+        codeword = ac_lht_codes[code]; 
+        bits_left = add_bits2buf(bits_left, &buf, codeword, codelen);
+
+        // skip EOB and ZRL codes (because they don't have amps) 
+        if (code != 0 && code != 151) {
+            amp = (*(++a));
+            size = amp >> 12; 
+            amp &= 0x0fff;
+            bits_left = add_bits2buf(bits_left, &buf, amp, size);
+        }
+    }
+    // Round up the last 16bit word
+    if (bits_left != 0) buf++;
+
+    // Return sizeof buf buffer (in bytes). 
+    return (char*) buf - (char*) buf_start; 
+}
+
+   
+/*
+ * Decodes a given huffman encoded 8x8 block. 
+ *
+ * @prev_dcval: The previous DC value that came before this block. 
+ * @buf: The 16bit word buffer that holds the huffman encoded bitstring. 
+ * @outb: The 8x8 output array to which the decoded DCT will be written to. 
+ */
+void 
+dehuff(int32_t prev_dcval, uint16_t* buf, int32_t outb[8][8]) 
+{
+    uint8_t bitoffset = 0; 
     uint16_t word; 
     int len; 
     int idx;
     int rl; 
     int size; 
+    int32_t amp; 
+    uint8_t lin_idx = 1; 
+    uint8_t dig_row;
+    uint8_t dig_col;
 
-    bitoffset = get_word_from_buf(&p, &word, bitoffset);
-    printf("Codeword: %x", word);
+    // Read DC codeword
+    bitoffset = get_word_from_buf(&buf, &word, bitoffset);
     size = dc_size_from_codeword(word, &len);
     bitoffset += len; 
 
-    printf("Len/Size = %d/%d\n", len, size); 
-    bitoffset = get_word_from_buf(&p, &word, bitoffset);
+    // Read DC amplitude
+    bitoffset = get_word_from_buf(&buf, &word, bitoffset);
     bitoffset += size; 
-    int32_t dc_offset = vli_to_amp(word, size); 
-    int32_t dc_val = prev_dcval + dc_offset; 
-    outb[0 + dst_col_offset] = dc_val; 
-
-    printf("DC Amp: %x", dc_offset);
-
-    uint8_t lin_idx = 1; 
-    uint8_t dig_row = 1;
-    uint8_t dig_col = 1;
-        
+    outb[0][0] = prev_dcval + vli_to_amp(word, size); 
+       
     int codes_n = 128;
-    printf("\n");
     while (codes_n-- != 0) {
-        bitoffset = get_word_from_buf(&p, &word, bitoffset);
-        printf("Raw word: %x", word);
-        // 0x1f20
-        idx = ac_idx_from_codeword(word, &len); 
+        // Get huff codeword
+        bitoffset = get_word_from_buf(&buf, &word, bitoffset);
+        idx = ac_lht_idx_from_codeword(word, &len); 
+        bitoffset += len; 
+
+        // If it's zero, we're done (EOB)
         if (idx == 0) break;
+
+        // Extract runlength and amp size from index 
         rl = idx / 10; 
         size = idx % 10; 
-        //0/10 -> 3/8
         if (size == 0) {
             rl--;
             size = 10;
         }
-        printf("RL/Size = %d/%d; [len:%d] ", rl, size, len); 
-        bitoffset += len; 
 
-        int32_t amp; 
+        amp = 0; 
         if (idx != 151) {
-            bitoffset = get_word_from_buf(&p, &word, bitoffset);
+            // If not a Zeroblock (ZRL), get amplitude 
+            bitoffset = get_word_from_buf(&buf, &word, bitoffset);
             amp = vli_to_amp(word, size); 
-            printf("Amp: %d\n", amp);
             bitoffset += size; 
-        }
-        else {
-            printf("Skipping amp!\n");
-            amp = 0; 
         }
 
         // at this point we've decoded the next zero runlength and
-        // the amplitude following this runlength. 
+        // the amplitude following this runlength. Skip RL indexes
+        // and then place amplitude. 
         lin_idx += rl; 
         dig_row = row_lin2diag[lin_idx];  
         dig_col = col_lin2diag[lin_idx];  
-        printf("[%d] (%d, %d) <- %d", lin_idx, dig_row, dig_col, amp);
-        outb[dig_row * dst_width + dig_col + dst_col_offset] = amp;  
+        outb[dig_row][dig_col] = amp;  
         lin_idx++;
     }
 }
 
-#ifndef NO_MAIN
-int main() {
-    int32_t amp = 34; 
-    uint8_t size = 0;
-    printf("Amp: %d/%d\n", amp, size); 
-    amp = amp_to_vli(amp, &size);
-    amp <<= (16 - size); 
-    printf("VLI: 0x%x/%d\n", amp, size); 
-    amp = vli_to_amp(amp, size); 
-    printf("Amp: %d/%d\n", amp, size); 
-
-    uint16_t* buf = malloc(1024); 
-
-    int32_t block[8][8] = {
-        57, 20, -1, 0, 0, 0, 0, 0, 
-        10, -3, 0, 1, 0, 0, 0, 1,
-        5, 2, 0, 0, 0, 0, 2, 0,
-        1, 0, 0, 0, 0, 3, 0, 0,
-        0, 0, 0, 0, -10, 0, 0, 0,
-        0, 0, -12, 0, 0, 0, 6, 0,
-        0, 0, 0, 0, 0, 7, 0, 0,
-        8, 0, 0, 0, 0, 0, 0, 1,
-    };
-    uint8_t prev_dcval = 12; 
-    /*int32_t block[8][8] = {
-        15,  0,-1, 0, 0, 0, 0, 0, 
-        -2, -1, 0, 0, 0, 0, 0, 0,
-        -1, -1, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-    };
-    int32_t block[8][8] = {
-        0, 
-        1, 2, 3, 4, 5, 6, 7, 8, 
-        9, 10, 11, 12, 13, 14, 15, 16, 
-        17, 18, 19, 20, 21, 22, 23, 24, 
-        25, 26, 27, 28, 29, 30, 31, 32, 
-        33, 34, 35, 36, 37, 38, 39, 40, 
-        41, 42, 43, 44, 45, 46, 47, 48, 
-        49, 50, 51, 52, 53, 54, 55, 56, 
-        57, 58, 59, 60, 61, 62, 63
-    };*/
- 
-    uint8_t outs = huff(prev_dcval, block, buf);
-    for (uint8_t i = 0; i< outs; i++) {
-        printf("%04x ", (uint32_t) buf[i]); 
-    }
-
-    int8_t* outb = calloc(255, 1);
-    /*// idx 42, 31
-    buf[0] = 0b1111111000111010;
-    dehuff(buf, 2); 
-
-    // idx 154, 151, 22
-    buf[0] = 0b1111111111110111;
-    buf[1] = 0b1111111100111111;
-    buf[2] = 0b0010000000000000;*/
-    //outbmalloc
-//  void dehuff(uint16_t* buf, uint8_t* outb, uint16_t dst_col_offset, uint16_t dst_width) {
-
-    dehuff(prev_dcval, buf, outb, 0, 8); 
-    printf("\n");
-    for (int r = 0; r < 8; r++) {
-        for (int c = 0; c < 8; c++) {
-            printf("%d ", (int) *(outb + r * 8 + c)); 
-        }
-        printf("\n");
-    }
-    test_huff();
+int _main() {
+ //   test_huff();
 }
-#endif
 
-#include "huff-test.c"
+//#include "huff-test.c"

@@ -11,6 +11,7 @@
 #include <math.h>
 #include "targa.h"
 #include "string.h"
+#include "huff.c"
 
 
 typedef uint8_t byte;
@@ -22,8 +23,8 @@ typedef uint8_t byte;
 	exit(EXIT_FAILURE); } } while(0)
 
 
-
-void load_tga(tga_image *tga, const char *fn)
+void 
+load_tga(tga_image *tga, const char *fn)
 {
 	DONTFAIL( tga_read(tga, fn) );
 
@@ -43,35 +44,28 @@ void load_tga(tga_image *tga, const char *fn)
 
 
 
-#ifndef PI
- #ifdef M_PI
-  #define PI M_PI
- #else
-  #define PI 3.14159265358979
- #endif
+/* Define if shuold encode with integer arithemtic instead of double */
+//#define USE_DCT_INT_ENCODING      
+
+/* Set to 1 if should normalize the DFT */
+#define NORMALIZE_DFT 0
+
+/* Define if should decode (IDCT) with integer arithemtic instead of double */
+#define USE_DCT_INT_DECODING
+
+/* Scale factor used to scale up rational constants in integer IDCT */
+#define IDF_SF 8
+
+
+#define PI 3.14159
+
+#ifdef USE_DCT_INT_DECODING
+#define pix_t int32_t
+#else
+#define pix_t double
 #endif
 
 
-
-/* S[u,v] = 1/4 * C[u] * C[v] *
- *   sum for x=0 to width-1 of
- *   sum for y=0 to height-1 of
- *     s[x,y] * cos( (2x+1)*u*PI / 2N ) * cos( (2y+1)*v*PI / 2N )
- *
- * C[u], C[v] = 1/sqrt(2) for u, v = 0
- * otherwise, C[u], C[v] = 1
- *
- * S[u,v] ranges from -2^10 to 2^10
- */
-
-#define COEFFS(Cu,Cv,u,v) { \
-	if (u == 0) Cu = 1.0 / sqrt(2.0); else Cu = 1.0; \
-	if (v == 0) Cv = 1.0 / sqrt(2.0); else Cv = 1.0; \
-	}
-
-//#define USE_DCT_INT
-//
-#define NORMALIZE_DFT 0
 
 /* 
  * w, c: width of block. For columnwise DFT, use w=8, c=colum
@@ -115,7 +109,7 @@ void dct8(double b[8], double out[8], uint8_t w, uint8_t c) {
 
     // Stage 4
     f_8  = -g[6] + g[4]; 
-#ifndef USE_DCT_INT
+#ifndef USE_DCT_INT_ENCODING
     f_8  =   0.382 * f_8; 
 
     f[0] =  1  *g[0];          // *8
@@ -138,7 +132,6 @@ void dct8(double b[8], double out[8], uint8_t w, uint8_t c) {
     f[6] =  10 *g[6] + f_8;    // *10
     f[7] =  8  *g[7] ;          // *8*/
 #endif
-
 
     // Stage 5
     g[0] =  f[0];    
@@ -170,7 +163,6 @@ void dct8(double b[8], double out[8], uint8_t w, uint8_t c) {
     g[6] = f[3] / 8; 
     g[7] = f[6] / 8; 
 
-#define PI 3.14159
 #if NORMALIZE_DFT
     s[0] = sqrt(2);
     s[1] = 2.0 / (cos(1.0 * PI / 16.0));        
@@ -192,10 +184,10 @@ void dct8(double b[8], double out[8], uint8_t w, uint8_t c) {
 }
 
 
-void dct_ii(const tga_image *tga, double data[8][8],
+void dct_encode(const tga_image *tga, double data[8][8],
 	const int xpos, const int ypos)
 {
-    // block = input block .Do not modify.
+    // block = input block. Do not modify.
     double block[8][8] = {};
     for (int i = 0; i < 8; i++) 
         for (int j = 0; j < 8; j++) 
@@ -218,25 +210,13 @@ void dct_ii(const tga_image *tga, double data[8][8],
         for (i = 0; i < 8; i++) 
             data[i][c] = out[i];
     }
-    putchar('\n');
 
-#ifdef USE_DCT_INT
+#ifdef USE_DCT_INT_ENCODING
     for (int i = 0; i < 8; i++) 
         for (int j = 0; j < 8; j++) 
             data[i][j] /= 32.0;
 #endif
 }
-
-#define USE_INTS
-#define IDF_SF 8
-
-#define PI 3.14159
-
-#ifdef USE_INTS
-#define pix_t int32_t
-#else
-#define pix_t double
-#endif
 
 #define __check_rng(F) \
     for (int i = 8; i < 8; i++) {               \
@@ -299,7 +279,7 @@ void idct8(pix_t in[8], pix_t out[8], uint8_t w, uint8_t c) {
     g[6] =  (f[5] - f[6]); 
     g[7] =  (f[4] + f[7]); 
 
-#ifndef USE_INTS
+#ifndef USE_DCT_INT_DECODING
     // Stage 5
     f[0] =  g[0];    
     f[1] =  g[1]; 
@@ -395,7 +375,7 @@ void idct8(pix_t in[8], pix_t out[8], uint8_t w, uint8_t c) {
     out[7*w+c] =  (g[0] - g[7]) / 2; 
 }
 
-void idct_ii(uint8_t* buf, uint16_t width, pix_t data[8][8],
+void dct_decode(uint8_t* buf, uint16_t width, pix_t data[8][8],
 	const int xpos, const int ypos)
 {
     // This calculates the columwise (up/down) transform
@@ -408,6 +388,7 @@ void idct_ii(uint8_t* buf, uint16_t width, pix_t data[8][8],
     for (r = 0; r < 8; r++) 
         idct8((pix_t*) data + r * 8, &data[r][0], 1, 0); 
 
+    // Copy result to output buffer 
     for (int i = 0; i < 8; i++) 
         for (int j = 0; j < 8; j++) 
             buf[(ypos + i) * width + j + xpos] = (uint8_t) ((int) data[i][j]);
@@ -418,14 +399,9 @@ void idct_ii(uint8_t* buf, uint16_t width, pix_t data[8][8],
 void quantize(double dct_buf[8][8])
 {
 	int x,y;
-    return;
 	for (y=0; y<8; y++)
 	for (x=0; x<8; x++)
-	if (x > 3 || y > 3) dct_buf[y][x] = 0.0;
-}
-
-void huffman_encode(uint8_t* buf) {
-    
+	if (x > 4 || y > 4) dct_buf[y][x] = 0.0;
 }
 
 
@@ -439,50 +415,46 @@ int main()
 	load_tga(&tga, "lenna.tga");
     uint8_t* buf = (uint8_t*) malloc(tga.width * tga.height * sizeof(uint8_t)); 
 
-    for (i = 0; i < tga.height; i++) {
+    /*for (i = 0; i < tga.height; i++) {
         for (j = 0; j < tga.width; j++) {
             printf("%4d ", tga.image_data[i * tga.height + j]);
         }
         printf(";\n");
-    }
+    }*/
 
 	k = 0;
 	l = (tga.height / 8) * (tga.width / 8);
     int cof = 0;
     int bits = 0;
+    int32_t prev_dcval = 0;
+    int bytes_sent = 0; 
+    
 	for (j=0; j<tga.height/8; j++)
 	for (i=0; i<tga.width/8; i++)
 	{
-        dct_ii(&tga, dct_buf, i*8, j*8); 
+        dct_encode(&tga, dct_buf, i*8, j*8); 
     	quantize(dct_buf);
         for (int l = 0; l < 8; l++) {
             for (int m = 0; m < 8; m++) {
                 idct_buf[l][m] = (pix_t) dct_buf[l][m];
             }
         }
-	
-        // sending idct_buf over the wire...
-        for (int l = 0; l < 8; l++) {
-            for (int m = 0; m < 8; m++) {
-                pix_t v = idct_buf[l][m];
-                v = v < 0? -v : v;
-                if (v == 1) bits++;
-                if (v >= 2 && v <= 3) bits += 2; 
-                if (v >= 4 && v <= 7) bits += 3; 
-                if (v >= 8 && v <= 15) bits += 4;
-                if (v >= 16 && v <= 31) bits += 5; 
-                if (v >= 32 && v <= 63) bits += 6; 
-                if (v >= 64 && v <= 127) bits += 7; 
-            }
-        }
-	
-		idct_ii(buf, tga.width, idct_buf, i*8, j*8);
-		printf("processed %d/%d blocks.\r", ++k,l);
-		fflush(stdout);
+        uint8_t* sendbuf = malloc(512); 
+        uint16_t buflen = huff(prev_dcval, idct_buf, sendbuf); 
+        bytes_sent += buflen; 
+
+        // send sendbuf down the wire...
+
+        dehuff(prev_dcval, sendbuf, idct_buf);
+        prev_dcval = idct_buf[0][0]; 
+
+		dct_decode(buf, tga.width, idct_buf, i*8, j*8);
+		printf("processed %d/%d blocks.\n", ++k,l);
 	}
-    printf("%d non-zero coefficients", cof);
-    printf("%d data RLE bytes", bits / 8); 
-	printf("\n");
+    printf("Total Bytes Transmitted: %d\n", bytes_sent);
+    printf("Raw Image Size: %d\n", (tga.width * tga.height));
+    printf("Compression Factor: %0.2f\n", (float) bytes_sent / (tga.width * tga.height));
+
 
 	DONTFAIL( tga_write_mono("out.tga", buf,
 		tga.width, tga.height) );

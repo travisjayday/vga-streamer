@@ -5,7 +5,7 @@ int test_block(int32_t block[8][8]) {
     uint16_t* codebuf = malloc(28 * 8 * sizeof(uint16_t));
     int32_t* outb = malloc(8 * 8 * sizeof(int32_t));
     huff(prevdc, block, codebuf);
-    dehuff(prevdc, codebuf, outb, 0, 8);
+    dehuff(prevdc, codebuf, outb);
     printf("\n");
     for (int r = 0; r < 8; r++) {
         for (int c = 0; c < 8; c++) {
