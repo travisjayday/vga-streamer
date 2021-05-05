@@ -1,10 +1,14 @@
 #include <stdlib.h>
 
 int test_block(int32_t block[8][8]) {
-    int32_t prevdc = 34;
+    int32_t prevdc = 0;
     uint16_t* codebuf = malloc(28 * 8 * sizeof(uint16_t));
     int32_t* outb = malloc(8 * 8 * sizeof(int32_t));
-    huff(prevdc, block, codebuf);
+    huff(prevdc, block, codebuf, 0);
+    printf("Encoded as: ");
+    for (int i =0; i < 10; i++) {
+        printf("0x%x ", codebuf[i]);
+    }
     dehuff(prevdc, codebuf, outb);
     printf("\n");
     for (int r = 0; r < 8; r++) {
@@ -23,6 +27,16 @@ int test_block(int32_t block[8][8]) {
 
 int test_huff() {
     /* Note: AC values can be within -1023...1023 inclusive range */
+    int32_t block0[8][8] = {
+630,2,0,1,0,0,0,0,
+4,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+    };
     int32_t block1[8][8] = {
         57, 20, 30, 0, 0, 0, 0, 0, 
         10, -3, -120, 1, 0, 0, 0, 1,
@@ -101,6 +115,8 @@ int test_huff() {
     };
 
 
+    test_block(block0);
+    return;
     test_block(block1);
     test_block(block2);
     test_block(block3);

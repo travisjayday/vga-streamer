@@ -7,9 +7,12 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 
 #define MAX 80
-#define PORT 8080
+#define PORT 50007
 #define SA struct sockaddr
   
 // Function designed for chat between client and server.
@@ -19,6 +22,7 @@ void func(int sockfd)
     int n;
     // infinite loop for chat
     for (;;) {
+        //printf("SEND");
         uint32_t r = rand();
         memset(buf, r, MAX);
         write(sockfd, buf, sizeof(buf));
@@ -39,6 +43,13 @@ int main()
     }
     else
         printf("Socket successfully created..\n");
+
+    int yes = 1;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
+        perror("setsockopt");
+        exit(1);
+    }
+
     bzero(&servaddr, sizeof(servaddr));
   
     // assign IP, PORT

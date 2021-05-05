@@ -184,14 +184,14 @@ void dct8(double b[8], double out[8], uint8_t w, uint8_t c) {
 }
 
 
-void dct_encode(const tga_image *tga, double data[8][8],
+void dct_encode(uint8_t* imdata, uint32_t width, double data[8][8],
 	const int xpos, const int ypos)
 {
     // block = input block. Do not modify.
     double block[8][8] = {};
     for (int i = 0; i < 8; i++) 
         for (int j = 0; j < 8; j++) 
-            block[i][j] = tga->image_data[(ypos + i) * tga->width + j + xpos];
+            block[i][j] = imdata[(ypos + i) * width + j + xpos];
 
     double out[8] = {};
 
@@ -206,7 +206,7 @@ void dct_encode(const tga_image *tga, double data[8][8],
     // This calculates the columwise (up/down) transform
     uint8_t c = 0; 
     for (c = 0; c < 8; c++) {
-        dct8(data, out, 8, c); 
+        dct8((double*) data, out, 8, c); 
         for (i = 0; i < 8; i++) 
             data[i][c] = out[i];
     }
@@ -381,7 +381,7 @@ void dct_decode(uint8_t* buf, uint16_t width, pix_t data[8][8],
     // This calculates the columwise (up/down) transform
     uint8_t c = 0; 
     for (c = 0; c < 8; c++) 
-        idct8(data, data, 8, c); 
+        idct8((int32_t*) data, (int32_t*) data, 8, c); 
 
     // This calculates the rowise (left/right) transforms
     uint8_t r = 0; 
@@ -404,61 +404,78 @@ void quantize(double dct_buf[8][8])
 	if (x > 4 || y > 4) dct_buf[y][x] = 0.0;
 }
 
-
-int main()
-{
-	tga_image tga;
+uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uint32_t height) {
 	double dct_buf[8][8];
 	pix_t idct_buf[8][8];
-	int i, j, k, l;
-
-	load_tga(&tga, "lenna.tga");
-    uint8_t* buf = (uint8_t*) malloc(tga.width * tga.height * sizeof(uint8_t)); 
-
-    /*for (i = 0; i < tga.height; i++) {
-        for (j = 0; j < tga.width; j++) {
-            printf("%4d ", tga.image_data[i * tga.height + j]);
-        }
-        printf(";\n");
-    }*/
-
-	k = 0;
-	l = (tga.height / 8) * (tga.width / 8);
-    int cof = 0;
-    int bits = 0;
+    int c, r;
+	
     int32_t prev_dcval = 0;
-    int bytes_sent = 0; 
-    
-	for (j=0; j<tga.height/8; j++)
-	for (i=0; i<tga.width/8; i++)
+    uint8_t* encoded_data = calloc(1, width * height * sizeof(uint16_t));
+    uint32_t encoded_data_n = 0; 
+ 
+    // compress the image
+	for (r=0; r<height/8; r++)
+	for (c=0; c<width/8; c++)
 	{
-        dct_encode(&tga, dct_buf, i*8, j*8); 
+        dct_encode(image, width,  dct_buf, c*8, r*8); 
     	quantize(dct_buf);
         for (int l = 0; l < 8; l++) {
             for (int m = 0; m < 8; m++) {
                 idct_buf[l][m] = (pix_t) dct_buf[l][m];
             }
         }
-        uint8_t* sendbuf = malloc(512); 
-        uint16_t buflen = huff(prev_dcval, idct_buf, sendbuf); 
-        bytes_sent += buflen; 
-
-        // send sendbuf down the wire...
-
-        dehuff(prev_dcval, sendbuf, idct_buf);
-        prev_dcval = idct_buf[0][0]; 
-
-		dct_decode(buf, tga.width, idct_buf, i*8, j*8);
-		printf("processed %d/%d blocks.\n", ++k,l);
+        encoded_data_n += huff(prev_dcval, idct_buf, encoded_data + encoded_data_n); 
+        prev_dcval = idct_buf[0][0];
 	}
-    printf("Total Bytes Transmitted: %d\n", bytes_sent);
+
+    *outsize = encoded_data_n;
+    return encoded_data; 
+}
+
+void 
+decompress_channel(uint8_t* dest, uint8_t* compressed_image, uint32_t width, uint32_t height) 
+{
+	pix_t idct_buf[8][8];
+    uint32_t prev_dcval = 0; 
+    uint32_t encoded_data_i = 0; 
+    int r, c; 
+    for (r = 0; r < height / 8; r++) 
+    for (c = 0; c < width / 8; c++) {
+        encoded_data_i += dehuff(prev_dcval, compressed_image + encoded_data_i, idct_buf);
+        prev_dcval = idct_buf[0][0]; 
+		dct_decode(dest, width, idct_buf, c*8, r*8);
+
+    }
+}
+
+
+int main()
+{
+    // load image from disk 
+	tga_image tga;
+	load_tga(&tga, "lenna.tga");
+
+    // compress iamge 
+    uint32_t encoded_data_n = 0;
+    uint8_t* compressed_image = compress_channel(&encoded_data_n, tga.image_data, tga.width, tga.height); 
+   
+    // send encoded_data down the wire...
+    printf("Total compressed size: %d bytes\n", encoded_data_n); 
     printf("Raw Image Size: %d\n", (tga.width * tga.height));
-    printf("Compression Factor: %0.2f\n", (float) bytes_sent / (tga.width * tga.height));
+    printf("Compression Factor: %0.2f\n", (float) encoded_data_n / (tga.width * tga.height));
 
+    // decompress image
+    uint8_t* buf = (uint8_t*) calloc(1, tga.width * tga.height * sizeof(uint8_t)); 
+    decompress_channel(buf, compressed_image, tga.width, tga.height);
 
-	DONTFAIL( tga_write_mono("out.tga", buf,
-		tga.width, tga.height) );
+    // decoded the image 
+	DONTFAIL( tga_write_mono("out.tga", buf, tga.width, tga.height) );
 
+    // free heap 
 	tga_free_buffers(&tga);
-	return EXIT_SUCCESS;
+    free(buf);
+    free(compressed_image);
+    
+    // exit 
+	return 0;
 }

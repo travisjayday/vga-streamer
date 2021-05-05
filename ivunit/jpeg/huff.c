@@ -357,7 +357,7 @@ huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* buf8)
         c = col_lin2diag[i];  
         parse_syms(b[r][c], &code_i, &amp_i); 
     }
-    *code_i = 0x00; // terminating sym
+    //*code_i = 0x00; // terminating sym
 
     /* The following converts intermediate codes to huffman codewords */
 
@@ -389,11 +389,12 @@ huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* buf8)
             bits_left = add_bits2buf(bits_left, &buf, amp, size);
         }
     }
-    // Round up the last 16bit word
-    if (bits_left != 0) buf++;
+    free(codes);
+    free(amps);
+
 
     // Return sizeof buf buffer (in bytes). 
-    return (char*) buf - (char*) buf_start; 
+    return (buf - buf_start +1) * 2; 
 }
 
    
@@ -403,20 +404,26 @@ huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* buf8)
  * @prev_dcval: The previous DC value that came before this block. 
  * @buf: The 16bit word buffer that holds the huffman encoded bitstring. 
  * @outb: The 8x8 output array to which the decoded DCT will be written to. 
+ *
+ * Returns the amount of data in bytes written to buf. 
  */
-void 
-dehuff(int32_t prev_dcval, uint16_t* buf, int32_t outb[8][8]) 
+uint32_t
+dehuff(int32_t prev_dcval, uint8_t* buf8, int32_t outb[8][8]) 
 {
+    uint16_t* buf = (uint16_t*) buf8; 
     uint8_t bitoffset = 0; 
-    uint16_t word; 
-    int len; 
-    int idx;
-    int rl; 
+    uint16_t word = 0; 
+    int len = 0; 
+    int idx = 0;
+    int rl = 0; 
     int size; 
-    int32_t amp; 
+    int32_t amp = 0; 
     uint8_t lin_idx = 1; 
     uint8_t dig_row;
     uint8_t dig_col;
+    uint16_t* buf_s = buf;
+
+    memset(outb, 0, 64 * sizeof(int32_t)); 
 
     // Read DC codeword
     bitoffset = get_word_from_buf(&buf, &word, bitoffset);
@@ -428,7 +435,7 @@ dehuff(int32_t prev_dcval, uint16_t* buf, int32_t outb[8][8])
     bitoffset += size; 
     outb[0][0] = prev_dcval + vli_to_amp(word, size); 
        
-    int codes_n = 128;
+    int codes_n = 127;
     while (codes_n-- != 0) {
         // Get huff codeword
         bitoffset = get_word_from_buf(&buf, &word, bitoffset);
@@ -458,15 +465,18 @@ dehuff(int32_t prev_dcval, uint16_t* buf, int32_t outb[8][8])
         // the amplitude following this runlength. Skip RL indexes
         // and then place amplitude. 
         lin_idx += rl; 
+        if (lin_idx >= 64) break;
         dig_row = row_lin2diag[lin_idx];  
         dig_col = col_lin2diag[lin_idx];  
         outb[dig_row][dig_col] = amp;  
         lin_idx++;
     }
+    if (bitoffset >= 16) buf++; 
+    return (buf - buf_s + 1) * 2; 
 }
 
 int _main() {
- //   test_huff();
+    //test_huff();
 }
 
 //#include "huff-test.c"

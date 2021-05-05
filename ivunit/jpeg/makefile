@@ -1,9 +1,9 @@
 target: 
-	gcc jpg.c targa.c -lm 
+	gcc jpg.c targa.c -g -lm 
 	./a.out
 
 huff:
-	gcc -g huff.c
+	gcc -g -g huff.c
 	./a.out
 
 
