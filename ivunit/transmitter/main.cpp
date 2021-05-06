@@ -2,13 +2,16 @@
 #include "screenshot.cpp"
 #include <iostream>
 #include "stdio.h"
-#include "ycrcb_decode.c"
-#include "jpg.h"
 
 #define WIDTH 128
 #define HEIGHT 128
+#define NUM_COLORS 32
 #define SUBSAMPLE_CHROMA 4
 
+#define COLOR_SCALER (256/NUM_COLORS)
+
+#include "ycrcb_decode.c"
+#include "jpg.h"
 
 int main()
 {
@@ -68,7 +71,7 @@ int main()
         ycrcb[0] += 0.5f;
         ycrcb[1] += 0.5f;
         cv::merge(ycrcb, img);
-        img.convertTo(img, CV_8UC3, 255); 
+        img.convertTo(img, CV_8UC3, NUM_COLORS); 
         cv::split(img, ycrcb);
         cv::resize(ycrcb[1], ycrcb[1], chrom_size);
         cv::resize(ycrcb[0], ycrcb[0], chrom_size);
@@ -112,6 +115,9 @@ int main()
 
         cv::imshow("decompressed", out);
         cv::imshow("original", bgr);
+
+        cv::resize(out, out, cv::Size(640, 640));
+        cv::imshow("upscaled", out);
 
         //cv::imshow("outy", outy);
         //cv::imshow("outcr", outcr);

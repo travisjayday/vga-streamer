@@ -21,8 +21,8 @@ dec_ycrcb_blk(uint8_t* y_blk, uint8_t* cr_blk, uint8_t* cb_blk,
     for (int r = 0; r < 8; r++) {
         for (int c = 0; c < 8; c++) {
             y  = y_blk[r * width + c];
-            cr = cr_blk[(r/subsampl_cr * width/subsampl_cr) + c / subsampl_cr] - 127; 
-            cb = cb_blk[(r/subsampl_cr * width/subsampl_cr) + c / subsampl_cr] - 127; 
+            cr = cr_blk[(r/subsampl_cr * width/subsampl_cr) + c / subsampl_cr] - (256 / 2) / COLOR_SCALER; 
+            cb = cb_blk[(r/subsampl_cr * width/subsampl_cr) + c / subsampl_cr] - (256 / 2) / COLOR_SCALER; 
 
 #ifdef USE_FLOAT_COLORMAT
             float redf = 1 * y +   0      * cb +  1.5748 * cr; 
@@ -35,9 +35,9 @@ dec_ycrcb_blk(uint8_t* y_blk, uint8_t* cr_blk, uint8_t* cb_blk,
             int16_t blu = ((1<<21) * y + 3891475 * cb + 0       * cr) >> 21;
 #endif
 
-            rgb_out[r * width + c].b = CLAMP_F(red);
-            rgb_out[r * width + c].g = CLAMP_F(grn);
-            rgb_out[r * width + c].r = CLAMP_F(blu);
+            rgb_out[r * width + c].b = CLAMP_F(red) * COLOR_SCALER;
+            rgb_out[r * width + c].g = CLAMP_F(grn) * COLOR_SCALER;
+            rgb_out[r * width + c].r = CLAMP_F(blu) * COLOR_SCALER;
         }
     }  
 }
