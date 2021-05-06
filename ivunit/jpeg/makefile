@@ -1,5 +1,5 @@
 target: 
-	gcc jpg.c targa.c -g -lm 
+	gcc jpg.c targa.c -g -lm -DTEST_JPEG
 	./a.out
 
 huff:

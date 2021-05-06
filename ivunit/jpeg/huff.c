@@ -160,6 +160,7 @@ int dc_size_from_codeword(uint16_t b, int* len) {
             ==0b1111111000000000){*len= 8; return 10; }
     if    ((b&0b1111111110000000)  
             ==0b1111111100000000){*len= 9; return 11; }
+    return -1;
 }
 
 /*
@@ -335,8 +336,8 @@ huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* buf8)
 {
     uint16_t* buf = (uint16_t*) buf8; 
     uint16_t* buf_start = buf; 
-    uint8_t* codes = calloc(128, 1); 
-    uint16_t* amps = calloc(128, 1); 
+    uint8_t* codes = (uint8_t*) calloc(128, 1); 
+    uint16_t* amps = (uint16_t*) calloc(128, 1); 
     uint8_t* code_i = codes; 
     uint16_t* amp_i = amps; 
 
@@ -475,8 +476,10 @@ dehuff(int32_t prev_dcval, uint8_t* buf8, int32_t outb[8][8])
     return (buf - buf_s + 1) * 2; 
 }
 
-int _main() {
+#ifdef JPEG_TEST
+void _main() {
     //test_huff();
 }
+#endif
 
 //#include "huff-test.c"

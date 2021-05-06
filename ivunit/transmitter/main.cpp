@@ -3,9 +3,12 @@
 #include <iostream>
 #include "stdio.h"
 #include "ycrcb_decode.c"
+#include "jpg.h"
 
-#define WIDTH 256
-#define HEIGHT 256
+#define WIDTH 128
+#define HEIGHT 128
+#define SUBSAMPLE_CHROMA 4
+
 
 int main()
 {
@@ -38,47 +41,81 @@ int main()
 
     struct pix* pixbuf = (struct pix*) malloc( WIDTH * HEIGHT * sizeof(struct pix));
 
-    int subsample_chrom = 8; 
-    cv::Size chrom_size(HEIGHT / subsample_chrom, WIDTH / subsample_chrom);
+    int subsample_chrom = SUBSAMPLE_CHROMA; 
+    const int CHROM_WIDTH = WIDTH / subsample_chrom;
+    const int CHROM_HEIGHT = HEIGHT / subsample_chrom;
+
+    cv::Size chrom_size(CHROM_HEIGHT, CHROM_WIDTH);
+    uint8_t* decoded_y  = (uint8_t*) calloc(1, WIDTH * HEIGHT * sizeof(uint8_t*));
+    uint8_t* decoded_cr = (uint8_t*) calloc(1, WIDTH * HEIGHT * sizeof(uint8_t*));
+    uint8_t* decoded_cb = (uint8_t*) calloc(1, WIDTH * HEIGHT * sizeof(uint8_t*));
 
     while(true) 
     {
+        /* Capture screen */
         screen(bgr);
 
+        /* Convert Image to YCrCB */
         cv::cvtColor(bgr, fimg, cv::COLOR_BGRA2BGR);
         fimg.convertTo(fimg, CV_32FC3); 
         tmp = fimg.reshape(1, HEIGHT*WIDTH);
         tmp = tmp*M;
         img = tmp.reshape(3, HEIGHT);
-
         img.convertTo(img, CV_32FC3, 1/255.0);
 
+        /* Downsample Chrome Channels */
         cv::split(img, ycrcb);
         ycrcb[0] += 0.5f;
         ycrcb[1] += 0.5f;
         cv::merge(ycrcb, img);
-
         img.convertTo(img, CV_8UC3, 255); 
-
         cv::split(img, ycrcb);
-
         cv::resize(ycrcb[1], ycrcb[1], chrom_size);
         cv::resize(ycrcb[0], ycrcb[0], chrom_size);
 
+        /* Transmit YCrCb */
         y  = ycrcb[2].data; 
         cb = ycrcb[1].data; 
         cr = ycrcb[0].data;
 
-        cv::imshow("0", ycrcb[0]);
+        /*cv::imshow("0", ycrcb[0]);
         cv::imshow("1", ycrcb[1]);
-        cv::imshow("2", ycrcb[2]);
+        cv::imshow("2", ycrcb[2]);*/
 
-        dec_ycrcb(y, cb, cr, subsample_chrom, pixbuf, WIDTH, HEIGHT);
+        uint32_t comp_y_n = 0;
+        uint32_t comp_cr_n = 0;
+        uint32_t comp_cb_n = 0;
+        uint8_t* comp_y  = compress_channel(&comp_y_n, y, WIDTH, HEIGHT);
+        uint8_t* comp_cb = compress_channel(&comp_cb_n, cb, CHROM_WIDTH, CHROM_HEIGHT);
+        uint8_t* comp_cr = compress_channel(&comp_cr_n, cr, CHROM_WIDTH, CHROM_HEIGHT);
+        
+        // compressed_image goes down the wire...
+        uint32_t total_size = comp_y_n + comp_cr_n + comp_cb_n; 
+        printf("Original size: %d\n", WIDTH * HEIGHT * 3); 
+        printf("Compressed size: %d\n", total_size);
+        printf("Compression factor: %.2f\n", (float) total_size / (WIDTH * HEIGHT * 3));
+        printf("\e[1;1H\e[2J");
 
+        /* Decompress image data */
+        decompress_channel(decoded_y, comp_y, WIDTH, HEIGHT);
+        decompress_channel(decoded_cb, comp_cb, CHROM_WIDTH, CHROM_HEIGHT);
+        decompress_channel(decoded_cr, comp_cr, CHROM_WIDTH, CHROM_HEIGHT);
+
+        /* Decode YCrCB */
+        dec_ycrcb(decoded_y, decoded_cb, decoded_cr, subsample_chrom, pixbuf, WIDTH, HEIGHT);
+
+        /* Display result */
         cv::Mat out(HEIGHT, WIDTH, CV_8UC3, (uchar*) pixbuf);
+        cv::Mat outy(HEIGHT, WIDTH, CV_8UC1, (uchar*) decoded_y);
+        cv::Mat outcr(CHROM_HEIGHT, CHROM_WIDTH, CV_8UC1, (uchar*) decoded_cr);
+        cv::Mat outcb(CHROM_HEIGHT, CHROM_WIDTH, CV_8UC1, (uchar*) decoded_cb);
 
-        cv::imshow("win", out);
-        cv::imshow("orig", bgr);
+        cv::imshow("decompressed", out);
+        cv::imshow("original", bgr);
+
+        //cv::imshow("outy", outy);
+        //cv::imshow("outcr", outcr);
+        //cv::imshow("outcb", outcb);
         
 
         char k = cv::waitKey(1);

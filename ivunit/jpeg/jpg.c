@@ -1,28 +1,18 @@
-/* DCT and IDCT - listing 1
- * Copyright (c) 2001 Emil Mikulic.
- * http://unix4lyfe.org/dct/
- *
- * Feel free to do whatever you like with this code.
- * Feel free to credit me.
- */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include "targa.h"
-#include "string.h"
+#include "jpg.h"
 #include "huff.c"
 
+#ifdef USE_DCT_INT_DECODING
+#define pix_t int32_t
+#else
+#define pix_t double
+#endif
 
-typedef uint8_t byte;
-
-#define pixel(i,x,y) ( (i)->image_data[((y)*( (i)->width ))+(x)] )
-
+/* For testing TGA files */
+#ifdef TEST_JPEG 
+#include "targa.h"
 #define DONTFAIL(x) do { tga_result res;  if ((res=x) != TGA_NOERR) { \
 	printf("Targa error: %s\n", tga_error(res)); \
 	exit(EXIT_FAILURE); } } while(0)
-
-
 void 
 load_tga(tga_image *tga, const char *fn)
 {
@@ -41,31 +31,7 @@ load_tga(tga_image *tga, const char *fn)
 		exit(EXIT_FAILURE);
 	}
 }
-
-
-
-/* Define if shuold encode with integer arithemtic instead of double */
-//#define USE_DCT_INT_ENCODING      
-
-/* Set to 1 if should normalize the DFT */
-#define NORMALIZE_DFT 0
-
-/* Define if should decode (IDCT) with integer arithemtic instead of double */
-#define USE_DCT_INT_DECODING
-
-/* Scale factor used to scale up rational constants in integer IDCT */
-#define IDF_SF 8
-
-
-#define PI 3.14159
-
-#ifdef USE_DCT_INT_DECODING
-#define pix_t int32_t
-#else
-#define pix_t double
 #endif
-
-
 
 /* 
  * w, c: width of block. For columnwise DFT, use w=8, c=colum
@@ -399,6 +365,7 @@ void dct_decode(uint8_t* buf, uint16_t width, pix_t data[8][8],
 void quantize(double dct_buf[8][8])
 {
 	int x,y;
+    return; 
 	for (y=0; y<8; y++)
 	for (x=0; x<8; x++)
 	if (x > 4 || y > 4) dct_buf[y][x] = 0.0;
@@ -410,7 +377,7 @@ uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uin
     int c, r;
 	
     int32_t prev_dcval = 0;
-    uint8_t* encoded_data = calloc(1, width * height * sizeof(uint16_t));
+    uint8_t* encoded_data = (uint8_t*) calloc(1, width * height * sizeof(uint16_t));
     uint32_t encoded_data_n = 0; 
  
     // compress the image
@@ -449,6 +416,7 @@ decompress_channel(uint8_t* dest, uint8_t* compressed_image, uint32_t width, uin
 }
 
 
+#ifdef TEST_JPEG
 int main()
 {
     // load image from disk 
@@ -479,3 +447,4 @@ int main()
     // exit 
 	return 0;
 }
+#endif 
