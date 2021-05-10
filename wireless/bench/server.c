@@ -10,28 +10,35 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <unistd.h>
 
-#define MAX 80
-#define PORT 50007
+#define MAX 6096
+#define PORT 8080
 #define SA struct sockaddr
   
 // Function designed for chat between client and server.
 void func(int sockfd)
 {
     char buf[MAX];
-    int n;
+
     // infinite loop for chat
+    uint64_t i = 1; 
+    char* sig = "FRSTART";
     for (;;) {
-        //printf("SEND");
-        uint32_t r = rand();
-        memset(buf, r, MAX);
+        uint8_t r = i;
+        uint16_t size = MAX; 
+        memcpy(buf, sig, sizeof(sig)); 
+        memcpy(buf + sizeof(sig), &size, sizeof(uint16_t)); 
+        memset(buf + sizeof(sig) + sizeof(uint16_t), r, MAX - sizeof(sig) + sizeof(uint16_t));
         write(sockfd, buf, sizeof(buf));
+        i++;
+        usleep(32 * 1000); 
     }
 }
-  
-// Driver function
+ // Driver function
 int main()
 {
+
     int sockfd, connfd, len;
     struct sockaddr_in servaddr, cli;
   
@@ -88,4 +95,4 @@ int main()
   
     // After chatting close the socket
     close(sockfd);
-}
+} 

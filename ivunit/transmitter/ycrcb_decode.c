@@ -35,9 +35,9 @@ dec_ycrcb_blk(uint8_t* y_blk, uint8_t* cr_blk, uint8_t* cb_blk,
             int16_t blu = ((1<<21) * y + 3891475 * cb + 0       * cr) >> 21;
 #endif
 
-            rgb_out[r * width + c].b = CLAMP_F(red) * COLOR_SCALER;
-            rgb_out[r * width + c].g = CLAMP_F(grn) * COLOR_SCALER;
-            rgb_out[r * width + c].r = CLAMP_F(blu) * COLOR_SCALER;
+            rgb_out[r * width + c].b = CLAMP_F(red * COLOR_SCALER);
+            rgb_out[r * width + c].g = CLAMP_F(grn * COLOR_SCALER);
+            rgb_out[r * width + c].r = CLAMP_F(blu * COLOR_SCALER);
         }
     }  
 }

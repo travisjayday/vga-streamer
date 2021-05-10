@@ -21,8 +21,14 @@
 
 #define PI 3.14159
 
-extern "C" uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uint32_t height);
+#ifndef TEST_JPEG
+extern "C" 
+#endif
+uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uint32_t height);
 
-extern "C" void  decompress_channel(uint8_t* dest, uint8_t* compressed_image, uint32_t width, uint32_t height);
+#ifndef TEST_JPEG
+extern "C" 
+#endif
+uint32_t decompress_channel(uint8_t* dest, uint8_t* compressed_image, uint32_t width, uint32_t height);
 
 #endif

@@ -356,8 +356,10 @@ void dct_decode(uint8_t* buf, uint16_t width, pix_t data[8][8],
 
     // Copy result to output buffer 
     for (int i = 0; i < 8; i++) 
-        for (int j = 0; j < 8; j++) 
-            buf[(ypos + i) * width + j + xpos] = (uint8_t) ((int) data[i][j]);
+        for (int j = 0; j < 8; j++) {
+            int32_t d = data[i][j];
+            buf[(ypos + i) * width + j + xpos] = d < 0? 0 : d > 255? 255 : d;
+        }
 }
 
 
@@ -399,7 +401,7 @@ uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uin
     return encoded_data; 
 }
 
-void 
+uint32_t
 decompress_channel(uint8_t* dest, uint8_t* compressed_image, uint32_t width, uint32_t height) 
 {
 	pix_t idct_buf[8][8];
@@ -411,17 +413,16 @@ decompress_channel(uint8_t* dest, uint8_t* compressed_image, uint32_t width, uin
         encoded_data_i += dehuff(prev_dcval, compressed_image + encoded_data_i, idct_buf);
         prev_dcval = idct_buf[0][0]; 
 		dct_decode(dest, width, idct_buf, c*8, r*8);
-
     }
+    return encoded_data_i; 
 }
-
 
 #ifdef TEST_JPEG
 int main()
 {
     // load image from disk 
 	tga_image tga;
-	load_tga(&tga, "lenna.tga");
+	load_tga(&tga, "test.tga");
 
     // compress iamge 
     uint32_t encoded_data_n = 0;
