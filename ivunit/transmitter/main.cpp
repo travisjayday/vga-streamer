@@ -3,6 +3,24 @@
 #include <iostream>
 #include "stdio.h"
 #include <time.h>
+#include "sys/time.h"
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <stdio.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+
+#define MAX 6096
+#define PORT 8080
+#define SA struct sockaddr
 
 #define WIDTH 128
 #define HEIGHT 128
@@ -19,9 +37,9 @@
 unsigned long 
 micros()
 {
-    struct timespec ts;
-    timespec_get(&ts, TIME_UTC);
-    return 1000000 * tv.tv_sec + tv.tv_usec;
+    struct timeval tv;
+    gettimeofday(&tv,NULL);
+    return (1000000*tv.tv_sec) + tv.tv_usec;
 }
 
 int service_client(int sockfd)
@@ -64,6 +82,7 @@ int service_client(int sockfd)
     uint8_t* decoded_cr = (uint8_t*) calloc(1, WIDTH * HEIGHT * sizeof(uint8_t*));
     uint8_t* decoded_cb = (uint8_t*) calloc(1, WIDTH * HEIGHT * sizeof(uint8_t*));
     unsigned long last_fr_time = micros();
+    uint8_t* sendbuf = (uint8_t*) malloc(256 * 256); 
 
     while(true) 
     {
@@ -108,15 +127,6 @@ int service_client(int sockfd)
         
         // compressed_image goes down the wire...
         uint32_t total_size = comp_y_n + comp_cr_n + comp_cb_n; 
-        printf("Original size: %d\n", WIDTH * HEIGHT * 3); 
-        printf("Compressed size: %d\n", total_size);
-        printf("Compression factor: %.2f\n", (float) total_size / (WIDTH * HEIGHT * 3));
-        printf("Sent bytes:");
-        for (int i = 0; i < 10; i++) printf("0x%x", comp_y[i]); 
-        printf(" ... ");
-        for (int i = comp_y_n - 10; i < comp_y_n; i++) printf("0x%x", comp_y[i]); 
-        printf("\n");
-        printf("\e[1;1H\e[2J");
 
 #if LOCAL_SHOW
         /* Decompress image data */
@@ -134,24 +144,46 @@ int service_client(int sockfd)
         cv::Mat out(HEIGHT, WIDTH, CV_8UC3, (uchar*) pixbuf);
 
         cv::imshow("decompressed", out);
-        cv::imshow("original", bgr);
 
         cv::resize(out, out, cv::Size(640, 640));
         cv::imshow("upscaled", out);
 #endif
+        cv::imshow("original", bgr);
 
+        //cv::imshow("outy", outy);
+        char k = cv::waitKey(1);
         /*
-        cv::imshow("outy", outy);
         cv::imshow("outcr", outcr);
         cv::imshow("outcb", outcb);
 
-        char k = cv::waitKey(1);
         if (k == 'q') break;
         */
 
-        while (micros() - last_fr_time >= 16000) {
+        char* sig = "FRSTART";
+        uint16_t size = comp_y_n; 
+        int preamble_size = strlen(sig) + 1;
+        int preamble_size = strlen(sig) + 1 + sizeof(uint16_t);
+        memcpy(sendbuf, sig, strlen(sig) + 1);
+        memcpy(sendbuf + strlen(sig) + 1, &size, sizeof(uint16_t));
+        memcpy(sendbuf + strlen(sig) + 1 + sizeof(uint16_t), comp_y, comp_y_n);
+        memcpy(sendbuf + strlen(sig) + 1 + sizeof(uint16_t) + compy_y_n, comp_y, comp_y_n);
+
+        while (micros() - last_fr_time >= 4 * 32000) {
             last_fr_time = micros();
-            write(sockfd, comp_y);
+            write(sockfd, sendbuf, comp_y_n + strlen(sig) + 1 + sizeof(uint16_t));
+
+            printf("Original size: %d\n", WIDTH * HEIGHT * 3); 
+            printf("Compressed size: %d\n", total_size);
+            printf("Compression factor: %.2f\n", (float) total_size / (WIDTH * HEIGHT * 3));
+            printf("Sent bytes:");
+            for (int i = 0; i < 10; i++) printf("0x%x", comp_y[i]); 
+            printf(" ... ");
+            for (int i = comp_y_n - 10; i < comp_y_n; i++) printf("0x%x", comp_y[i]); 
+            int sum = 0;
+            for (int i = 0; i < comp_y_n + strlen(sig) + 1 + sizeof(uint16_t); i++) 
+                sum += sendbuf[i];
+            printf("Frame huffman coded DCT Checksum: %d\n", sum); 
+            printf("\n");
         }
     }
 }
@@ -160,8 +192,9 @@ int service_client(int sockfd)
 int main()
 {
 
-    int sockfd, connfd, len;
+    int sockfd, connfd;
     struct sockaddr_in servaddr, cli;
+    socklen_t len;
 
     // socket create and verification
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
