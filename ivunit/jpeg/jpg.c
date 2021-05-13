@@ -1,9 +1,5 @@
 #include "jpg.h"
 
-#define JPEC_C
-#include "huff.c"
-#undef JPEG_C
-
 #ifdef USE_DCT_INT_DECODING
 #define pix_t int32_t
 #else
@@ -11,7 +7,7 @@
 #endif
 
 /* For testing TGA files */
-#ifdef TEST_JPEG 
+#if BENCH == 1
 #include "targa.h"
 #define DONTFAIL(x) do { tga_result res;  if ((res=x) != TGA_NOERR) { \
 	printf("Targa error: %s\n", tga_error(res)); \
