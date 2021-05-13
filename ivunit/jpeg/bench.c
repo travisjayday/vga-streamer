@@ -16,12 +16,22 @@ int main() {
 	load_tga(&tga, "test.tga");
 
     uint8_t* buf = (uint8_t*) calloc(1, tga.width * tga.height * sizeof(uint8_t)); 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     uint32_t start_t = micros();
+    uint8_t* compressed_image;
+    uint32_t encoded_data_n = 0;
     for (int i = 0; i < 1000; i++) {
         // compress iamge 
-        uint32_t encoded_data_n = 0;
-        uint8_t* compressed_image = compress_channel(&encoded_data_n, tga.image_data, tga.width, tga.height); 
+        encoded_data_n = 0;
+        compressed_image = compress_channel(&encoded_data_n, tga.image_data, tga.width, tga.height); 
+
+        if (i == 0) {
+            for (int j = 0; j < encoded_data_n; j++) 
+                printf("0x%x,", compressed_image[j]);
+        }
        
         // decompress image
         decompress_channel(buf, compressed_image, tga.width, tga.height);

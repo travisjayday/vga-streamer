@@ -372,7 +372,7 @@ void quantize(double dct_buf[8][8])
     return; 
 	for (y=0; y<8; y++)
 	for (x=0; x<8; x++)
-	if (x > 4 || y > 4) dct_buf[y][x] = 0.0;
+	if (x > 7 || y > 7) dct_buf[y][x] = 0.0;
 }
 
 uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uint32_t height) {
@@ -388,7 +388,7 @@ uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uin
 	for (r=0; r<height/8; r++)
 	for (c=0; c<width/8; c++)
 	{
-        dct_encode(image, width,  dct_buf, c*8, r*8); 
+        dct_encode(image, width, dct_buf, c*8, r*8); 
     	quantize(dct_buf);
         for (int l = 0; l < 8; l++) {
             for (int m = 0; m < 8; m++) {
@@ -410,11 +410,12 @@ decompress_channel(uint8_t* dest, uint8_t* compressed_image, uint32_t width, uin
     uint32_t prev_dcval = 0; 
     uint32_t encoded_data_i = 0; 
     int r, c; 
-    for (r = 0; r < height / 8; r++) 
-    for (c = 0; c < width / 8; c++) {
-        encoded_data_i += dehuff(prev_dcval, compressed_image + encoded_data_i, idct_buf);
-        prev_dcval = idct_buf[0][0]; 
-		dct_decode(dest, width, idct_buf, c*8, r*8);
+    for (r = 0; r < height / 8; r++) {
+        for (c = 0; c < width / 8; c++) {
+            encoded_data_i += dehuff(prev_dcval, compressed_image + encoded_data_i, idct_buf);
+            prev_dcval = idct_buf[0][0]; 
+            dct_decode(dest, width, idct_buf, c*8, r*8);
+        }
     }
     return encoded_data_i; 
 }

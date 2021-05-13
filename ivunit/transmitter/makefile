@@ -7,4 +7,5 @@ build=build
 main:
 	g++ screenshot.cpp -c -o $(build)/screenshot.o $(include) $(libs) $(opt) 
 	g++ ../jpeg/jpg.c -c -o $(build)/jpg.o
-	g++ main.cpp $(build)/screenshot.o $(build)/jpg.o $(include) $(libs) $(opt) 
+	g++ ../jpeg/table.c -c -o $(build)/table.o
+	g++ main.cpp $(build)/screenshot.o $(build)/jpg.o $(build)/table.o $(include) $(libs) $(opt) 

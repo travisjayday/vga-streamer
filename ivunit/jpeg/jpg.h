@@ -24,6 +24,9 @@
 /* Scale factor used to scale up rational constants in integer IDCT */
 #define IDF_SF 8
 
+#ifdef __cplusplus
+#define SERVER_BUILD 1
+#endif
 
 #define PI 3.14159
 
@@ -33,12 +36,12 @@ extern uint8_t col_lin2diag[];
 extern uint8_t row_lin2diag[];
 extern uint8_t ac_lht_idx16[];
 
-#if (PSOC != 1 && BENCH_JPEG != 1) 
+#if (SERVER_BUILD==1 || (PSOC != 1 && BENCH_JPEG != 1))
 extern "C" 
 #endif
 uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uint32_t height);
 
-#if (PSOC != 1 && BENCH_JPEG != 1)
+#if (SERVER_BUILD==1 || (PSOC != 1 && BENCH_JPEG != 1))
 extern "C" 
 #endif
 uint32_t decompress_channel(uint8_t* dest, uint8_t* compressed_image, uint32_t width, uint32_t height);
