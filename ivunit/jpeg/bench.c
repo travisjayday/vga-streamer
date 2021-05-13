@@ -15,6 +15,8 @@ int main() {
 	tga_image tga;
 	load_tga(&tga, "test.tga");
 
+    uint8_t* buf = (uint8_t*) calloc(1, tga.width * tga.height * sizeof(uint8_t)); 
+
     uint32_t start_t = micros();
     for (int i = 0; i < 1000; i++) {
         // compress iamge 
@@ -22,9 +24,11 @@ int main() {
         uint8_t* compressed_image = compress_channel(&encoded_data_n, tga.image_data, tga.width, tga.height); 
        
         // decompress image
-        uint8_t* buf = (uint8_t*) calloc(1, tga.width * tga.height * sizeof(uint8_t)); 
         decompress_channel(buf, compressed_image, tga.width, tga.height);
     }
     uint32_t end_t = micros();
     printf("DT: %.2fms", (float) (end_t - start_t) / 1000.0f);
+
+    // decoded the image 
+	tga_write_mono("out.tga", buf, tga.width, tga.height);
 }
