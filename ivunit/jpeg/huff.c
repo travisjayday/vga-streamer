@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "table.c"
-
+#if 0
 #define VLI_DC 12
 #define VLI_AC 11
 #define HUFF_START_PARSE_SYMS 0xffff
@@ -480,6 +479,7 @@ dehuff(int32_t prev_dcval, uint8_t* buf8, int32_t outb[8][8])
 void _main() {
     //test_huff();
 }
+#endif
 #endif
 
 //#include "huff-test.c"

@@ -1,3 +1,5 @@
+#include "jpg.h"
+
 uint16_t ac_lht_codes[] =  { 0b1010,    /* 0/0 -> 0x00 */
 0b00,                  /* 0/1 -> 0x01 */   // idx=1
 0b01,                  /* 0/2 -> 0x02 */   // idx=2

@@ -1,5 +1,8 @@
 #include <stdlib.h>
 
+#define PSOC
+#ifndef PSOC
+
 int test_block(int32_t block[8][8]) {
     int32_t prevdc = 0;
     uint16_t* codebuf = malloc(28 * 8 * sizeof(uint16_t));
@@ -173,3 +176,4 @@ int test_huff() {
 }
 
 
+#endif
