@@ -3,7 +3,7 @@ target:
 	./a.out
 
 bench: 
-	gcc table.c bench.c jpg.c targa.c -g -lm -DBENCH
+	gcc -Ofast table.c bench.c jpg.c targa.c -g -lm -DBENCH
 
 huff:
 	gcc -g -g huff.c

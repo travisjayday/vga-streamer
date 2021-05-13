@@ -27,11 +27,11 @@
 
 #define PI 3.14159
 
-extern uint16_t ac_lht_codes[];
-extern uint16_t dc_lht_codes[];
-extern uint8_t col_lin2diag[];
-extern uint8_t row_lin2diag[];
-extern uint8_t ac_lht_idx16[];
+extern const uint16_t ac_lht_codes[];
+extern const uint16_t dc_lht_codes[];
+extern const uint8_t col_lin2diag[];
+extern const uint8_t row_lin2diag[];
+extern const uint8_t ac_lht_idx16[];
 
 #if (PSOC != 1 && BENCH_JPEG != 1) 
 extern "C" 

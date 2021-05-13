@@ -460,7 +460,8 @@ int main()
  * Given a DC size category, return it's codelength
  * in bits.
  */
-uint8_t get_dc_code_len(uint8_t category) {
+static inline uint8_t 
+get_dc_code_len(uint8_t category) {
     switch (category) {
         case 0:   return 2;
         case 6:   return 4;
@@ -477,7 +478,8 @@ uint8_t get_dc_code_len(uint8_t category) {
  * Given an AC size category, return its codelength in
  * bits
  */
-uint8_t get_ac_code_len(uint8_t run_size) {
+uint8_t static inline 
+get_ac_code_len(uint8_t run_size) {
     switch (run_size) {
         case 0:   return 4;
         case 1:   return 2;
@@ -528,7 +530,8 @@ uint8_t get_ac_code_len(uint8_t run_size) {
  * into the luminance table and the length of the
  * given codeword.
  */
-int ac_lht_idx_from_codeword(uint16_t b, int* len) {
+static const uint32_t
+ac_lht_idx_from_codeword(uint16_t b, int* restrict len) {
     switch(b&0b1100000000000000){
         case 0b0000000000000000: *len = 2; return 1;
         case 0b0100000000000000: *len = 2; return 2;  }
@@ -588,7 +591,8 @@ int ac_lht_idx_from_codeword(uint16_t b, int* len) {
  * Given a DC codeword, return it's size / category.
  * Out pointer len will return the length of the codeword.
  */
-int dc_size_from_codeword(uint16_t b, int* len) {
+static inline int 
+dc_size_from_codeword(uint16_t b, int* restrict len) {
     if    ((b&0b1100000000000000)
             ==0b0000000000000000){*len= 2; return 0;  }
     switch(b&0b1110000000000000){
@@ -619,8 +623,8 @@ int dc_size_from_codeword(uint16_t b, int* len) {
  * @dc: 12 if this is a DC amplitude, if it's AC, 11. Use #defined
  *      VLI_DC or VLI_AC
  */
-int32_t
-amp_to_vli(int32_t amp, uint8_t* amp_size, uint8_t category)
+static inline int32_t
+amp_to_vli(int32_t amp, uint8_t* restrict amp_size, uint8_t category)
 {
     if (amp == 0) {
         *amp_size = 0;
@@ -641,7 +645,7 @@ amp_to_vli(int32_t amp, uint8_t* amp_size, uint8_t category)
 /*
  * Converts a VLI coded number into an amplitude.
  */
-int32_t
+static inline int32_t
 vli_to_amp(uint16_t vli, uint8_t vli_size)
 {
     int32_t amp = vli >> (16 - vli_size);
@@ -665,7 +669,8 @@ vli_to_amp(uint16_t vli, uint8_t vli_size)
  * @codes: Pointer to a parallel buffer of encoded runlengths and sizes.
  * @amps: Pointer to a paralell buffer of VLI encoded amplitudes.
  */
-void parse_syms(int32_t val, uint8_t** codes, uint16_t** amps) {
+void 
+parse_syms(int32_t val, uint8_t** restrict codes, uint16_t** restrict amps) {
     static uint8_t runlen;
     static uint8_t zeroblocks;
 
@@ -719,8 +724,8 @@ void parse_syms(int32_t val, uint8_t** codes, uint16_t** amps) {
  *
  * Returns the number of bits left in the current word after insertion.
  */
-uint16_t
-add_bits2buf(uint16_t bits_left, uint16_t** buf, uint16_t word, uint8_t len)
+static inline uint16_t
+add_bits2buf(uint16_t bits_left, uint16_t** restrict buf, uint16_t word, uint8_t len)
 {
     if (bits_left >= len) {
         // We can fit the entire word into the current buffer word.
@@ -754,8 +759,8 @@ add_bits2buf(uint16_t bits_left, uint16_t** buf, uint16_t word, uint8_t len)
  *
  * Returns the new bitoffset after advancing bitoffset bits.
  */
-int
-get_word_from_buf(uint16_t** p, uint16_t* word, int bitoffset)
+static inline int
+get_word_from_buf(uint16_t** restrict p, uint16_t* restrict word, int bitoffset)
 {
     // If bitoffset too big, go to next word in buffer
     while (bitoffset >= 16) {
@@ -780,8 +785,8 @@ get_word_from_buf(uint16_t** p, uint16_t* word, int bitoffset)
  *
  * Returns size of output buffer in bytes.
  */
-uint8_t
-huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* buf8)
+inline uint8_t
+huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* restrict buf8)
 {
     uint16_t* buf = (uint16_t*) buf8;
     uint16_t* buf_start = buf;
@@ -857,8 +862,8 @@ huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* buf8)
  *
  * Returns the amount of data in bytes written to buf.
  */
-uint32_t
-dehuff(int32_t prev_dcval, uint8_t* buf8, int32_t outb[8][8])
+inline uint32_t
+dehuff(int32_t prev_dcval, uint8_t* restrict buf8, int32_t outb[8][8])
 {
     uint16_t* buf = (uint16_t*) buf8;
     uint8_t bitoffset = 0;
