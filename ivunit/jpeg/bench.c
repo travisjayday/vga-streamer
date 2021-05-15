@@ -2,6 +2,8 @@
 #include "targa.h"
 #include <sys/time.h>
 
+#ifndef PSOC
+
 unsigned long 
 micros()
 {
@@ -16,10 +18,6 @@ int main() {
 	load_tga(&tga, "test.tga");
 
     uint8_t* buf = (uint8_t*) calloc(1, tga.width * tga.height * sizeof(uint8_t)); 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     uint32_t start_t = micros();
     uint8_t* compressed_image;
     uint32_t encoded_data_n = 0;
@@ -42,3 +40,5 @@ int main() {
     // decoded the image 
 	tga_write_mono("out.tga", buf, tga.width, tga.height);
 }
+
+#endif

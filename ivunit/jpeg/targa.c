@@ -11,6 +11,8 @@
  * code.
  * -------------------------------------------------------------------------*/
 
+#ifndef PSOC
+
 /*@unused@*/ static const char rcsid[] =
     "$Id: targa.c,v 1.8 2004/10/09 09:30:26 emikulic Exp $";
 
@@ -1100,3 +1102,5 @@ void tga_free_buffers(tga_image *img)
 }
 
 /* vim:set tabstop=4 shiftwidth=4 textwidth=78 expandtab: */
+
+#endif

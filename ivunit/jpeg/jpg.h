@@ -1,6 +1,6 @@
 #ifndef JPG_H
 
-#define PSOC 0
+#define PSOC 1
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,6 +44,6 @@ uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uin
 #if (SERVER_BUILD==1 || (PSOC != 1 && BENCH_JPEG != 1))
 extern "C" 
 #endif
-uint32_t decompress_channel(uint8_t* dest, uint8_t* compressed_image, uint32_t width, uint32_t height);
+uint32_t decompress_channel(uint8_t* dest, const uint8_t* compressed_image, uint32_t width, uint32_t height);
 
 #endif
