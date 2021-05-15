@@ -58,10 +58,10 @@ micros()
     return (1000000*tv.tv_sec) + tv.tv_usec;
 }
 
-#define RECORD_X        75
-#define RECORD_Y        50 
-#define RECORD_WIDTH    702
-#define RECORD_HEIGHT   480
+int RECORD_X        = 75;
+int RECORD_Y        = 50;
+int RECORD_WIDTH    = 702;
+int RECORD_HEIGHT   = 480;
 
 int service_client(int sockfd)
 {
@@ -252,9 +252,23 @@ int main(int argc, char* argv[])
 
     char* ip_str = (char*) malloc(64);
 
+    printf("\nPSoC/ESP Vga Streamer Server\n"
+            "-------------------------------\n"
+            "Usage: ./server.out IP_ADDR RECORD_X RECORD_Y "
+            "RECORD_WIDTH RECORD_HEIGHT\n\n");
+
     /* Check commandline args for custom IP */
     if (argc > 1) strcpy(ip_str, argv[1]);
     else strcpy(ip_str, "192.168.1.152");
+
+    if (argc == 1 + 1 + 4) {
+        RECORD_X = strtol(argv[2], NULL, 10);
+        RECORD_Y = strtol(argv[3], NULL, 10);
+        RECORD_WIDTH  = strtol(argv[4], NULL, 10);
+        RECORD_HEIGHT = strtol(argv[5], NULL, 10);
+        printf("Will stream geometry %dx%d at (%d, %d)\n", 
+                RECORD_WIDTH, RECORD_HEIGHT, RECORD_X, RECORD_Y);
+    }
 
     printf("Will host on %s...\n", ip_str);
 
