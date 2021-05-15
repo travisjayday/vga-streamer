@@ -1,0 +1,149 @@
+23:59:49 **** Incremental Build of configuration Release for project VgaStreamer.cm4_app ****
+/home/virt-tjz/ModusToolbox/tools_2.3/modus-shell/bin/make CY_MAKE_IDE=eclipse CY_MAKE_IDE_VERSION=2.3 CY_IDE_TOOLS_DIR=/home/virt-tjz/ModusToolbox/tools_2.3 -j10 all 
+Tools Directory: /home/virt-tjz/ModusToolbox/tools_2.3
+CY8CPROTO-062-4343W.mk: ./libs/TARGET_CY8CPROTO-062-4343W/CY8CPROTO-062-4343W.mk
+Building dependent apps
+
+==============================================================================
+= Dependent app cm0p_app =
+==============================================================================
+Tools Directory: /home/virt-tjz/ModusToolbox/tools_2.3
+CY8CPROTO-062-4343W.mk: ./libs/TARGET_CY8CPROTO-062-4343W/CY8CPROTO-062-4343W.mk
+
+Prebuild operations complete
+Commencing build operations...
+
+Tools Directory: /home/virt-tjz/ModusToolbox/tools_2.3
+CY8CPROTO-062-4343W.mk: ./libs/TARGET_CY8CPROTO-062-4343W/CY8CPROTO-062-4343W.mk
+
+Initializing build: cy_m0p_image Release CY8CPROTO-062-4343W GCC_ARM
+
+Auto-discovery in progress...
+-> Found 182 .c file(s)
+-> Found 46 .S file(s)
+-> Found 22 .s file(s)
+-> Found 0 .cpp file(s)
+-> Found 0 .o file(s)
+-> Found 6 .a file(s)
+-> Found 486 .h file(s)
+-> Found 0 .hpp file(s)
+-> Found 0 resource file(s)
+Applying filters...
+Auto-discovery complete
+
+Constructing build rules...
+Build rules construction complete
+
+==============================================================================
+= Building application =
+==============================================================================
+Generating compilation database file...
+-> ./build/compile_commands.json
+Compilation database file generation complete
+Building 104 file(s)
+==============================================================================
+= Build complete =
+==============================================================================
+
+Calculating memory consumption: CY8C624ABZI-S2D44 GCC_ARM -Os
+
+   ---------------------------------------------------- 
+  | Section Name         |  Address      |  Size       | 
+   ---------------------------------------------------- 
+  | .text                |  0x10000000   |  16276      | 
+  | .ARM.exidx           |  0x10003f94   |  8          | 
+  | .copy.table          |  0x10003f9c   |  24         | 
+  | .zero.table          |  0x10003fb4   |  8          | 
+  | .data                |  0x08000080   |  864        | 
+  | .noinit              |  0x080003e0   |  32         | 
+  | .bss                 |  0x08000400   |  568        | 
+  | .heap                |  0x08000638   |  2504       | 
+  | .cy_sharedmem        |  0x08002000   |  28         | 
+   ---------------------------------------------------- 
+
+  Total Internal Flash (Available)          2097152    
+  Total Internal Flash (Utilized)           17188      
+
+  Total Internal SRAM (Available)           1046528    
+  Total Internal SRAM (Utilized with heap)  3996       
+
+  
+==============================================================================
+
+Dependent apps build complete
+
+Prebuild operations complete
+Commencing build operations...
+
+Tools Directory: /home/virt-tjz/ModusToolbox/tools_2.3
+CY8CPROTO-062-4343W.mk: ./libs/TARGET_CY8CPROTO-062-4343W/CY8CPROTO-062-4343W.mk
+
+Initializing build: mtb-example-psoc6-dual-cpu-empty-app Release CY8CPROTO-062-4343W GCC_ARM
+
+Auto-discovery in progress...
+-> Found 188 .c file(s)
+-> Found 46 .S file(s)
+-> Found 22 .s file(s)
+-> Found 0 .cpp file(s)
+-> Found 0 .o file(s)
+-> Found 6 .a file(s)
+-> Found 488 .h file(s)
+-> Found 0 .hpp file(s)
+-> Found 0 resource file(s)
+Applying filters...
+Auto-discovery complete
+
+Constructing build rules...
+Build rules construction complete
+
+==============================================================================
+= Building application =
+==============================================================================
+Generating compilation database file...
+-> ./build/compile_commands.json
+Compilation database file generation complete
+Building 174 file(s)
+Compiling main.c -DPSOC -DCY_USING_HAL -DCY_APPNAME_mtb_example_psoc6_dual_cpu_empty_app -DCY8C624ABZI_S2D44 -DCY_TARGET_DEVICE=CY8C624ABZI_S2D44 -DTARGET_CY8CPROTO_062_4343W -DCY_TARGET_BOARD=CY8CPROTO_062_4343W -DCOMPONENT_4343W -DCOMPONENT_BSP_DESIGN_MODUS -DCOMPONENT_CAT1 -DCOMPONENT_CAT1A -DCOMPONENT_CM4 -DCOMPONENT_CY8CPROTO_062_4343W -DCOMPONENT_PSOC6HAL -DCOMPONENT_SOFTFP -DCOMPONENT_WLBGA -DNDEBUG  -I. -I../../mtb_shared/capsense/release-v2.10.0 -I../../mtb_shared/core-lib/release-v1.1.5 -I../../mtb_shared/core-lib/release-v1.1.5/include -I../../mtb_shared/mtb-hal-cat1/release-v1.5.0 -I../../mtb_shared/mtb-hal-cat1/release-v1.5.0/COMPONENT_CM4 -I../../mtb_shared/mtb-hal-cat1/release-v1.5.0/COMPONENT_CM4/include -I../../mtb_shared/mtb-hal-cat1/release-v1.5.0/COMPONENT_CM4/include/pin_packages -I../../mtb_shared/mtb-hal-cat1/release-v1.5.0/COMPONENT_CM4/include/triggers -I../../mtb_shared/mtb-hal-cat1/release-v1.5.0/include -I../../mtb_shared/mtb-pdl-cat1/release-v2.2.0 -I../../mtb_shared/mtb-pdl-cat1/release-v2.2.0/cmsis -I../../mtb_shared/mtb-pdl-cat1/release-v2.2.0/cmsis/include -I../../mtb_shared/mtb-pdl-cat1/release-v2.2.0/devices -I../../mtb_shared/mtb-pdl-cat1/release-v2.2.0/devices/COMPONENT_CAT1A -I../../mtb_shared/mtb-pdl-cat1/release-v2.2.0/devices/COMPONENT_CAT1A/include -I../../mtb_shared/mtb-pdl-cat1/release-v2.2.0/devices/COMPONENT_CAT1A/include/ip -I../../mtb_shared/mtb-pdl-cat1/release-v2.2.0/drivers -I../../mtb_shared/mtb-pdl-cat1/release-v2.2.0/drivers/include -I../../mtb_shared/retarget-io/release-v1.2.0 -I./jpeg -I./libs -I./libs/TARGET_CY8CPROTO-062-4343W -I./libs/TARGET_CY8CPROTO-062-4343W/COMPONENT_BSP_DESIGN_MODUS -I./libs/TARGET_CY8CPROTO-062-4343W/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource -I./libs/TARGET_CY8CPROTO-062-4343W/bluetooth
+main.c: In function 'main':
+main.c:296:14: warning: unused variable 'last_fr_time' [-Wunused-variable]
+  296 |     uint32_t last_fr_time = 0;
+      |              ^~~~~~~~~~~~
+main.c:187:12: warning: unused variable 'frame_n' [-Wunused-variable]
+  187 |  uint32_t  frame_n = 0;
+      |            ^~~~~~~
+main.c:186:11: warning: unused variable 'receive_data' [-Wunused-variable]
+  186 |  uint8_t  receive_data[512];
+      |           ^~~~~~~~~~~~
+    Linking output file mtb-example-psoc6-dual-cpu-empty-app.elf
+    Linking standalone file mtb-example-psoc6-dual-cpu-empty-app_standalone.elf
+==============================================================================
+= Build complete =
+==============================================================================
+
+Calculating memory consumption: CY8C624ABZI-S2D44 GCC_ARM -Os
+
+   ---------------------------------------------------- 
+  | Section Name         |  Address      |  Size       | 
+   ---------------------------------------------------- 
+  | .cy_m0p_image        |  0x10000000   |  17180      | 
+  | .text                |  0x10005000   |  30796      | 
+  | .ARM.exidx           |  0x1000c84c   |  8          | 
+  | .copy.table          |  0x1000c854   |  24         | 
+  | .zero.table          |  0x1000c86c   |  8          | 
+  | .data                |  0x080622e0   |  1312       | 
+  | .noinit              |  0x08062800   |  120        | 
+  | .bss                 |  0x08062878   |  1752       | 
+  | .heap                |  0x08062f50   |  637104     | 
+  | .cy_sharedmem        |  0x08002000   |  337932     | 
+   ---------------------------------------------------- 
+
+  Total Internal Flash (Available)          2097152    
+  Total Internal Flash (Utilized)           52636      
+
+  Total Internal SRAM (Available)           1046528    
+  Total Internal SRAM (Utilized with heap)  978220     
+
+  
+
+23:59:54 Build Finished. 0 errors, 3 warnings. (took 5s.426ms)
+
