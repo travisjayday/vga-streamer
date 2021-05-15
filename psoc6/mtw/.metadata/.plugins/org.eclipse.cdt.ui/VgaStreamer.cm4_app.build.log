@@ -1,4 +1,4 @@
-23:59:49 **** Incremental Build of configuration Release for project VgaStreamer.cm4_app ****
+00:15:27 **** Incremental Build of configuration Release for project VgaStreamer.cm4_app ****
 /home/virt-tjz/ModusToolbox/tools_2.3/modus-shell/bin/make CY_MAKE_IDE=eclipse CY_MAKE_IDE_VERSION=2.3 CY_IDE_TOOLS_DIR=/home/virt-tjz/ModusToolbox/tools_2.3 -j10 all 
 Tools Directory: /home/virt-tjz/ModusToolbox/tools_2.3
 CY8CPROTO-062-4343W.mk: ./libs/TARGET_CY8CPROTO-062-4343W/CY8CPROTO-062-4343W.mk
@@ -145,5 +145,5 @@ Calculating memory consumption: CY8C624ABZI-S2D44 GCC_ARM -Os
 
   
 
-23:59:54 Build Finished. 0 errors, 3 warnings. (took 5s.426ms)
+00:15:35 Build Finished. 0 errors, 3 warnings. (took 7s.232ms)
 
