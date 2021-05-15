@@ -17,6 +17,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <netinet/tcp.h>
+#include <string.h>
 
 #define MAX 6096
 #define PORT 8080
@@ -25,10 +27,10 @@
 #define CONFIG 0
 
 #if CONFIG==0
-#define WIDTH 160
-#define HEIGHT 192
+#define WIDTH 192
+#define HEIGHT 160
 #define NUM_COLORS 32
-#define SUBSAMPLE_CHROMA 4
+#define SUBSAMPLE_CHROMA 2
 #elif CONFIG==1
 #define WIDTH 192
 #define HEIGHT 224
@@ -56,14 +58,16 @@ micros()
     return (1000000*tv.tv_sec) + tv.tv_usec;
 }
 
-#define RECORD_WIDTH 540
-#define RECORD_HEIGHT   500
+#define RECORD_X        75
+#define RECORD_Y        50 
+#define RECORD_WIDTH    702
+#define RECORD_HEIGHT   480
 
 int service_client(int sockfd)
 {
     //ScreenShot screen(0,50,WIDTH*1.66,HEIGHT);
     //ScreenShot screen(0,50,WIDTH,HEIGHT);
-    ScreenShot screen(0,160,RECORD_WIDTH,HEIGHT);
+    ScreenShot screen(RECORD_X,RECORD_Y,RECORD_WIDTH,RECORD_HEIGHT);
     cv::Mat img;
     cv::Mat tmp;
     cv::Mat fimg;
@@ -180,31 +184,57 @@ int service_client(int sockfd)
 
 #if LOCAL_SHOW==0
         char* sig = "FRSTART";
-        uint16_t size = comp_y_n + comp_cb_n + comp_cr_n;  
         int preamble_size1 = strlen(sig) + 1;
         int preamble_size2 = strlen(sig) + 1 + sizeof(uint16_t);
-        memcpy(sendbuf,                                          sig,     preamble_size1);
-        memcpy(sendbuf + preamble_size1,                         &size,   sizeof(uint16_t));
-        memcpy(sendbuf + preamble_size2,                         comp_y,  comp_y_n);
-        memcpy(sendbuf + preamble_size2 + comp_y_n,              comp_cb, comp_cb_n);
-        memcpy(sendbuf + preamble_size2 + comp_y_n + comp_cb_n,  comp_cr, comp_cr_n);
-
-        while (micros() - last_fr_time >= 48000) {
+     
+        while (micros() - last_fr_time >= 40 * 1000) {
+            printf("Time since last: %d\n", micros() - last_fr_time);
             last_fr_time = micros();
-            write(sockfd, sendbuf, preamble_size2 + comp_y_n + comp_cb_n + comp_cr_n);
 
+            uint16_t size = comp_y_n + comp_cb_n + comp_cr_n;  
+            memset(sendbuf, 0, 4096);
+            memcpy(sendbuf,                                          sig,     preamble_size1);
+            memcpy(sendbuf + preamble_size1,                         &size,   sizeof(uint16_t));
+            memcpy(sendbuf + preamble_size2,                         comp_y,  comp_y_n);
+            memcpy(sendbuf + preamble_size2 + comp_y_n,              comp_cb, comp_cb_n);
+            memcpy(sendbuf + preamble_size2 + comp_y_n + comp_cb_n,  comp_cr, comp_cr_n);
+
+            int send_size = preamble_size2 + comp_y_n + comp_cb_n + comp_cr_n;
+            write(sockfd, sendbuf, send_size);
+
+#ifdef DEBUG
             printf("Original size: %d\n", WIDTH * HEIGHT * 3); 
             printf("Compressed size: %d\n", total_size);
             printf("Compression factor: %.2f\n", (float) total_size / (WIDTH * HEIGHT * 3));
+            printf("Sent num bytes: %d\n", send_size);
             printf("Sent bytes:");
             for (int i = 0; i < 10; i++) printf("0x%x", comp_y[i]); 
             printf(" ... ");
             for (int i = comp_y_n - 10; i < comp_y_n; i++) printf("0x%x", comp_y[i]); 
             int sum = 0;
-            for (int i = 0; i < comp_cr_n + comp_cb_n + comp_y_n + strlen(sig) + 1 + sizeof(uint16_t); i++) 
+            int total_len = comp_cr_n + comp_cb_n + comp_y_n + strlen(sig) + 1 + sizeof(uint16_t);
+            for (int i = 0; i < total_len; i++) 
                 sum += sendbuf[i];
+            int k = 0;
+            while (total_len > 0) {
+                if (total_len > 512) {
+                    int sum  = 0;
+                    for (int i = 0; i < 512; i++)
+                        sum += sendbuf[k++]; 
+                    printf("ChecksumMTU: %d\n", sum);
+                    total_len -= 512;
+                }
+                else {
+                    int sum  = 0;
+                    for (int i = 0; i < 512; i++)
+                        sum += sendbuf[k++]; 
+                    printf("ChecksumMTU_fin: %d\n", sum);
+                    total_len = 0; 
+                }
+            }
             printf("Frame huffman coded DCT Checksum: %d\n", sum); 
             printf("\n");
+#endif
         }
 #endif
         free(comp_y);
@@ -214,11 +244,19 @@ int service_client(int sockfd)
 }
 
  // Driver function
-int main()
+int main(int argc, char* argv[])
 {
 #if LOCAL_SHOW
     service_client(0);
 #endif
+
+    char* ip_str = (char*) malloc(64);
+
+    /* Check commandline args for custom IP */
+    if (argc > 1) strcpy(ip_str, argv[1]);
+    else strcpy(ip_str, "192.168.1.152");
+
+    printf("Will host on %s...\n", ip_str);
 
     int sockfd, connfd;
     struct sockaddr_in servaddr, cli;
@@ -238,12 +276,16 @@ int main()
         perror("setsockopt");
         exit(1);
     }
+    if (setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes)) == -1) {
+        perror("setsockopt");
+        exit(1);
+    }
 
     bzero(&servaddr, sizeof(servaddr));
 
     // assign IP, PORT
     servaddr.sin_family = AF_INET;
-    servaddr.sin_addr.s_addr = inet_addr("192.168.1.152");
+    servaddr.sin_addr.s_addr = inet_addr(ip_str);
     servaddr.sin_port = htons(PORT);
 
     // Binding newly created socket to given IP and verification
@@ -253,6 +295,12 @@ int main()
     }
     else
         printf("Socket successfully binded..\n");
+
+    if (setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes)) == -1) {
+        perror("setsockopt");
+        exit(1);
+    }
+
 
     // Now server is ready to listen and verification
     if ((listen(sockfd, 5)) != 0) {
@@ -271,6 +319,12 @@ int main()
     }
     else
         printf("server acccept the client...\n");
+
+    if (setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes)) == -1) {
+        perror("setsockopt");
+        exit(1);
+    }
+
 
     // Function for chatting between client and server
     service_client(connfd);
