@@ -4,7 +4,7 @@
 #include "cy_retarget_io.h"
 #include "jpeg/jpg.h"
 
-//#define BENCH
+#define BENCH
 //#define DEBUG
 
 /* Pin Definitions for SPI */
