@@ -172,15 +172,17 @@ main(void)
 #ifdef BENCH
     printf("Startin test...\n");
 	uint32_t start_t = micros();
-	uint8_t* buf1 = malloc(256 * 256);
-	uint8_t* buf2 = malloc(256 * 256);
-	uint8_t* buf3 = malloc(256 * 256);
-	uint32_t count = 10;
+	uint32_t bench_w = 344;
+	uint32_t bench_h = 240;
+	uint8_t* buf1 = malloc(bench_w * bench_h);
+	uint8_t* buf2 = malloc(bench_w * bench_h);
+	uint8_t* buf3 = malloc(bench_w * bench_h);
+	uint32_t count = 2;
 	for (int i = 0; i < count; i++) {
-		decompress_channel(buf1, huffman_test, 256, 256);
-		decompress_channel(buf2, huffman_test, 256, 256);
-		decompress_channel(buf3, huffman_test, 256, 256);
-		dec_ycrcb(buf1, buf2, buf3, 1, 150, 80, 256, 256);
+		decompress_channel(buf1, test_comp_y, bench_w, bench_h);
+		decompress_channel(buf2, test_comp_cb, bench_w, bench_h);
+		decompress_channel(buf3, test_comp_cr, bench_w, bench_h);
+		dec_ycrcb(buf1, buf2, buf3, 1, 1, 3, bench_w, bench_h);
 	}
 	uint32_t end_tt = micros();
 	printf("TD: %.2fms/frame\n", ((end_tt - start_t) / 1000.0f)/count);
