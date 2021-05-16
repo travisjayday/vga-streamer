@@ -7,39 +7,57 @@
 
 #include "vga.h"
 
+/* Do not optimize this file, as this
+ * would break the magic legacy code
+ */
 #pragma GCC optimize("Os")
-
 
 /* Local FB pointers */
 static volatile uint8_t* 	buf_ptr1;
 static volatile uint8_t* 	buf_ptr2;
 
 /* Horizontal line state */
-static volatile int 		hline = 0;
-static volatile uint8_t 	in_frame = 0;
-static volatile uint8_t 	skipv = 0;
-
-void handle_error()
+static volatile int 		hline = 0;		// which horizontal line we're on
+static volatile uint8_t 	in_frame = 0;	// if we're inside visible area (non-blanking)
+static volatile uint8_t 	skipv = 0;		/* if we should advance to the next horizontal
+												line or repeat the last (upscale vertical resolution) */
+void
+handle_error(void)
 {
+	/* Die */
 	for(;;);
 }
 
 /*
  * ISR Triggered when Horizontal Line has been finished
  */
-void dma_line_done(void)
+void
+dma_line_done(void)
 {
 	__disable_irq();
-	//*port9_addr = 0x00;
-	//*port8_addr = 0x00;
+
+	/* If we are in visible area (non-vertical blanking) */
 	if (hline > 32 && hline < 32 + 480) {
+		/* Notify CM4 that we're drawing the frame, so as to not make SPI requests
+		 * during this time interval.
+		 */
 		port9_fb[0] = 0x00;
 		in_frame = 1;
-		/* Setup Channel */
+
+		/* Setup Channel.
+		 * Go to next horizontal line every other line (expands vertical size by 2)
+		 * This makes the picture look better because vertical resolution is so much
+		 * higher than horizontal resolution (limiting factor is clock speed).
+		 */
 		if (skipv == 0) {
 			buf_ptr1 += SCRN_WIDTH;
 			buf_ptr2 += SCRN_WIDTH;
 			skipv = 1;
+
+			/* Below NOPs align the code cycles such that
+			 * DW0 and DW1 start at the same time and are in sync.
+			 * This is dark magic.
+			 */
 			asm("nop;nop;nop;");
 			asm("nop;nop;nop;");
 			asm("nop;nop;nop;");
@@ -49,21 +67,34 @@ void dma_line_done(void)
 		else {
 			skipv = 0;
 		}
-		Cy_DMA_Descriptor_SetSrcAddress(&BDMA_Descriptor_0, (uint32_t *) (buf_ptr1));
+
+		/* Reload the DMA Descriptors with updated buffer pointers */
+		Cy_DMA_Descriptor_SetSrcAddress(&DMA1_Descriptor_0, (uint32_t *) (buf_ptr1));
 		Cy_DMA_Descriptor_SetSrcAddress(&DMA2_Descriptor_0, (uint32_t *) (buf_ptr2));
-		Cy_DMA_Channel_Enable(BDMA_HW, BDMA_CHANNEL);
-		Cy_DMA_Channel_Enable(DMA2_HW, BDMA_CHANNEL);
+		Cy_DMA_Channel_Enable(DMA1_HW, DMA1_CHANNEL);
+		Cy_DMA_Channel_Enable(DMA2_HW, DMA2_CHANNEL);
 	}
 	else {
+		/* If we're in the vertical blanking interval, notify the CM4 core
+		 * that it's clear to start SPI transactions.
+		 */
 		port9_fb[0] = 0xff;
+
+		/*
+		 * Disable DMA channels once for safety. (Not sure if required).
+		 */
 		if (in_frame) {
-			Cy_DMA_Channel_Disable(BDMA_HW, BDMA_CHANNEL);
+			Cy_DMA_Channel_Disable(DMA1_HW, DMA1_CHANNEL);
 			Cy_DMA_Channel_Disable(DMA2_HW, DMA2_CHANNEL);
 			in_frame = 0;
 		}
 
 	}
+
+	// Go to next horizontal line.
 	hline += 1;
+
+	// Clear interrupt flag and re-enable interrupts.
     Cy_TCPWM_ClearInterrupt(HSYNC_T_HW, HSYNC_T_NUM, 0xff);
     __enable_irq();
 }
@@ -83,7 +114,7 @@ void vsync_rise_isr(void)
 }
 
 void
-init_dma(DW_Type* dma_hw, int channel, const cy_stc_dma_descriptor_t* descriptor,
+init_dma(DW_Type* dma_hw, int channel, cy_stc_dma_descriptor_t* descriptor,
 		const cy_stc_dma_descriptor_config_t* dconfig, const cy_stc_dma_channel_config_t* channel_config,
 		uint32_t* _port_addr, uint32_t* src_addr)
 {
@@ -103,7 +134,6 @@ init_dma(DW_Type* dma_hw, int channel, const cy_stc_dma_descriptor_t* descriptor
 
     /* Setup Channel */
     Cy_DMA_Channel_SetDescriptor(dma_hw, channel, descriptor);
-    //Cy_DMA_Channel_SetInterruptMask(BDMA_HW, BDMA_CHANNEL, CY_DMA_INTR_MASK);
     Cy_DMA_Channel_SetPriority(dma_hw, channel, 0UL);
     Cy_DMA_Channel_Enable(dma_hw, channel);
 
@@ -112,30 +142,43 @@ init_dma(DW_Type* dma_hw, int channel, const cy_stc_dma_descriptor_t* descriptor
 void
 init_vga()
 {
-	// Find Port register address
+	/* Find Port register address */
     port9_addr = (uint32_t*) Cy_GPIO_PortToAddr(9);
     port8_addr = (uint32_t*) Cy_GPIO_PortToAddr(8);
 
-    init_dma(BDMA_HW, BDMA_CHANNEL, &BDMA_Descriptor_0, &BDMA_Descriptor_0_config,
-    		&BDMA_channelConfig, (uint32_t*) port9_addr, (uint32_t*) port9_fb);
+    /* Initialise DW0 and DW1 DMA controllers */
+    init_dma(DMA1_HW, DMA1_CHANNEL, &DMA1_Descriptor_0, &DMA1_Descriptor_0_config,
+    		&DMA1_channelConfig, (uint32_t*) port9_addr, (uint32_t*) port9_fb);
     init_dma(DMA2_HW, DMA2_CHANNEL, &DMA2_Descriptor_0, &DMA2_Descriptor_0_config,
     		&DMA2_channelConfig, (uint32_t*) port8_addr, (uint32_t*) port8_fb);
 
-	cy_stc_sysint_t RDMA_DONE_ISR =
+    /* Create DMA Line interrupt service routine
+     * This interrupt reloads the DMA controllers with updated addresses.
+     */
+	cy_stc_sysint_t DMA_LINE_DONE_ISR =
 	{
 			.intrSrc      = (IRQn_Type) NvicMux1_IRQn,
-			.cm0pSrc 	  = HSYNC_T_IRQ,
+			.cm0pSrc 	  = HSYNC_T_IRQ,	// Fire on each HSYNC pulse
 			.intrPriority = 0u,
 	};
-	for (int i = 0; i < 0xff; i++) {
-		__NVIC_DisableIRQ(i);
-	}
 
-    /* Initialize and enable the interrupt from TxDma */
-    Cy_SysInt_Init(&RDMA_DONE_ISR, &dma_line_done);
-    __NVIC_EnableIRQ(RDMA_DONE_ISR.intrSrc);
 
-    /* Start PWM Timer which will trigger DMA */
+	/* Disable all other IRQs for safety */
+	for (int i = 0; i < 0xff; i++) __NVIC_DisableIRQ(i);
+
+    /* Initialize and enable the interrupt */
+    Cy_SysInt_Init(&DMA_LINE_DONE_ISR, &dma_line_done);
+    __NVIC_EnableIRQ(DMA_LINE_DONE_ISR.intrSrc);
+
+    /* Start PWM Timers which will trigger DMA
+     *
+     * HSYNC_T 	 -- Generates Hsync pulse that goees into the VGA monitor
+     * HBLANK_T  -- A slightly delayed Hsync pulse that goes off after Hsync goes low.
+     * 				When this PWM pulses, DW0 gets triggered to start the next horizontal
+     * 				line transfer. This creates the back porch.
+     * HBLANK_T2 -- A copy of HBLANK_T. This triggers DW1 transfer. (We need separate
+     * 				TCPWM blocks because each only connects to one DataWire)
+     */
     Cy_TCPWM_PWM_Init(HSYNC_T_HW, HSYNC_T_NUM, &HSYNC_T_config);
     Cy_TCPWM_PWM_Enable(HSYNC_T_HW, HSYNC_T_NUM);
 
@@ -145,9 +188,10 @@ init_vga()
     Cy_TCPWM_PWM_Init(HBLANK_T2_HW, HBLANK_T2_NUM, &HBLANK_T2_config);
     Cy_TCPWM_PWM_Enable(HBLANK_T2_HW, HBLANK_T2_NUM);
 
-    Cy_DMA_Enable(BDMA_HW);
+    Cy_DMA_Enable(DMA1_HW);
     Cy_DMA_Enable(DMA2_HW);
 
+    /* Create and register vertical sync ISR */
     cy_stc_sysint_t VSYNC_RISE_ISR =
     {
     		.intrSrc      = (IRQn_Type) NvicMux0_IRQn,
@@ -155,7 +199,7 @@ init_vga()
 			.intrPriority = 0u,
     };
 
-    /* Initialize and enable the interrupt from TxDma */
+    /* Initialize and enable the interrupt */
     Cy_SysInt_Init(&VSYNC_RISE_ISR, &vsync_rise_isr);
     NVIC_EnableIRQ(VSYNC_RISE_ISR.intrSrc);
 
@@ -169,10 +213,19 @@ init_vga()
     CyDelayCycles(470);
 
     Cy_TCPWM_TriggerStart(HBLANK_T_HW, HBLANK_T_MASK);
+
     CyDelayUs(31);
     CyDelayCycles(92);
 }
 
+/*
+ * Initialise the framebuffers. This is an ugly legacy function and
+ * in an ideal world, it would be cut out. However, this function as is,
+ * provides just enough delay such that the timers and DMA DW's get
+ * initialised on the right clock cycle so that everything is in sync.
+ * If this function changes, the next function (init_vga()) will break
+ * as the timers won't start in sync anymore.
+ */
 void
 init_fb()
 {
@@ -187,25 +240,20 @@ init_fb()
     port9_fb[329] = 0xff;
     for (int i = 0; i < 456; i++) port9_fb[i] = i % 2? 0x00: 0xff;
     port9_fb[455] = 0x00;
-    //for (int i = 50; i < 464; i++) port9_fb[i] = i % 2? 0x00: 0xff;
 
     int k = 0;
     for (int i = 0; i < SCRN_SIZE; i++) port9_fb[i] = 0x00;
     for (int r = 0; r < SCRN_HEIGHT; r++) {
-    	//if (r > 33) {
-    		int c;
-			for (c= 0; c < SCRN_WIDTH; c++) {
-				//if (c < 200)
-				uint16_t v = (k++) % 2? 0xff : 0xff;
-				port9_fb[r * SCRN_WIDTH + c] = v;
-				port8_fb[r * SCRN_WIDTH + c] = v;
+		int c;
+		for (c= 0; c < SCRN_WIDTH; c++) {
+			uint16_t v = (k++) % 2? 0xff : 0xff;
+			port9_fb[r * SCRN_WIDTH + c] = v;
+			port8_fb[r * SCRN_WIDTH + c] = v;
 
-			}
-			k++;
-			port9_fb[r * SCRN_WIDTH + c - 1] = 0x00;
-			port8_fb[r * SCRN_WIDTH + c - 1] = 0x00;
-			//port9_fb[r * SCRN_WIDTH] = 0x00;
-    	//}
+		}
+		k++;
+		port9_fb[r * SCRN_WIDTH + c - 1] = 0x00;
+		port8_fb[r * SCRN_WIDTH + c - 1] = 0x00;
     }
 
     for (int r = 0; r < SCRN_HEIGHT; r++) {

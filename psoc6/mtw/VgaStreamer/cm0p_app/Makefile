@@ -128,7 +128,7 @@ LDFLAGS=
 LDLIBS=
 
 # Path to the linker script to use (if empty, use the default linker script).
-LINKER_SCRIPT=/home/virt-tjz/mtw4/VgaStreamer/shared/linker_script/COMPONENT_CM0P/cy8c6xxa_cm0plus.ld
+LINKER_SCRIPT=../shared/linker_script/COMPONENT_CM0P/cy8c6xxa_cm0plus.ld
 
 # Custom pre-build commands to run.
 PREBUILD=
