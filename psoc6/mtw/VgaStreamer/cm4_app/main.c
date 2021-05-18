@@ -5,6 +5,7 @@
 #include "jpeg/jpg.h"
 
 //#define BENCH
+#define FULLRES
 //#define DEBUG
 
 /* Pin Definitions for SPI */
@@ -61,6 +62,9 @@ volatile uint8_t spi_ready;
 #ifdef BENCH
 /* Provides declaration and initialisation of huffman/DCT coded test image */
 #include "huffman_test.c"
+#endif
+#ifdef FULLRES
+#include "fullres_test.c"
 #endif
 
 /*
@@ -187,6 +191,23 @@ main(void)
 	uint32_t end_tt = micros();
 	printf("TD: %.2fms/frame\n", ((end_tt - start_t) / 1000.0f)/count);
 	while(1);
+#endif
+
+#ifdef FULLRES
+	int i = 0;
+    for (int r = 0; r < SCRN_HEIGHT; r++) {
+    	for (int c = 0; c < 344; c++) {
+    		uint16_t val = fullres_test[i++];
+    		port9_fb[r*SCRN_WIDTH+c] = val & 0xffff;
+    		port8_fb[r*SCRN_WIDTH+c] = (val >> 8);
+    		if (c == SCRN_WIDTH - 1) {
+    			port9_fb[r*SCRN_WIDTH+c] = 0;
+    			port8_fb[r*SCRN_WIDTH+c] = 0;
+    		}
+
+    	}
+    }
+    while (1);
 #endif
 
 	/* Configure SPI */

@@ -349,7 +349,7 @@ dct_decode(uint8_t* restrict buf, uint16_t width,
     // This calculates the columwise (up/down) transform
     uint8_t c = 0; 
     for (c = 0; c < 8; c++) 
-        idct8((int32_t*) data, (int32_t*) data, 8, c); 
+        idct8((int32_t*) data, (int32_t*) data, 8, c);
 
     // This calculates the rowise (left/right) transforms
     uint8_t r = 0; 
