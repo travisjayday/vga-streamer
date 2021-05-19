@@ -33,14 +33,13 @@ load_tga(tga_image *tga, const char *fn)
 #endif
 
 uint8_t huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* buf8);
-uint32_t dehuff(int32_t prev_dcval, uint8_t* buf8, int32_t outb[8][8]);
+static uint32_t dehuff(int32_t prev_dcval, const uint8_t* restrict buf8, int32_t outb[8][8]);
 
 /* 
  * w, c: width of block. For columnwise DFT, use w=8, c=colum
  *       For row-wise DCT, use w=0, c=0. 
  */
 void dct8(double b[8], double out[8], uint8_t w, uint8_t c) {
-    double s[8] = {};
     double g[8] = {};
     double f[8] = {};
     double f_8; 
@@ -193,10 +192,10 @@ void dct_encode(uint8_t* imdata, uint32_t width, double data[8][8],
         }                                       \
     }                                           \
 
-void idct8(pix_t in[8], pix_t out[8], uint8_t w, uint8_t c) {
+static inline void
+idct8(const pix_t in[8], pix_t out[8], uint8_t w, uint8_t c) {
     pix_t g[8] = {};
     pix_t f[8] = {};
-    pix_t f_8; 
 
     for (int i = 0; i < 8; i++) 
        g[i] = in[i*w+c];
@@ -343,13 +342,14 @@ void idct8(pix_t in[8], pix_t out[8], uint8_t w, uint8_t c) {
     out[7*w+c] =  (g[0] - g[7]) / 2; 
 }
 
-void dct_decode(uint8_t* buf, uint16_t width, pix_t data[8][8],
-	const int xpos, const int ypos)
+static void
+dct_decode(uint8_t* restrict buf, uint16_t width,
+		pix_t data[8][8], int xpos, int ypos)
 {
     // This calculates the columwise (up/down) transform
     uint8_t c = 0; 
     for (c = 0; c < 8; c++) 
-        idct8((int32_t*) data, (int32_t*) data, 8, c); 
+        idct8((int32_t*) data, (int32_t*) data, 8, c);
 
     // This calculates the rowise (left/right) transforms
     uint8_t r = 0; 
@@ -382,7 +382,7 @@ uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uin
 	
     int32_t prev_dcval = 0;
     uint8_t* encoded_data = (uint8_t*) calloc(1, width * height * sizeof(uint16_t));
-    uint32_t encoded_data_n = 0; 
+    uint32_t encoded_data_n = 0;
  
     // compress the image
 	for (r=0; r<height/8; r++)
@@ -404,11 +404,13 @@ uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uin
 }
 
 uint32_t
-decompress_channel(uint8_t* dest, uint8_t* compressed_image, uint32_t width, uint32_t height) 
+decompress_channel(uint8_t* restrict dest,
+		const uint8_t* restrict compressed_image,
+		uint32_t width, uint32_t height)
 {
 	pix_t idct_buf[8][8];
-    uint32_t prev_dcval = 0; 
-    uint32_t encoded_data_i = 0; 
+    uint32_t prev_dcval = 0;
+    uint32_t encoded_data_i = 0;
     int r, c; 
     for (r = 0; r < height / 8; r++) {
         for (c = 0; c < width / 8; c++) {
@@ -461,7 +463,8 @@ int main()
  * Given a DC size category, return it's codelength
  * in bits.
  */
-uint8_t get_dc_code_len(uint8_t category) {
+static inline uint8_t
+get_dc_code_len(uint8_t category) {
     switch (category) {
         case 0:   return 2;
         case 6:   return 4;
@@ -478,7 +481,8 @@ uint8_t get_dc_code_len(uint8_t category) {
  * Given an AC size category, return its codelength in
  * bits
  */
-uint8_t get_ac_code_len(uint8_t run_size) {
+static inline uint8_t
+get_ac_code_len(uint8_t run_size) {
     switch (run_size) {
         case 0:   return 4;
         case 1:   return 2;
@@ -529,7 +533,8 @@ uint8_t get_ac_code_len(uint8_t run_size) {
  * into the luminance table and the length of the
  * given codeword.
  */
-int ac_lht_idx_from_codeword(uint16_t b, int* len) {
+static inline int
+ac_lht_idx_from_codeword(uint16_t b, int* restrict len) {
     switch(b&0b1100000000000000){
         case 0b0000000000000000: *len = 2; return 1;
         case 0b0100000000000000: *len = 2; return 2;  }
@@ -589,7 +594,8 @@ int ac_lht_idx_from_codeword(uint16_t b, int* len) {
  * Given a DC codeword, return it's size / category.
  * Out pointer len will return the length of the codeword.
  */
-int dc_size_from_codeword(uint16_t b, int* len) {
+static inline int
+dc_size_from_codeword(uint16_t b, int* restrict len) {
     if    ((b&0b1100000000000000)
             ==0b0000000000000000){*len= 2; return 0;  }
     switch(b&0b1110000000000000){
@@ -620,8 +626,8 @@ int dc_size_from_codeword(uint16_t b, int* len) {
  * @dc: 12 if this is a DC amplitude, if it's AC, 11. Use #defined
  *      VLI_DC or VLI_AC
  */
-int32_t
-amp_to_vli(int32_t amp, uint8_t* amp_size, uint8_t category)
+static inline int32_t
+amp_to_vli(int32_t amp, uint8_t* restrict amp_size, uint8_t category)
 {
     if (amp == 0) {
         *amp_size = 0;
@@ -642,7 +648,7 @@ amp_to_vli(int32_t amp, uint8_t* amp_size, uint8_t category)
 /*
  * Converts a VLI coded number into an amplitude.
  */
-int32_t
+static inline int32_t
 vli_to_amp(uint16_t vli, uint8_t vli_size)
 {
     int32_t amp = vli >> (16 - vli_size);
@@ -675,8 +681,6 @@ void parse_syms(int32_t val, uint8_t** codes, uint16_t** amps) {
         zeroblocks = 0;
         return;
     }
-
-    uint32_t absval;
 
     if (val == 0) {
         if (++runlen > 15) {
@@ -755,8 +759,8 @@ add_bits2buf(uint16_t bits_left, uint16_t** buf, uint16_t word, uint8_t len)
  *
  * Returns the new bitoffset after advancing bitoffset bits.
  */
-int
-get_word_from_buf(uint16_t** p, uint16_t* word, int bitoffset)
+static inline int
+get_word_from_buf(const uint16_t** restrict p, uint16_t* restrict word, int bitoffset)
 {
     // If bitoffset too big, go to next word in buffer
     while (bitoffset >= 16) {
@@ -808,7 +812,6 @@ huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* buf8)
         c = col_lin2diag[i];
         parse_syms(b[r][c], &code_i, &amp_i);
     }
-    //*code_i = 0x00; // terminating sym
 
     /* The following converts intermediate codes to huffman codewords */
 
@@ -858,10 +861,10 @@ huff(int32_t prev_dcval, int32_t b[8][8], uint8_t* buf8)
  *
  * Returns the amount of data in bytes written to buf.
  */
-uint32_t
-dehuff(int32_t prev_dcval, uint8_t* buf8, int32_t outb[8][8])
+static uint32_t
+dehuff(int32_t prev_dcval, const uint8_t* restrict buf8, int32_t outb[8][8])
 {
-    uint16_t* buf = (uint16_t*) buf8;
+    const uint16_t* restrict buf = (const uint16_t* restrict) buf8;
     uint8_t bitoffset = 0;
     uint16_t word = 0;
     int len = 0;
@@ -872,24 +875,30 @@ dehuff(int32_t prev_dcval, uint8_t* buf8, int32_t outb[8][8])
     uint8_t lin_idx = 1;
     uint8_t dig_row;
     uint8_t dig_col;
-    uint16_t* buf_s = buf;
+    const uint16_t* restrict buf_s = buf;
 
     memset(outb, 0, 64 * sizeof(int32_t));
 
     // Read DC codeword
-    bitoffset = get_word_from_buf(&buf, &word, bitoffset);
+    bitoffset = get_word_from_buf(
+    		(const uint16_t** restrict) &buf,
+    		&word, bitoffset);
     size = dc_size_from_codeword(word, &len);
     bitoffset += len;
 
     // Read DC amplitude
-    bitoffset = get_word_from_buf(&buf, &word, bitoffset);
+    bitoffset = get_word_from_buf(
+    		(const uint16_t** restrict) &buf,
+    		&word, bitoffset);
     bitoffset += size;
     outb[0][0] = prev_dcval + vli_to_amp(word, size);
 
     int codes_n = 127;
     while (codes_n-- != 0) {
         // Get huff codeword
-        bitoffset = get_word_from_buf(&buf, &word, bitoffset);
+        bitoffset = get_word_from_buf(
+        		(const uint16_t** restrict) &buf,
+        		&word, bitoffset);
         idx = ac_lht_idx_from_codeword(word, &len);
         bitoffset += len;
 
@@ -907,7 +916,9 @@ dehuff(int32_t prev_dcval, uint8_t* buf8, int32_t outb[8][8])
         amp = 0;
         if (idx != 151) {
             // If not a Zeroblock (ZRL), get amplitude
-            bitoffset = get_word_from_buf(&buf, &word, bitoffset);
+            bitoffset = get_word_from_buf(
+            		(const uint16_t** restrict) &buf,
+            		&word, bitoffset);
             amp = vli_to_amp(word, size);
             bitoffset += size;
         }
