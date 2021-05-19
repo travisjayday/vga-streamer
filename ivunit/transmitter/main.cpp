@@ -24,7 +24,7 @@
 #define PORT 8080
 #define SA struct sockaddr
 
-#define CONFIG 0
+#define CONFIG 3
 
 #if CONFIG==0
 #define WIDTH 192
@@ -34,21 +34,33 @@
 #elif CONFIG==1
 #define WIDTH 192
 #define HEIGHT 224
-#define NUM_COLORS 16
+#define NUM_COLORS 32
 #define SUBSAMPLE_CHROMA 4
 #elif CONFIG==2
 #define WIDTH 224
 #define HEIGHT 256
-#define NUM_COLORS 16
+#define NUM_COLORS 32
 #define SUBSAMPLE_CHROMA 4
+#elif CONFIG==3
+#define WIDTH 344
+#define HEIGHT 240
+#define NUM_COLORS 32
+#define SUBSAMPLE_CHROMA 1
 #endif
 
-#define LOCAL_SHOW 0
+#define LOCAL_SHOW 1
+#define SAVE_IMG_AS_ARR 1
 
 #define COLOR_SCALER (256/NUM_COLORS)
 
 #include "ycrcb_decode.c"
 #include "jpg.h"
+
+
+int RECORD_X        = 75;
+int RECORD_Y        = 175;
+int RECORD_WIDTH    = 702;
+int RECORD_HEIGHT   = 480;
 
 unsigned long 
 micros()
@@ -57,11 +69,6 @@ micros()
     gettimeofday(&tv,NULL);
     return (1000000*tv.tv_sec) + tv.tv_usec;
 }
-
-int RECORD_X        = 75;
-int RECORD_Y        = 50;
-int RECORD_WIDTH    = 702;
-int RECORD_HEIGHT   = 480;
 
 int service_client(int sockfd)
 {
@@ -182,6 +189,24 @@ int service_client(int sockfd)
         char k = cv::waitKey(1);
         if (k == 'q') break;
 
+#if SAVE_IMG_AS_ARR==1
+        if (k == 's') {
+            printf("Printing image...\n");
+            pritnf("#ifdef BENCH\n");
+            printf("char test_comp_y[] = {");
+            for (int i = 0; i < comp_y_n; i++) printf("0x%x,", comp_y[i]);
+            printf("};\n");
+            printf("char test_comp_cb[] = {");
+            for (int i = 0; i < comp_cb_n; i++) printf("0x%x,", comp_cb[i]);
+            printf("};\n");
+            printf("char test_comp_cr[] = {");
+            for (int i = 0; i < comp_cr_n; i++) printf("0x%x,", comp_cr[i]);
+            printf("};\n");
+            pritnf("#endif\n");
+            fflush(stdout);
+        }    
+#endif
+
 #if LOCAL_SHOW==0
         char* sig = "FRSTART";
         int preamble_size1 = strlen(sig) + 1;
@@ -246,10 +271,6 @@ int service_client(int sockfd)
  // Driver function
 int main(int argc, char* argv[])
 {
-#if LOCAL_SHOW
-    service_client(0);
-#endif
-
     char* ip_str = (char*) malloc(64);
 
     printf("\nPSoC/ESP Vga Streamer Server\n"
@@ -269,6 +290,10 @@ int main(int argc, char* argv[])
         printf("Will stream geometry %dx%d at (%d, %d)\n", 
                 RECORD_WIDTH, RECORD_HEIGHT, RECORD_X, RECORD_Y);
     }
+
+#if LOCAL_SHOW
+    service_client(0);
+#endif
 
     printf("Will host on %s...\n", ip_str);
 
