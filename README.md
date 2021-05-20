@@ -7,7 +7,7 @@ This GitHub repository contains many subprojects.
 See the READMEs in the subfolders.
 
 
-Watch this demo video of livestreaming gameplay to the VGA monitor over WiFi: [Link to video](https://drive.google.com/file/d/11KUNEaZ5C9LpPbEa5FUrYylOdbOHhFKc/view?usp=sharing)
+Watch this demo video of livestreaming gameplay to the VGA monitor over WiFi: [Link to video](https://drive.google.com/file/d/1-jbulYnPb3N8D912lSg62HLdD7m2vJCN/view?usp=sharing)
 
 
 Native, Full Resolution of PSoC6 VGA. RGB555 color at 352x480 pixels.
@@ -19,4 +19,3 @@ Lowered Resolution of Streaming Live Video at 30FPS.
 Breadboard Layout.
 ![Alt text](images/BoardLayout.jpg?raw=true "Breadboard layout")
 
-B
