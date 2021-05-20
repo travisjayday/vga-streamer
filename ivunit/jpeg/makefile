@@ -1,5 +1,5 @@
 target: 
-	gcc jpg.c targa.c -g -lm -DTEST_JPEG
+	gcc table.c jpg.c targa.c -g -lm -DTEST_JPEG
 	./a.out
 
 bench: 

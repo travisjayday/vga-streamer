@@ -19,3 +19,7 @@ Lowered Resolution of Streaming Live Video at 30FPS.
 Breadboard Layout.
 ![Alt text](images/BoardLayout.jpg?raw=true "Breadboard layout")
 
+Software Diagram Overview
+![Alt text](images/ProjectDiagram.png?raw=true "Project Diagram")
+
+For the full project writeup, and detailed explanations on how the various subsystems interact, see [the whitepaper PDF](https://github.com/travisjayday/vga-streamer/blob/main/images/whitepaper.pdf)

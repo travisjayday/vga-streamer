@@ -1,0 +1,25 @@
+    /*
+     * To avoid bus arbitration when the DMA DataWires are active, we can
+     * set busmaster priorities in the MSx_CTL Protection Registers.
+     *
+     * See PSOC62 Register TRM for details. Note that the addresses the TRM
+     * PDF provides are wrong. Looking through the source, the below addresses
+     * are correct for the following busmasters.
+     */
+    volatile uint32_t* MS0_CTL = (uint32_t*) 0x40230000;
+    volatile uint32_t* MS1_CTL = (uint32_t*) 0x40230004;
+    volatile uint32_t* MS2_CTL = (uint32_t*) 0x40230008;
+    volatile uint32_t* MS3_CTL = (uint32_t*) 0x4023000C;
+    volatile uint32_t* MS14_CTL= (uint32_t*) 0x40230038;
+    volatile uint32_t* MS15_CTL= (uint32_t*) 0x4023003C;
+
+    /*
+     * Give CM0+ Core, DW0 DMA Controller, priority zero (highest);
+     * Give CM4 Core and other BusMasters priority three (lowest)
+     */
+    *MS14_CTL = 0b1100000011;		// CM4
+    *MS15_CTL = 0b1100000011;		// TC
+    *MS1_CTL  = 0b1100000011;		// TC
+    *MS0_CTL  = 0b0000000011;		// CM0+
+    *MS2_CTL  = 0b0000000011;		// DW0
+    *MS3_CTL  = 0b0000000011;		// DW1

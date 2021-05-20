@@ -42,9 +42,9 @@
 #define NUM_COLORS 32
 #define SUBSAMPLE_CHROMA 4
 #elif CONFIG==3
-#define WIDTH 344
-#define HEIGHT 240
-#define NUM_COLORS 32
+#define WIDTH 256
+#define HEIGHT 256
+#define NUM_COLORS 256
 #define SUBSAMPLE_CHROMA 1
 #endif
 
@@ -154,9 +154,9 @@ int service_client(int sockfd)
         uint32_t total_size = comp_y_n + comp_cr_n + comp_cb_n; 
 
 #if LOCAL_SHOW==1
-        cv::imshow("0", ycrcb[0]);
-        cv::imshow("1", ycrcb[1]);
-        cv::imshow("2", ycrcb[2]);
+        cv::imshow("Chrominance (Cr)", ycrcb[0]);
+        cv::imshow("Chrominance (Cb)", ycrcb[1]);
+        cv::imshow("Luminance (Y)", ycrcb[2]);
 
         /* Decompress image data */
         // this creates incorrect cb,cr

@@ -2,6 +2,11 @@
 #include "targa.h"
 #include <sys/time.h>
 
+#ifdef PSOC
+#ifdef BENCH_JPEG
+#undef PSOC
+#endif
+
 #ifndef PSOC
 
 unsigned long 

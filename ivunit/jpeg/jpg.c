@@ -6,6 +6,10 @@
 #define pix_t double
 #endif
 
+#ifdef TEST_JPEG
+#define BENCH 1
+#endif
+
 /* For testing TGA files */
 #if BENCH == 1
 #include "targa.h"

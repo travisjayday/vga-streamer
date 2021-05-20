@@ -191,4 +191,4 @@ def generate_random_masks(n, count):
 if __name__ == "__main__":
     src = ['A', 'B', 'C', 'D']
     dst = ['B', 'C', 'D', 'A']
-    get_masks(src, dst)
+    print(get_masks(src, dst))
