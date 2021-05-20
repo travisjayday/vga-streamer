@@ -24,13 +24,13 @@
 #define PORT 8080
 #define SA struct sockaddr
 
-#define CONFIG 3
+#define CONFIG 0
 
 #if CONFIG==0
-#define WIDTH 192
-#define HEIGHT 160
-#define NUM_COLORS 32
-#define SUBSAMPLE_CHROMA 2
+#define WIDTH 160
+#define HEIGHT 128
+#define NUM_COLORS 128
+#define SUBSAMPLE_CHROMA 4
 #elif CONFIG==1
 #define WIDTH 192
 #define HEIGHT 224
@@ -48,8 +48,8 @@
 #define SUBSAMPLE_CHROMA 1
 #endif
 
-#define LOCAL_SHOW 1
-#define SAVE_IMG_AS_ARR 1
+#define LOCAL_SHOW 0
+#define SAVE_IMG_AS_ARR 0
 
 #define COLOR_SCALER (256/NUM_COLORS)
 
@@ -57,10 +57,10 @@
 #include "jpg.h"
 
 
-int RECORD_X        = 75;
+int RECORD_X        = 175;
 int RECORD_Y        = 175;
-int RECORD_WIDTH    = 702;
-int RECORD_HEIGHT   = 480;
+int RECORD_WIDTH    = WIDTH;
+int RECORD_HEIGHT   = HEIGHT;
 
 unsigned long 
 micros()
@@ -143,10 +143,6 @@ int service_client(int sockfd)
         cb = ycrcb[1].data; // these are correct
         cr = ycrcb[0].data;
 
-        cv::imshow("0", ycrcb[0]);
-        cv::imshow("1", ycrcb[1]);
-        cv::imshow("2", ycrcb[2]);
-
         uint32_t comp_y_n = 0;
         uint32_t comp_cr_n = 0;
         uint32_t comp_cb_n = 0;
@@ -158,6 +154,10 @@ int service_client(int sockfd)
         uint32_t total_size = comp_y_n + comp_cr_n + comp_cb_n; 
 
 #if LOCAL_SHOW==1
+        cv::imshow("0", ycrcb[0]);
+        cv::imshow("1", ycrcb[1]);
+        cv::imshow("2", ycrcb[2]);
+
         /* Decompress image data */
         // this creates incorrect cb,cr
         uint32_t data_i = decompress_channel(decoded_y, comp_y, WIDTH, HEIGHT);
@@ -183,16 +183,17 @@ int service_client(int sockfd)
 
         cv::imshow("outcr", outcr);
         cv::imshow("outcb", outcb);
-#endif
+
         cv::imshow("original", bgr);
 
         char k = cv::waitKey(1);
         if (k == 'q') break;
+#endif
 
 #if SAVE_IMG_AS_ARR==1
         if (k == 's') {
             printf("Printing image...\n");
-            pritnf("#ifdef BENCH\n");
+            printf("#ifdef BENCH\n");
             printf("char test_comp_y[] = {");
             for (int i = 0; i < comp_y_n; i++) printf("0x%x,", comp_y[i]);
             printf("};\n");
@@ -202,7 +203,7 @@ int service_client(int sockfd)
             printf("char test_comp_cr[] = {");
             for (int i = 0; i < comp_cr_n; i++) printf("0x%x,", comp_cr[i]);
             printf("};\n");
-            pritnf("#endif\n");
+            printf("#endif\n");
             fflush(stdout);
         }    
 #endif
@@ -211,18 +212,18 @@ int service_client(int sockfd)
         char* sig = "FRSTART";
         int preamble_size1 = strlen(sig) + 1;
         int preamble_size2 = strlen(sig) + 1 + sizeof(uint16_t);
+
+        uint16_t size = comp_y_n + comp_cb_n + comp_cr_n;  
+        memset(sendbuf, 0, 4096);
+        memcpy(sendbuf,                                          sig,     preamble_size1);
+        memcpy(sendbuf + preamble_size1,                         &size,   sizeof(uint16_t));
+        memcpy(sendbuf + preamble_size2,                         comp_y,  comp_y_n);
+        memcpy(sendbuf + preamble_size2 + comp_y_n,              comp_cb, comp_cb_n);
+        memcpy(sendbuf + preamble_size2 + comp_y_n + comp_cb_n,  comp_cr, comp_cr_n);
      
-        while (micros() - last_fr_time >= 40 * 1000) {
+        while (micros() - last_fr_time >= 28 * 1000) {
             printf("Time since last: %d\n", micros() - last_fr_time);
             last_fr_time = micros();
-
-            uint16_t size = comp_y_n + comp_cb_n + comp_cr_n;  
-            memset(sendbuf, 0, 4096);
-            memcpy(sendbuf,                                          sig,     preamble_size1);
-            memcpy(sendbuf + preamble_size1,                         &size,   sizeof(uint16_t));
-            memcpy(sendbuf + preamble_size2,                         comp_y,  comp_y_n);
-            memcpy(sendbuf + preamble_size2 + comp_y_n,              comp_cb, comp_cb_n);
-            memcpy(sendbuf + preamble_size2 + comp_y_n + comp_cb_n,  comp_cr, comp_cr_n);
 
             int send_size = preamble_size2 + comp_y_n + comp_cb_n + comp_cr_n;
             write(sockfd, sendbuf, send_size);
@@ -271,6 +272,8 @@ int service_client(int sockfd)
  // Driver function
 int main(int argc, char* argv[])
 {
+    std::cout << cv::getBuildInformation() << std::endl;
+
     char* ip_str = (char*) malloc(64);
 
     printf("\nPSoC/ESP Vga Streamer Server\n"

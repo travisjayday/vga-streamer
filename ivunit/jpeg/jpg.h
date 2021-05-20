@@ -26,6 +26,7 @@
 
 #ifdef __cplusplus
 #define SERVER_BUILD 1
+#define restrict
 #endif
 
 #define PI 3.14159

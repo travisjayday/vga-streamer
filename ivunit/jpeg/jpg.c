@@ -369,10 +369,9 @@ dct_decode(uint8_t* restrict buf, uint16_t width,
 void quantize(double dct_buf[8][8])
 {
 	int x,y;
-    return; 
 	for (y=0; y<8; y++)
 	for (x=0; x<8; x++)
-	if (x > 7 || y > 7) dct_buf[y][x] = 0.0;
+	if (x > 4 || y > 4) dct_buf[y][x] = 0.0;
 }
 
 uint8_t* compress_channel(uint32_t* outsize, uint8_t* image, uint32_t width, uint32_t height) {

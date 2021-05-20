@@ -7,7 +7,7 @@ bin=bin
 
 
 main:
-	g++ screenshot.cpp -c -o $(build)/screenshot.o $(include) $(libs_dynamic) $(opt) 
-	g++ ../jpeg/jpg.c -c -o $(build)/jpg.o
-	g++ ../jpeg/table.c -c -o $(build)/table.o
-	g++ main.cpp -o $(bin)/server.out $(build)/screenshot.o $(build)/jpg.o $(build)/table.o $(include) $(libs_dynamic) $(opt) 
+	g++ -Ofast -mavx2 screenshot.cpp -c -o $(build)/screenshot.o $(include) $(libs_dynamic) $(opt) 
+	g++ -Ofast -mavx2 ../jpeg/jpg.c -c -o $(build)/jpg.o
+	g++ -Ofast -mavx2 ../jpeg/table.c -c -o $(build)/table.o
+	g++ -Ofast main.cpp -o $(bin)/server.out $(build)/screenshot.o $(build)/jpg.o $(build)/table.o $(include) $(libs_dynamic) $(opt) 
