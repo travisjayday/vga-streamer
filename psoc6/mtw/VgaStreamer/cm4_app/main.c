@@ -5,8 +5,8 @@
 #include "jpeg/jpg.h"
 
 //#define BENCH
-#define FULLRES
-//#define DEBUG
+//#define FULLRES
+#define DEBUG
 
 /* Pin Definitions for SPI */
 #define mSPI_MOSI               (P6_0)
@@ -22,10 +22,10 @@
  * Defines for Image Decompression
  * These must match the server's defines
  */
-#define IMG_WIDTH 				192
-#define IMG_HEIGHT 				160
-#define NUM_COLORS 				32
-#define SUBSAMPLE_CHROMA 		2
+#define IMG_WIDTH 				160
+#define IMG_HEIGHT 				128
+#define NUM_COLORS 				128
+#define SUBSAMPLE_CHROMA 		4
 
 /* Decompression Helpers */
 #define CHROMA_WIDTH 			(IMG_WIDTH / SUBSAMPLE_CHROMA)
@@ -41,6 +41,12 @@
 #define SCRN_HEIGHT 480
 #define SCRN_SIZE 	(SCRN_WIDTH * SCRN_HEIGHT)
 
+/*
+ * Places an RGB pixel at a given row and column
+ */
+#define PUT_PIXEL(_r, _c, red, grn, blu) 						\
+	port8_fb[(_r) * SCRN_WIDTH + _c] = (grn<<6) | (blu<<1);		\
+    port9_fb[(_r) * SCRN_WIDTH + _c] = (red<<3) | (grn>>2);		\
 
 /*
  * The main VGA Framebuffers which live in shared memory.
@@ -126,6 +132,10 @@ main(void)
 	cyhal_spi_t mSPI;
     cy_rslt_t 	result;
 
+    /* Initialize UART */
+	result = cy_retarget_io_init( CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX,
+							  CY_RETARGET_IO_BAUDRATE);
+
     /*
      * To avoid bus arbitration when the DMA DataWires are active, we can
      * set busmaster priorities in the MSx_CTL Protection Registers.
@@ -152,16 +162,13 @@ main(void)
     *MS2_CTL  = 0b0000000011;		// DW0
     *MS3_CTL  = 0b0000000011;		// DW1
 
-#if DEBUG
+#ifdef DEBUG
     printf("MS0_CTL: %x\n", *MS0_CTL);
     printf("MS2_CTL: %x\n", *MS2_CTL);
     printf("MS3_CTL: %x\n", *MS3_CTL);
     printf("MS14_CTL: %x\n",*MS14_CTL);
 #endif
 
-    /* Initialize UART */
-	result = cy_retarget_io_init( CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX,
-							  CY_RETARGET_IO_BAUDRATE);
 
 	/* Init LED */
     cyhal_gpio_init(CYBSP_USER_LED, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
@@ -265,6 +272,10 @@ main(void)
      */
     uint8_t in_frame = 0;
 
+#ifdef DEBUG
+    uint32_t last_fr_time = 0;
+#endif
+
     /*
      * Flag to check how many SPI transfer's we're allowed to make.
      * Note that making an SPI transfer causes a missed horizontal line
@@ -283,7 +294,7 @@ main(void)
 		 * 		transferring the first chunk of a frame and we have clearance
 		 * 		to get the next.
 		 */
-		if (spi_ready && (port9_fb[0] == 0xff || spi_ok != 0)) {
+		if (spi_ready /*&& (port9_fb[0] == 0xff || spi_ok != 0)*/) {
 
 			spi_ready = 0;
 
@@ -343,7 +354,7 @@ main(void)
 
 					/* YCbCr convert to RGB and draw fill the shared VGA buffer */
 					dec_ycrcb(ychannel, cbchannel, crchannel,
-							SUBSAMPLE_CHROMA, 80, 75, IMG_WIDTH, IMG_HEIGHT);
+							SUBSAMPLE_CHROMA, 0, 10, IMG_WIDTH, IMG_HEIGHT);
 #ifdef DEBUG
 					uint32_t end_t = micros();
 					printf("Decompression time: %dms\n\r", (end_t-start_t)/1000);
@@ -415,6 +426,10 @@ dec_ycrcb_blk(const uint8_t* restrict y_blk, const uint8_t* restrict cr_blk, con
 #endif
             red = CLAMP_F(red);		grn = CLAMP_F(grn); 	blu = CLAMP_F(blu);
 
+            red /= (NUM_COLORS / 32);
+            grn /= (NUM_COLORS / 32);
+            blu /= (NUM_COLORS / 32);
+
             /* Once we know the RGB555 (15bit number), we write them to the shared
              * framebuffer so that DMA can output it to the three DACs over GPIO
              * Format:
@@ -425,8 +440,14 @@ dec_ycrcb_blk(const uint8_t* restrict y_blk, const uint8_t* restrict cr_blk, con
              * 	          |                |                 |
              * 		   Analog B         Analog G          Analog R
              */
-            port8_fb[(row_base + r) * SCRN_WIDTH + (col_base + c)] = (grn<<6) | (blu<<1);
-            port9_fb[(row_base + r) * SCRN_WIDTH + (col_base + c)] = (red<<3) | (grn>>2);
+            int _r = row_base + r;
+            int _c = col_base + c;
+
+            /* Upsample each pixel into 4 pixels */
+            PUT_PIXEL(2*_r,   2*_c,   red, grn, blu)
+            PUT_PIXEL(2*_r+1, 2*_c,   red, grn, blu)
+            PUT_PIXEL(2*_r,   2*_c+1, red, grn, blu)
+            PUT_PIXEL(2*_r+1, 2*_c+1, red, grn, blu)
         }
     }
 }
